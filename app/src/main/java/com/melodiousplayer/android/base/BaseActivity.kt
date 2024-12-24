@@ -19,14 +19,14 @@ abstract class BaseActivity : AppCompatActivity() {
     /**
      * 初始化数据
      */
-    protected fun initData() {
+    open protected fun initData() {
 
     }
 
     /**
      * adapter listener
      */
-    protected fun initListener() {
+    open protected fun initListener() {
 
     }
 
@@ -40,6 +40,13 @@ abstract class BaseActivity : AppCompatActivity() {
      */
     protected fun myToast(msg: String) {
         runOnUiThread { toast(msg) }
+    }
+
+    /**
+     * 开启activity并且finish当前界面
+     */
+    fun startActivityAndFinish() {
+
     }
 
 }
