@@ -1,6 +1,5 @@
 package com.melodiousplayer.android.ui.activity
 
-import android.content.Intent
 import android.view.View
 import android.widget.ImageView
 import androidx.core.view.ViewCompat
@@ -35,9 +34,7 @@ class SplashActivity : BaseActivity(), ViewPropertyAnimatorListener {
 
     override fun onAnimationEnd(view: View) {
         // 进入主界面
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
+        startActivityAndFinish<MainActivity>()
     }
 
     override fun onAnimationCancel(view: View) {

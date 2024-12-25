@@ -1,5 +1,6 @@
 package com.melodiousplayer.android.base
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import splitties.toast.toast
@@ -45,8 +46,10 @@ abstract class BaseActivity : AppCompatActivity() {
     /**
      * 开启activity并且finish当前界面
      */
-    fun startActivityAndFinish() {
-
+    inline fun <reified T : BaseActivity> startActivityAndFinish() {
+        val intent = Intent(this, T::class.java)
+        startActivity(intent)
+        finish()
     }
 
 }
