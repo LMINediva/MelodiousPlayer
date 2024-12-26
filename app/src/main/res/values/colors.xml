@@ -11,6 +11,7 @@
     <color name="colorPrimaryDark">#54B3CC</color>
     <color name="colorAccent">#FF4081</color>
     <color name="gray">#DEDCDC</color>
+    <color name="darkGray">#808080</color>
     <color name="home_item_bg">#7F000000</color>
     <color name="green">#FF1EC399</color>
     <color name="transparent_layer">#7F000000</color>

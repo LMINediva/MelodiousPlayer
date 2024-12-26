@@ -6,19 +6,18 @@ import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.util.ToolBarManager
 
 /**
- * 主界面
+ * 设置界面
  */
-class MainActivity : BaseActivity(), ToolBarManager {
+class SettingActivity : BaseActivity(), ToolBarManager {
 
-    // 惰性加载
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
 
     override fun getLayoutId(): Int {
-        return R.layout.activity_main
+        return R.layout.activity_setting
     }
 
     override fun initData() {
-        initMainToolBar()
+        initSettingToolbar()
     }
 
 }
