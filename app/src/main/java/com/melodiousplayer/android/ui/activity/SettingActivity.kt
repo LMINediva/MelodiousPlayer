@@ -1,5 +1,6 @@
 package com.melodiousplayer.android.ui.activity
 
+import android.preference.PreferenceManager
 import androidx.appcompat.widget.Toolbar
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
@@ -18,6 +19,10 @@ class SettingActivity : BaseActivity(), ToolBarManager {
 
     override fun initData() {
         initSettingToolbar()
+        // 获取推送通知有没有选中
+        val sp = PreferenceManager.getDefaultSharedPreferences(this)
+        val push = sp.getBoolean("push", false)
+        println("push=$push")
     }
 
 }

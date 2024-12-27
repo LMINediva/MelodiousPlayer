@@ -2,8 +2,8 @@ package com.melodiousplayer.android.base
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import splitties.toast.toast
 
 /**
  * 所有activity的基类
@@ -13,8 +13,8 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(getLayoutId())
-        initListener()
         initData()
+        initListener()
     }
 
     /**
@@ -40,7 +40,9 @@ abstract class BaseActivity : AppCompatActivity() {
      * 实现可在子线程中安全的弹出消息
      */
     protected fun myToast(msg: String) {
-        runOnUiThread { toast(msg) }
+        runOnUiThread {
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+        }
     }
 
     /**
