@@ -20,7 +20,7 @@ abstract class BaseFragment : Fragment() {
     /**
      * fragment初始化
      */
-    protected fun init() {
+    open protected fun init() {
 
     }
 
@@ -46,14 +46,14 @@ abstract class BaseFragment : Fragment() {
     /**
      * 数据的初始化
      */
-    protected fun initData() {
+    open protected fun initData() {
 
     }
 
     /**
      * adapter listener
      */
-    protected fun initListener() {
+    open protected fun initListener() {
 
     }
 

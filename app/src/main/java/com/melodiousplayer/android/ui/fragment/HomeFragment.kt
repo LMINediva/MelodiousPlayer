@@ -1,9 +1,8 @@
 package com.melodiousplayer.android.ui.fragment
 
-import android.graphics.Color
-import android.view.Gravity
 import android.view.View
-import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseFragment
 
 /**
@@ -11,12 +10,14 @@ import com.melodiousplayer.android.base.BaseFragment
  */
 class HomeFragment : BaseFragment() {
 
+    private lateinit var recyclerView: RecyclerView
+
     override fun initView(): View? {
-        val tv = TextView(context)
-        tv.gravity = Gravity.CENTER
-        tv.setTextColor(Color.RED)
-        tv.text = javaClass.simpleName
-        return tv
+        return View.inflate(context, R.layout.fragment_home, null)
+    }
+
+    override fun initListener() {
+        // 初始化RecyclerView
     }
 
 }
