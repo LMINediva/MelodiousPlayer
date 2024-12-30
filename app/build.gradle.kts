@@ -44,6 +44,8 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     // splitties代替anko
     implementation(libs.splitties.base)
+    // okhttp
+    implementation(libs.okhttp)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
