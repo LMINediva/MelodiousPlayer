@@ -46,6 +46,10 @@ dependencies {
     implementation(libs.splitties.base)
     // okhttp
     implementation(libs.okhttp)
+    // gson
+    implementation(libs.gson)
+    // glide
+    implementation(libs.glide)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

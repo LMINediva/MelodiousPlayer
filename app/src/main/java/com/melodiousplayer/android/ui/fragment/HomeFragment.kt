@@ -1,11 +1,16 @@
 package com.melodiousplayer.android.ui.fragment
 
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.adapter.HomeAdapter
 import com.melodiousplayer.android.base.BaseFragment
+import com.melodiousplayer.android.model.HomeItemBean
+import com.melodiousplayer.android.util.ThreadUtil
 import com.melodiousplayer.android.util.URLProviderUtils
 import okhttp3.Call
 import okhttp3.Callback
@@ -19,6 +24,9 @@ import java.io.IOException
  */
 class HomeFragment : BaseFragment() {
 
+    // 适配
+    val adapter by lazy { HomeAdapter() }
+
     private lateinit var recyclerView: RecyclerView
 
     override fun initView(): View? {
@@ -30,8 +38,6 @@ class HomeFragment : BaseFragment() {
     override fun initListener() {
         // 初始化RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(context)
-        // 适配
-        val adapter = HomeAdapter()
         recyclerView.adapter = adapter
     }
 
@@ -52,14 +58,27 @@ class HomeFragment : BaseFragment() {
              * 子线程中调用
              */
             override fun onFailure(call: Call, e: IOException) {
-                println("获取数据出错：" + Thread.currentThread().name)
+                myToast("获取数据失败")
+                Log.i("HomeFragment", "onFailure: " + e.message)
             }
 
             /**
              * 子线程中调用
              */
             override fun onResponse(call: Call, response: Response) {
-                println("获取数据成功：" + Thread.currentThread().name)
+                myToast("获取数据成功")
+                val result = response.body?.string()
+                val gson = Gson()
+                val list = gson.fromJson<List<HomeItemBean>>(
+                    result,
+                    object : TypeToken<List<HomeItemBean>>() {}.type
+                )
+                // 刷新列表
+                ThreadUtil.runOnMainThread(object : Runnable {
+                    override fun run() {
+                        adapter.updateList(list)
+                    }
+                })
             }
         })
     }
