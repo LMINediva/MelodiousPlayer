@@ -1,9 +1,11 @@
 package com.melodiousplayer.android.ui.fragment
 
+import android.graphics.Color
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.melodiousplayer.android.R
@@ -28,10 +30,12 @@ class HomeFragment : BaseFragment() {
     val adapter by lazy { HomeAdapter() }
 
     private lateinit var recyclerView: RecyclerView
+    private lateinit var refreshLayout: SwipeRefreshLayout
 
     override fun initView(): View? {
         val view = View.inflate(context, R.layout.fragment_home, null)
         recyclerView = view.findViewById(R.id.recyclerView)
+        refreshLayout = view.findViewById(R.id.refreshLayout)
         return view
     }
 
@@ -39,6 +43,34 @@ class HomeFragment : BaseFragment() {
         // 初始化RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
+        // 初始化刷新控件
+        refreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW, Color.GREEN)
+        // 刷新监听
+        refreshLayout.setOnRefreshListener {
+            loadDatas()
+        }
+        // 监听列表滑动
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                when (newState) {
+                    RecyclerView.SCROLL_STATE_IDLE -> {
+                        println("idel")
+                    }
+
+                    RecyclerView.SCROLL_STATE_DRAGGING -> {
+                        println("drag")
+                    }
+
+                    RecyclerView.SCROLL_STATE_SETTLING -> {
+                        println("settling")
+                    }
+                }
+            }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                println("onScrolled dx=$dx dy=$dy")
+            }
+        })
     }
 
     override fun initData() {
@@ -58,6 +90,12 @@ class HomeFragment : BaseFragment() {
              * 子线程中调用
              */
             override fun onFailure(call: Call, e: IOException) {
+                ThreadUtil.runOnMainThread(object : Runnable {
+                    override fun run() {
+                        // 隐藏刷新控件
+                        refreshLayout.isRefreshing = false
+                    }
+                })
                 myToast("获取数据失败")
                 Log.i("HomeFragment", "onFailure: " + e.message)
             }
@@ -73,9 +111,11 @@ class HomeFragment : BaseFragment() {
                     result,
                     object : TypeToken<List<HomeItemBean>>() {}.type
                 )
-                // 刷新列表
                 ThreadUtil.runOnMainThread(object : Runnable {
                     override fun run() {
+                        // 隐藏刷新控件
+                        refreshLayout.isRefreshing = false
+                        // 刷新列表
                         adapter.updateList(list)
                     }
                 })
