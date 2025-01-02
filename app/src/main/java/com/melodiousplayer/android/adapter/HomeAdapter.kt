@@ -24,6 +24,14 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.HomeHolder>() {
         notifyDataSetChanged()
     }
 
+    /**
+     * 加载更多
+     */
+    fun loadMoreList(list: List<HomeItemBean>) {
+        this.list.addAll(list)
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeHolder {
         if (viewType == 1) {
             // 最后一条
