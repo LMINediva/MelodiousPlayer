@@ -18,18 +18,22 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.HomeHolder>() {
     /**
      * 更新数据
      */
-    fun updateList(list: List<HomeItemBean>) {
-        this.list.clear()
-        this.list.addAll(list)
-        notifyDataSetChanged()
+    fun updateList(list: List<HomeItemBean>?) {
+        list?.let {
+            this.list.clear()
+            this.list.addAll(list)
+            notifyDataSetChanged()
+        }
     }
 
     /**
      * 加载更多
      */
-    fun loadMoreList(list: List<HomeItemBean>) {
-        this.list.addAll(list)
-        notifyDataSetChanged()
+    fun loadMoreList(list: List<HomeItemBean>?) {
+        list?.let {
+            this.list.addAll(list)
+            notifyDataSetChanged()
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeHolder {

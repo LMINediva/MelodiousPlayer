@@ -1,6 +1,5 @@
 package com.melodiousplayer.android.presenter.impl
 
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.melodiousplayer.android.model.HomeItemBean
@@ -77,19 +76,16 @@ class HomePresenterImpl(var homeView: HomeView) : HomePresenter {
             override fun onFailure(call: Call, e: IOException) {
                 ThreadUtil.runOnMainThread(object : Runnable {
                     override fun run() {
-                        // 隐藏刷新控件
-                        refreshLayout.isRefreshing = false
+                        // 回调到view层处理
+                        homeView.onError(e.message)
                     }
                 })
-                myToast("获取数据失败")
-                Log.i("HomeFragment", "onFailure: " + e.message)
             }
 
             /**
              * 子线程中调用
              */
             override fun onResponse(call: Call, response: Response) {
-                myToast("获取数据成功")
                 val result = response.body?.string()
                 val gson = Gson()
                 val list = gson.fromJson<List<HomeItemBean>>(
@@ -98,10 +94,7 @@ class HomePresenterImpl(var homeView: HomeView) : HomePresenter {
                 )
                 ThreadUtil.runOnMainThread(object : Runnable {
                     override fun run() {
-                        // 隐藏刷新控件
-                        refreshLayout.isRefreshing = false
-                        // 加载更多列表
-                        adapter.loadMoreList(list)
+                        homeView.loadMore(list)
                     }
                 })
             }

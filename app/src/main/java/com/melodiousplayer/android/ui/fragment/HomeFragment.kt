@@ -8,6 +8,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.adapter.HomeAdapter
 import com.melodiousplayer.android.base.BaseFragment
+import com.melodiousplayer.android.model.HomeItemBean
 import com.melodiousplayer.android.presenter.impl.HomePresenterImpl
 import com.melodiousplayer.android.view.HomeView
 
@@ -79,6 +80,21 @@ class HomeFragment : BaseFragment(), HomeView {
     override fun initData() {
         // 初始化数据
         presenter.loadDatas()
+    }
+
+    override fun onError(message: String?) {
+        myToast("加载数据失败")
+    }
+
+    override fun loadSuccess(list: List<HomeItemBean>?) {
+        // 隐藏刷新控件
+        refreshLayout.isRefreshing = false
+        // 刷新列表
+        adapter.updateList(list)
+    }
+
+    override fun loadMore(list: List<HomeItemBean>?) {
+        adapter.loadMoreList(list)
     }
 
 }
