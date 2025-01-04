@@ -1,10 +1,6 @@
 package com.melodiousplayer.android.net
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.melodiousplayer.android.model.HomeItemBean
 import com.melodiousplayer.android.util.ThreadUtil
-import com.melodiousplayer.android.util.URLProviderUtils
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -21,7 +17,7 @@ class NetManager private constructor() {
 
     // 单例实现
     companion object {
-        val manager by lazy { NetManager }
+        val manager by lazy { NetManager() }
     }
 
     /**
@@ -40,7 +36,7 @@ class NetManager private constructor() {
                 ThreadUtil.runOnMainThread(object : Runnable {
                     override fun run() {
                         // 回调到view层处理
-                        req.handler.onError(e.message)
+                        req.handler.onError(req.type, e.message)
                     }
                 })
             }
@@ -53,7 +49,7 @@ class NetManager private constructor() {
                 val parseResult = req.parseResult(result)
                 ThreadUtil.runOnMainThread(object : Runnable {
                     override fun run() {
-                        homeView.loadMore(list)
+                        req.handler.onSuccess(req.type, parseResult)
                     }
                 })
             }
