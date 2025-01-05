@@ -25,7 +25,7 @@ class HomeFragment : BaseFragment(), HomeView {
     private lateinit var refreshLayout: SwipeRefreshLayout
 
     override fun initView(): View? {
-        val view = View.inflate(context, R.layout.fragment_home, null)
+        val view = View.inflate(context, R.layout.fragment_list, null)
         recyclerView = view.findViewById(R.id.recyclerView)
         refreshLayout = view.findViewById(R.id.refreshLayout)
         return view
