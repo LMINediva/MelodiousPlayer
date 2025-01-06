@@ -16,4 +16,5 @@ interface HomePresenter {
      * 加载更多数据
      */
     fun loadMore(offset: Int)
+
 }

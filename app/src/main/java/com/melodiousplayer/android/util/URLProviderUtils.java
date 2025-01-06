@@ -19,6 +19,20 @@ public class URLProviderUtils {
         return url;
     }
 
+    /**
+     * 获取悦单界面数据的url
+     *
+     * @param offset 数据偏移量
+     * @param size   返回数据的条目个数
+     * @return
+     */
+    public static String getMVListUrl(int offset, int size) {
+        String url = "http://192.168.124.10/list.json";
+        Log.i("offset", String.valueOf(offset));
+        Log.i("size", String.valueOf(size));
+        return url;
+    }
+
     public static String getMVareaUrl() {
         String url = "http://mapi.yinyuetai.com/video/get_mv_areas.json?deviceinfo="
                 + "{\"aid\":\"10201036\",\"os\":\"Android\","
@@ -34,7 +48,7 @@ public class URLProviderUtils {
         return url;
     }
 
-    public static String getMVListUrl(String area, int offset, int size) {
+    public static String getMVUrl(String area, int offset, int size) {
         String url = "http://mapi.yinyuetai.com/video/list.json?deviceinfo="
                 + "{\"aid\":\"10201036\",\"os\":\"Android\","
                 + "\"ov\":" + "\"" + getSystemVersion() + "\"" + ","
@@ -47,23 +61,6 @@ public class URLProviderUtils {
                 + "\"dbcaa6c4482bc05ecb0bf39dabf207d2\","
                 + "\"clid\":110025000}"
                 + "&area=" + area
-                + "&offset=" + offset
-                + "&size=" + size;
-        return url;
-    }
-
-    public static String getYueDanUrl(int offset, int size) {
-        String url = "http://mapi.yinyuetai.com/playlist/list.json?deviceinfo="
-                + "{\"aid\":\"10201036\",\"os\":\"Android\","
-                + "\"ov\":" + "\"" + getSystemVersion() + "\"" + ","
-                + "\"rn\":\"480*800\","
-                + "\"dn\":" + "\"" + getPhoneModel() + "\"" + ","
-                + "\"cr\":\"46000\","
-                + "\"as\":"
-                + "\"WIFI\","
-                + "\"uid\":"
-                + "\"dbcaa6c4482bc05ecb0bf39dabf207d2\","
-                + "\"clid\":110025000}"
                 + "&offset=" + offset
                 + "&size=" + size;
         return url;
