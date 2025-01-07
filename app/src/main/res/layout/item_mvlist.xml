@@ -20,15 +20,15 @@
             android:background="@mipmap/default_splash_bg"
             android:scaleType="centerCrop" />
 
-        <!--左下角图片-->
+        <!--歌手头像-->
         <ImageView
             android:id="@+id/author_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_alignParentBottom="true"
             android:layout_margin="10dp" />
 
-        <!--数量-->
+        <!--MV列表数量-->
         <TextView
             android:id="@+id/count"
             android:layout_width="wrap_content"
@@ -36,7 +36,7 @@
             android:layout_alignParentBottom="true"
             android:layout_toRightOf="@+id/author_image"
             android:maxLines="1"
-            android:text="数量"
+            android:text="MV列表数量"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
 
@@ -52,7 +52,7 @@
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
 
-        <!--歌曲名-->
+        <!--MV列表名称-->
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -60,7 +60,7 @@
             android:layout_above="@+id/author_name"
             android:layout_toRightOf="@+id/author_image"
             android:maxLines="1"
-            android:text="歌曲名"
+            android:text="MV列表名称"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
     </RelativeLayout>

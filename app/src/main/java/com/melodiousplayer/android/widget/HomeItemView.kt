@@ -44,7 +44,7 @@ class HomeItemView : RelativeLayout {
         // 简介
         description.setText(data.description)
         // 背景图片
-        Glide.with(this).load(data.posterPic).into(bg)
+        Glide.with(context).load(data.posterPic).into(bg)
     }
 
 }

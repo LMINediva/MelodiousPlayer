@@ -37,6 +37,12 @@ class MVListAdapter : RecyclerView.Adapter<MVListAdapter.MVListHolder>() {
     }
 
     override fun onBindViewHolder(holder: MVListHolder, position: Int) {
+        // 获取当前条目的数据
+        val data = list.get(position)
+        // 获取当前条目的视图
+        val itemView = holder.itemView as MVListItemView
+        // 当前条目的数据和视图的绑定
+        itemView.setData(data)
     }
 
 }

@@ -1,8 +1,10 @@
 package com.melodiousplayer.android.ui.fragment
 
+import android.graphics.Color
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.adapter.MVListAdapter
 import com.melodiousplayer.android.base.BaseFragment
@@ -20,16 +22,24 @@ class MVListFragment : BaseFragment(), MVListView {
     val presenter by lazy { MVListPresenterImpl(this) }
 
     private lateinit var recyclerView: RecyclerView
+    private lateinit var refreshLayout: SwipeRefreshLayout
 
     override fun initView(): View? {
         val view = View.inflate(context, R.layout.fragment_list, null)
         recyclerView = view.findViewById(R.id.recyclerView)
+        refreshLayout = view.findViewById(R.id.refreshLayout)
         return view
     }
 
     override fun initListener() {
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
+        // 初始化刷新控件
+        refreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW, Color.GREEN)
+        // 监听刷新控件
+        refreshLayout.setOnRefreshListener {
+            presenter.loadDatas()
+        }
     }
 
     override fun initData() {
