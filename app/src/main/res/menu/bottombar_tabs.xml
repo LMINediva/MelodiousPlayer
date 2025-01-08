@@ -13,7 +13,7 @@
         android:icon="@mipmap/bottom_vlist_unselect"
         android:title="V榜" />
     <item
-        android:id="@+id/tab_mvList"
+        android:id="@+id/tab_musicList"
         android:icon="@mipmap/bottom_mvlist_unselect"
         android:title="悦单" />
 </menu>

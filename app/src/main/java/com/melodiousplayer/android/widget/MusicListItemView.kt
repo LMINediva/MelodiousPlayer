@@ -9,12 +9,12 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.melodiousplayer.android.R
-import com.melodiousplayer.android.model.MVListBean
+import com.melodiousplayer.android.model.MusicListBean
 
 /**
  * 悦单界面每个条目的自定义view
  */
-class MVListItemView : RelativeLayout {
+class MusicListItemView : RelativeLayout {
 
     constructor(context: Context?) : super(context)
 
@@ -27,13 +27,13 @@ class MVListItemView : RelativeLayout {
     )
 
     init {
-        View.inflate(context, R.layout.item_mvlist, this)
+        View.inflate(context, R.layout.item_music, this)
     }
 
     /**
      * 条目view的控件初始化
      */
-    fun setData(data: MVListBean.PlayListsBean) {
+    fun setData(data: MusicListBean.PlayListsBean) {
         val title: TextView = findViewById(R.id.title)
         val author_name: TextView = findViewById(R.id.author_name)
         val count: TextView = findViewById(R.id.count)

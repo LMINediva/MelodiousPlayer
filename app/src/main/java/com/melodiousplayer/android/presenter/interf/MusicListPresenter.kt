@@ -1,6 +1,6 @@
 package com.melodiousplayer.android.presenter.interf
 
-interface MVListPresenter {
+interface MusicListPresenter {
 
     companion object {
         val TYPE_INIT_OR_REFRESH = 1

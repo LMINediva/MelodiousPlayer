@@ -1,6 +1,6 @@
 package com.melodiousplayer.android.model
 
-class MVListBean {
+class MusicListBean {
 
     var totalCount: Int = 0
     var playLists: List<PlayListsBean>? = null

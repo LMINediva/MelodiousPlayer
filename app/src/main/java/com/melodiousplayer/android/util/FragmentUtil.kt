@@ -4,7 +4,7 @@ import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseFragment
 import com.melodiousplayer.android.ui.fragment.HomeFragment
 import com.melodiousplayer.android.ui.fragment.MVFragment
-import com.melodiousplayer.android.ui.fragment.MVListFragment
+import com.melodiousplayer.android.ui.fragment.MusicListFragment
 import com.melodiousplayer.android.ui.fragment.VListFragment
 
 /**
@@ -22,7 +22,7 @@ class FragmentUtil private constructor() { // 私有化构造函数
     val vListFragment by lazy { VListFragment() }
 
     // 悦单
-    val mvListFragment by lazy { MVListFragment() }
+    val musicListFragment by lazy { MusicListFragment() }
 
     companion object {
         val fragmentUtil by lazy { FragmentUtil() }
@@ -36,7 +36,7 @@ class FragmentUtil private constructor() { // 私有化构造函数
             R.id.tab_home -> return homeFragment
             R.id.tab_mv -> return mvFragment
             R.id.tab_vList -> return vListFragment
-            R.id.tab_mvList -> return mvListFragment
+            R.id.tab_musicList -> return musicListFragment
         }
         return null
     }
