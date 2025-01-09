@@ -1,5 +1,6 @@
 package com.melodiousplayer.android.presenter.impl
 
+import com.melodiousplayer.android.base.BaseListPresenter
 import com.melodiousplayer.android.model.HomeItemBean
 import com.melodiousplayer.android.net.HomeRequest
 import com.melodiousplayer.android.net.ResponseHandler
@@ -12,7 +13,7 @@ class HomePresenterImpl(var homeView: HomeView?) : HomePresenter,
     /**
      * 解绑view和presenter
      */
-    fun destroyView() {
+    override fun destroyView() {
         if (homeView != null) {
             homeView = null
         }
@@ -31,8 +32,8 @@ class HomePresenterImpl(var homeView: HomeView?) : HomePresenter,
     override fun onSuccess(type: Int, result: List<HomeItemBean>) {
         // 区分是初始化数据还是加载更多数据
         when (type) {
-            HomePresenter.TYPE_INIT_OR_REFRESH -> homeView?.loadSuccess(result)
-            HomePresenter.TYPE_LOAD_MORE -> homeView?.loadMore(result)
+            BaseListPresenter.TYPE_INIT_OR_REFRESH -> homeView?.loadSuccess(result)
+            BaseListPresenter.TYPE_LOAD_MORE -> homeView?.loadMore(result)
         }
     }
 
@@ -41,7 +42,7 @@ class HomePresenterImpl(var homeView: HomeView?) : HomePresenter,
      */
     override fun loadDatas() {
         // 定义request并发送request
-        HomeRequest(HomePresenter.TYPE_INIT_OR_REFRESH, 0, this).execute()
+        HomeRequest(BaseListPresenter.TYPE_INIT_OR_REFRESH, 0, this).execute()
     }
 
     /**
@@ -49,7 +50,7 @@ class HomePresenterImpl(var homeView: HomeView?) : HomePresenter,
      */
     override fun loadMore(offset: Int) {
         // 定义request并发送request
-        HomeRequest(HomePresenter.TYPE_LOAD_MORE, offset, this).execute()
+        HomeRequest(BaseListPresenter.TYPE_LOAD_MORE, offset, this).execute()
     }
 
 }
