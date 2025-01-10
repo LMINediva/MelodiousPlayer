@@ -1,13 +1,13 @@
 package com.melodiousplayer.android.presenter.impl
 
 import com.melodiousplayer.android.base.BaseListPresenter
+import com.melodiousplayer.android.base.BaseView
 import com.melodiousplayer.android.model.HomeItemBean
 import com.melodiousplayer.android.net.HomeRequest
 import com.melodiousplayer.android.net.ResponseHandler
 import com.melodiousplayer.android.presenter.interf.HomePresenter
-import com.melodiousplayer.android.view.HomeView
 
-class HomePresenterImpl(var homeView: HomeView?) : HomePresenter,
+class HomePresenterImpl(var homeView: BaseView<List<HomeItemBean>>?) : HomePresenter,
     ResponseHandler<List<HomeItemBean>> {
 
     /**

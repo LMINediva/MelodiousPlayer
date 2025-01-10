@@ -6,10 +6,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.melodiousplayer.android.R
-import com.melodiousplayer.android.adapter.HomeAdapter
-import com.melodiousplayer.android.model.HomeItemBean
-import com.melodiousplayer.android.presenter.impl.HomePresenterImpl
-import com.melodiousplayer.android.view.HomeView
 
 /**
  * 所有具有下拉刷新和上拉加载更多列表界面的基类
@@ -18,11 +14,12 @@ import com.melodiousplayer.android.view.HomeView
  * Adapter -> BaseListAdapter
  * Presenter -> BaseListPresenter
  */
-class BaseListFragment : BaseFragment(), HomeView {
+abstract class BaseListFragment<RESPONSE, ITEMBEAN, ITEMVIEW : View> : BaseFragment(),
+    BaseView<RESPONSE> {
 
     // 适配
-    val adapter by lazy { HomeAdapter() }
-    val presenter by lazy { HomePresenterImpl(this) }
+    val adapter by lazy { getSpecialAdapter() }
+    val presenter by lazy { getSpecialPresenter() }
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var refreshLayout: SwipeRefreshLayout
@@ -89,15 +86,30 @@ class BaseListFragment : BaseFragment(), HomeView {
         myToast("加载数据失败")
     }
 
-    override fun loadSuccess(list: List<HomeItemBean>?) {
+    override fun loadSuccess(response: RESPONSE?) {
         // 隐藏刷新控件
         refreshLayout.isRefreshing = false
         // 刷新列表
-        adapter.updateList(list)
+        adapter.updateList(getList(response))
     }
 
-    override fun loadMore(list: List<HomeItemBean>?) {
-        adapter.loadMoreList(list)
+    override fun loadMore(response: RESPONSE?) {
+        adapter.loadMoreList(getList(response))
     }
+
+    /**
+     * 获取适配器adapter
+     */
+    abstract fun getSpecialAdapter(): BaseListAdapter<ITEMBEAN, ITEMVIEW>
+
+    /**
+     * 获取presenter
+     */
+    abstract fun getSpecialPresenter(): BaseListPresenter
+
+    /**
+     * 从返回结果中获取列表数据集合
+     */
+    abstract fun getList(response: RESPONSE?): List<ITEMBEAN>?
 
 }

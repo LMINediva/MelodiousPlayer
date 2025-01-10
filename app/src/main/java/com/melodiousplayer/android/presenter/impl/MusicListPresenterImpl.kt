@@ -1,13 +1,13 @@
 package com.melodiousplayer.android.presenter.impl
 
 import com.melodiousplayer.android.base.BaseListPresenter
+import com.melodiousplayer.android.base.BaseView
 import com.melodiousplayer.android.model.MusicListBean
 import com.melodiousplayer.android.net.MusicListRequest
 import com.melodiousplayer.android.net.ResponseHandler
 import com.melodiousplayer.android.presenter.interf.MusicListPresenter
-import com.melodiousplayer.android.view.MusicListView
 
-class MusicListPresenterImpl(var musicListView: MusicListView?) : MusicListPresenter,
+class MusicListPresenterImpl(var musicListView: BaseView<MusicListBean>?) : MusicListPresenter,
     ResponseHandler<MusicListBean> {
 
     override fun destroyView() {
