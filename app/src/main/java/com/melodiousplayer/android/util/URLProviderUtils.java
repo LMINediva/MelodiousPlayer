@@ -24,7 +24,7 @@ public class URLProviderUtils {
      *
      * @param offset 数据偏移量
      * @param size   返回数据的条目个数
-     * @return
+     * @return url
      */
     public static String getMVListUrl(int offset, int size) {
         String url = "http://192.168.124.10/list.json";
@@ -33,18 +33,13 @@ public class URLProviderUtils {
         return url;
     }
 
+    /**
+     * 获取MV界面区域数据的url
+     *
+     * @return url
+     */
     public static String getMVareaUrl() {
-        String url = "http://mapi.yinyuetai.com/video/get_mv_areas.json?deviceinfo="
-                + "{\"aid\":\"10201036\",\"os\":\"Android\","
-                + "\"ov\":" + "\"" + getSystemVersion() + "\"" + ","
-                + "\"rn\":\"480*800\","
-                + "\"dn\":" + "\"" + getPhoneModel() + "\"" + ","
-                + "\"cr\":\"46000\","
-                + "\"as\":"
-                + "\"WIFI\","
-                + "\"uid\":"
-                + "\"dbcaa6c4482bc05ecb0bf39dabf207d2\","
-                + "\"clid\":110025000}";
+        String url = "http://192.168.124.10/get_mv_areas.json";
         return url;
     }
 
