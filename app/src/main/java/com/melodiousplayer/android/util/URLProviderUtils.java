@@ -38,13 +38,21 @@ public class URLProviderUtils {
      *
      * @return url
      */
-    public static String getMVareaUrl() {
+    public static String getMVAreaUrl() {
         String url = "http://192.168.124.10/get_mv_areas.json";
         return url;
     }
 
-    public static String getMVUrl(String area, int offset, int size) {
-        String url = "http://mapi.yinyuetai.com/video/list.json?deviceinfo="
+    /**
+     * 获取MV界面区域数据列表的url
+     *
+     * @param area   区域数据类型
+     * @param offset 数据偏移量
+     * @param size   返回数据的条目个数
+     * @return url
+     */
+    public static String getMVAreaListUrl(String area, int offset, int size) {
+        String url = "http://mapi.yinyuetai.com/video/get_mv_list.json?deviceinfo="
                 + "{\"aid\":\"10201036\",\"os\":\"Android\","
                 + "\"ov\":" + "\"" + getSystemVersion() + "\"" + ","
                 + "\"rn\":\"480*800\","
