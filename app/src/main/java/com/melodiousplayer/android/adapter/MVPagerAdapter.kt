@@ -20,7 +20,7 @@ class MVPagerAdapter(val context: Context, val list: List<MVAreaBean>?, fm: Frag
         // 第一种数据传递方式
         // val fragment = MVPagerFragment()
         val bundle = Bundle()
-        bundle.putString("args", list?.get(position)?.name)
+        bundle.putString("args", list?.get(position)?.code)
         // fragment.arguments = bundle
         // 第二种fragment传递数据的方式
         val fragment = Fragment.instantiate(context, MVPagerFragment::class.java.name, bundle)

@@ -1,30 +1,36 @@
 package com.melodiousplayer.android.ui.fragment
 
-import android.graphics.Color
-import android.view.Gravity
-import android.view.View
-import android.widget.TextView
-import com.melodiousplayer.android.base.BaseFragment
+import com.melodiousplayer.android.adapter.MVListAdapter
+import com.melodiousplayer.android.base.BaseListAdapter
+import com.melodiousplayer.android.base.BaseListFragment
+import com.melodiousplayer.android.base.BaseListPresenter
+import com.melodiousplayer.android.model.MVPagerBean
+import com.melodiousplayer.android.model.VideosBean
+import com.melodiousplayer.android.presenter.impl.MVListPresenterImpl
+import com.melodiousplayer.android.view.MVListView
+import com.melodiousplayer.android.widget.MVItemView
 
 /**
  * MV界面每一个页面的fragment
  */
-class MVPagerFragment : BaseFragment() {
+class MVPagerFragment : BaseListFragment<MVPagerBean, VideosBean, MVItemView>(), MVListView {
 
-    // 在fragment创建时传递数据，不能通过构造方法，需要通过setArguments方法传递
-    var name: String? = null
+    var code: String? = null
 
     override fun init() {
-        // 获取传递的数据
-        name = arguments?.getString("args")
+        code = arguments?.getString("args")
     }
 
-    override fun initView(): View? {
-        val tv = TextView(context)
-        tv.gravity = Gravity.CENTER
-        tv.setTextColor(Color.RED)
-        tv.text = javaClass.simpleName + name
-        return tv
+    override fun getSpecialAdapter(): BaseListAdapter<VideosBean, MVItemView> {
+        return MVListAdapter()
+    }
+
+    override fun getSpecialPresenter(): BaseListPresenter {
+        return MVListPresenterImpl(code!!, this)
+    }
+
+    override fun getList(response: MVPagerBean?): List<VideosBean>? {
+        return response?.videos
     }
 
 }
