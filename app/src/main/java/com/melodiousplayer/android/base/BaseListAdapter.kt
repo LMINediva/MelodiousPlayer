@@ -65,11 +65,18 @@ abstract class BaseListAdapter<ITEMBEAN, ITEMVIEW : View> :
         // 设置条目点击事件
         itemView.setOnClickListener {
             // 条目点击事件
+            listener?.let {
+                it(data)
+            }
         }
     }
 
     // 定义函数类型变量
     var listener: ((itemBean: ITEMBEAN) -> Unit)? = null
+
+    fun setMyListener(listener: (itemBean: ITEMBEAN) -> Unit) {
+        this.listener = listener
+    }
 
     override fun getItemViewType(position: Int): Int {
         if (position == list.size) {
