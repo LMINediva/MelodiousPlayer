@@ -12,6 +12,7 @@ class TextureVideoPlayerActivity : BaseActivity(), TextureView.SurfaceTextureLis
 
     private lateinit var textureView: TextureView
     var videoPlayBean: VideoPlayBean? = null
+    val mediaPlayer by lazy { MediaPlayer() }
 
     override fun getLayoutId(): Int {
         return R.layout.activity_video_player_texture
@@ -27,13 +28,14 @@ class TextureVideoPlayerActivity : BaseActivity(), TextureView.SurfaceTextureLis
     override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
         videoPlayBean?.let {
             // 视图可用
-            val mediaPlayer = MediaPlayer()
             mediaPlayer.setDataSource(it.url)
             // 设置播放视频画面
             mediaPlayer.setSurface(Surface(surface))
             mediaPlayer.prepareAsync()
             mediaPlayer.setOnPreparedListener {
                 mediaPlayer.start()
+                // 旋转画面
+                textureView.rotation = 100f
             }
         }
     }
@@ -43,6 +45,11 @@ class TextureVideoPlayerActivity : BaseActivity(), TextureView.SurfaceTextureLis
     }
 
     override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
+        // 关闭MediaPlayer
+        mediaPlayer?.let {
+            mediaPlayer.stop()
+            mediaPlayer.release()
+        }
         // 视图销毁
         return true
     }
