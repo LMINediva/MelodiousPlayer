@@ -9,7 +9,7 @@ import com.melodiousplayer.android.model.MVPagerBean
 import com.melodiousplayer.android.model.VideoPlayBean
 import com.melodiousplayer.android.model.VideosBean
 import com.melodiousplayer.android.presenter.impl.MVListPresenterImpl
-import com.melodiousplayer.android.ui.activity.TextureVideoPlayerActivity
+import com.melodiousplayer.android.ui.activity.JiaoZiVideoPlayerActivity
 import com.melodiousplayer.android.view.MVListView
 import com.melodiousplayer.android.widget.MVItemView
 
@@ -42,7 +42,7 @@ class MVPagerFragment : BaseListFragment<MVPagerBean, VideosBean, MVItemView>(),
         adapter.setMyListener {
             val videoPlayBean = VideoPlayBean(it.id, it.title, it.url)
             // 跳转到视频播放界面
-            val intent = Intent(activity, TextureVideoPlayerActivity::class.java)
+            val intent = Intent(activity, JiaoZiVideoPlayerActivity::class.java)
             intent.putExtra("item", videoPlayBean)
             activity?.startActivity(intent)
         }

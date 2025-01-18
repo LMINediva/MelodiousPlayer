@@ -51,6 +51,7 @@ dependencies {
     // glide
     implementation(libs.glide)
     implementation(libs.swiperefreshlayout)
+    implementation(libs.jiaozivideoplayer)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
