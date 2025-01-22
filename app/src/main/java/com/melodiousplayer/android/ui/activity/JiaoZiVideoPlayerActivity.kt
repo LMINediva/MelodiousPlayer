@@ -3,19 +3,25 @@ package com.melodiousplayer.android.ui.activity
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.viewpager.widget.ViewPager
 import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
 import com.melodiousplayer.android.R
+import com.melodiousplayer.android.adapter.VideoPagerAdapter
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.model.VideoPlayBean
 
 class JiaoZiVideoPlayerActivity : BaseActivity() {
 
     private lateinit var videoplayer: JzvdStd
-    private var data: String? = null
+    private lateinit var viewPager: ViewPager
+    private lateinit var rg: RadioGroup
+    private var data: Uri? = null
     private val permissions: Array<String> = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -28,20 +34,29 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
 
     override fun initData() {
         videoplayer = findViewById(R.id.jz_video)
-        data = intent.data?.path
+        viewPager = findViewById(R.id.viewPager)
+        rg = findViewById(R.id.rg)
+        data = intent.data
         if (data == null) {
             // 获取传递的数据
             val videoPlayBean = intent.getParcelableExtra<VideoPlayBean>("item")
             // 从应用内响应视频播放
             videoplayer.setUp(videoPlayBean?.url, videoPlayBean?.title, JzvdStd.SCREEN_NORMAL)
         } else {
-            // 动态申请权限
-            hasPermissions = hasPermissions(this, permissions)
-            if (!hasPermissions) {
-                ActivityCompat.requestPermissions(this, permissions, 1)
-            } else {
+            if (data.toString().startsWith("http")) {
+                // 应用外的网络视频请求
                 // 应用外响应
-                videoplayer.setUp(data.toString(), data.toString(), JzvdStd.SCREEN_NORMAL)
+                videoplayer.setUp(data?.toString(), data.toString(), JzvdStd.SCREEN_NORMAL)
+            } else {
+                // 应用外的本地视频请求
+                // 动态申请权限
+                hasPermissions = hasPermissions(this, permissions)
+                if (!hasPermissions) {
+                    ActivityCompat.requestPermissions(this, permissions, 1)
+                } else {
+                    // 应用外响应
+                    videoplayer.setUp(data?.path, data.toString(), JzvdStd.SCREEN_NORMAL)
+                }
             }
         }
     }
@@ -77,7 +92,7 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
                 }
                 if (allPermissionsGranted) {
                     // 应用外响应
-                    videoplayer.setUp(data.toString(), data.toString(), JzvdStd.SCREEN_NORMAL)
+                    videoplayer.setUp(data?.path, data.toString(), JzvdStd.SCREEN_NORMAL)
                 } else {
                     Toast.makeText(this, "你拒绝了权限", Toast.LENGTH_SHORT).show()
                 }
@@ -95,6 +110,19 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
     override fun onPause() {
         super.onPause()
         Jzvd.releaseAllVideos()
+    }
+
+    override fun initListener() {
+        // 适配ViewPager
+        viewPager.adapter = VideoPagerAdapter(supportFragmentManager)
+        // RadioGroup选中监听
+        rg.setOnCheckedChangeListener { radioGroup, i ->
+            when (i) {
+                R.id.rb1 -> viewPager.setCurrentItem(0)
+                R.id.rb2 -> viewPager.setCurrentItem(1)
+                R.id.rb3 -> viewPager.setCurrentItem(2)
+            }
+        }
     }
 
 }
