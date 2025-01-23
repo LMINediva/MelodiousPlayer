@@ -123,6 +123,40 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
                 R.id.rb3 -> viewPager.setCurrentItem(2)
             }
         }
+
+        // ViewPager选中状态监听
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+
+            /**
+             * 滑动状态改变的回调
+             */
+            override fun onPageScrollStateChanged(state: Int) {
+
+            }
+
+            /**
+             * 滑动回调
+             */
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+
+            }
+
+            /**
+             * 选中状态改变回调
+             */
+            override fun onPageSelected(position: Int) {
+                when (position) {
+                    0 -> rg.check(R.id.rb1)
+                    1 -> rg.check(R.id.rb2)
+                    2 -> rg.check(R.id.rb3)
+                }
+            }
+
+        })
     }
 
 }

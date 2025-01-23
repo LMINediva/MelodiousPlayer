@@ -5,7 +5,7 @@ import com.melodiousplayer.android.base.BaseFragment
 import com.melodiousplayer.android.ui.fragment.HomeFragment
 import com.melodiousplayer.android.ui.fragment.MVFragment
 import com.melodiousplayer.android.ui.fragment.MusicListFragment
-import com.melodiousplayer.android.ui.fragment.VListFragment
+import com.melodiousplayer.android.ui.fragment.LocalMusicFragment
 
 /**
  * 管理fragment的util类
@@ -18,8 +18,8 @@ class FragmentUtil private constructor() { // 私有化构造函数
     // MV
     val mvFragment by lazy { MVFragment() }
 
-    // V榜
-    val vListFragment by lazy { VListFragment() }
+    // 本地音乐
+    val localMusicFragment by lazy { LocalMusicFragment() }
 
     // 悦单
     val musicListFragment by lazy { MusicListFragment() }
@@ -35,8 +35,8 @@ class FragmentUtil private constructor() { // 私有化构造函数
         when (tabId) {
             R.id.tab_home -> return homeFragment
             R.id.tab_mv -> return mvFragment
-            R.id.tab_vList -> return vListFragment
-            R.id.tab_musicList -> return musicListFragment
+            R.id.tab_local_music_list -> return localMusicFragment
+            R.id.tab_music_list -> return musicListFragment
         }
         return null
     }

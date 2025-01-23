@@ -9,11 +9,11 @@
         android:icon="@mipmap/bottom_mv_unselect"
         android:title="MV" />
     <item
-        android:id="@+id/tab_vList"
+        android:id="@+id/tab_local_music_list"
         android:icon="@mipmap/bottom_vlist_unselect"
-        android:title="V榜" />
+        android:title="本地" />
     <item
-        android:id="@+id/tab_musicList"
+        android:id="@+id/tab_music_list"
         android:icon="@mipmap/bottom_mvlist_unselect"
         android:title="悦单" />
 </menu>
