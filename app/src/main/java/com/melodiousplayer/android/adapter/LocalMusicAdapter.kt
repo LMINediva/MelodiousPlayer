@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.view.View
 import android.view.ViewGroup
 import androidx.cursoradapter.widget.CursorAdapter
+import com.melodiousplayer.android.model.AudioBean
 import com.melodiousplayer.android.widget.LocalMusicItemView
 
 /**
@@ -25,6 +26,10 @@ class LocalMusicAdapter(context: Context?, c: Cursor?) : CursorAdapter(context, 
     override fun bindView(view: View?, context: Context?, cursor: Cursor?) {
         // view
         val itemView = view as LocalMusicItemView
+        // data
+        val itemBean = AudioBean.getAudioBean(cursor)
+        // view和data绑定
+        itemView.setData(itemBean)
     }
 
 }
