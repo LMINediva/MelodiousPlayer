@@ -2,6 +2,7 @@ package com.melodiousplayer.android.ui.fragment
 
 import android.Manifest
 import android.content.AsyncQueryHandler
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.provider.MediaStore.Audio.Media
@@ -12,6 +13,8 @@ import androidx.core.app.ActivityCompat
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.adapter.LocalMusicAdapter
 import com.melodiousplayer.android.base.BaseFragment
+import com.melodiousplayer.android.model.AudioBean
+import com.melodiousplayer.android.ui.activity.AudioPlayerActivity
 
 /**
  * 本地音乐
@@ -80,7 +83,7 @@ class LocalMusicFragment : BaseFragment() {
      */
     private fun myRequestPermission() {
         val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-        ActivityCompat.requestPermissions(requireActivity(), permissions, 1)
+        requestPermissions(permissions, 1)
     }
 
     /**
@@ -131,6 +134,18 @@ class LocalMusicFragment : BaseFragment() {
 
     override fun initListener() {
         listView.adapter = adapter
+        // 设置条目点击事件
+        listView.setOnItemClickListener { parent, view, position, id ->
+            // 获取数据集合
+            val cursor = adapter?.getItem(position) as Cursor
+            // 通过当前位置cursor获取整个播放列表
+            val list: ArrayList<AudioBean> = AudioBean.getAudioBeans(cursor)
+            // 位置position
+            val intent = Intent(activity, AudioPlayerActivity::class.java)
+            intent.putExtra("list", list)
+            intent.putExtra("position", position)
+            // 跳转到音乐播放界面
+        }
     }
 
     override fun onDestroy() {

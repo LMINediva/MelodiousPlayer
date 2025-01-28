@@ -66,6 +66,7 @@
                 <data android:mimeType="video/3gpp2" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.activity.AudioPlayerActivity" />
     </application>
 
 </manifest>

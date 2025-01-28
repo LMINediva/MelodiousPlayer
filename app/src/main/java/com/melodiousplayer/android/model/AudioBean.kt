@@ -30,6 +30,25 @@ data class AudioBean(
             }
             return audioBean
         }
+
+        /**
+         * 根据特定位置cursor获取整个播放列表
+         */
+        fun getAudioBeans(cursor: Cursor?): ArrayList<AudioBean> {
+            // 创建集合
+            val list = ArrayList<AudioBean>()
+            // cursor是否为空
+            cursor?.let {
+                // 将cursor游标移动到-1
+                it.moveToPosition(-1)
+                // 解析cursor添加到集合中
+                while (it.moveToNext()) {
+                    val audioBean = getAudioBean(it)
+                    list.add(audioBean)
+                }
+            }
+            return list
+        }
     }
 
 }
