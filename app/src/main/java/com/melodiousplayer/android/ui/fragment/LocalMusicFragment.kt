@@ -145,6 +145,7 @@ class LocalMusicFragment : BaseFragment() {
             intent.putExtra("list", list)
             intent.putExtra("position", position)
             // 跳转到音乐播放界面
+            activity?.startActivity(intent)
         }
     }
 

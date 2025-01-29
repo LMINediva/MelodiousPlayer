@@ -1,6 +1,8 @@
 package com.melodiousplayer.android.model
 
 import android.database.Cursor
+import android.os.Parcel
+import android.os.Parcelable
 import android.provider.MediaStore.Audio.Media
 
 /**
@@ -8,9 +10,37 @@ import android.provider.MediaStore.Audio.Media
  */
 data class AudioBean(
     var data: String, var size: Long, var displayName: String, var artist: String
-) {
+) : Parcelable {
 
-    companion object {
+    constructor(parcel: Parcel) : this(
+        parcel.readString().toString(),
+        parcel.readLong(),
+        parcel.readString().toString(),
+        parcel.readString().toString()
+    ) {
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(data)
+        parcel.writeLong(size)
+        parcel.writeString(displayName)
+        parcel.writeString(artist)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<AudioBean> {
+
+        override fun createFromParcel(parcel: Parcel): AudioBean {
+            return AudioBean(parcel)
+        }
+
+        override fun newArray(size: Int): Array<AudioBean?> {
+            return arrayOfNulls(size)
+        }
+
         /**
          * 根据特定位置上的cursor获取bean
          */
@@ -49,6 +79,7 @@ data class AudioBean(
             }
             return list
         }
+
     }
 
 }
