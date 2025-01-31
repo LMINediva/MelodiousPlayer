@@ -12,6 +12,7 @@ class AudioService : Service() {
     var list: ArrayList<AudioBean>? = null
     var position: Int = 0
     var mediaPlayer: MediaPlayer? = null
+    val binder by lazy { AudioBinder() }
 
     override fun onCreate() {
         super.onCreate()
@@ -22,14 +23,18 @@ class AudioService : Service() {
         list = intent?.getParcelableArrayListExtra<AudioBean>("list")
         position = intent?.getIntExtra("position", -1) ?: -1
         // 开始播放音乐
-        return super.onStartCommand(intent, flags, startId)
+        binder.playItem()
+        // START_STICKY 粘性的 Service被强制杀死之后，会尝试重新启动Service，不会传递原来的Intent(null)
+        // START_NOT_STICKY 非粘性的 Service被强制杀死之后，不会尝试重新启动Service
+        // START_REDELIVER_INTENT Service被强制杀死之后，会尝试重新启动Service，会传递原来的Intent
+        return START_NOT_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder? {
-
+        return binder
     }
 
-    inner class AudioBinder : Binder(), MediaPlayer.OnPreparedListener {
+    inner class AudioBinder : Binder(), IService, MediaPlayer.OnPreparedListener {
 
         override fun onPrepared(mp: MediaPlayer?) {
             mediaPlayer?.start()
