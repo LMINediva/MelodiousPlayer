@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.swiperefreshlayout)
     implementation(libs.jiaozivideoplayer)
+    implementation(libs.eventbus)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

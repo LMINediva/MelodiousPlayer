@@ -15,6 +15,7 @@ gson = "2.10.1"
 glide = "4.16.0"
 swiperefreshlayout = "1.1.0"
 jiaozivideoplayer = "7.7.0"
+eventbus = "3.3.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -31,6 +32,7 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 jiaozivideoplayer = { group = "cn.jzvd", name = "jiaozivideoplayer", version.ref = "jiaozivideoplayer" }
+eventbus = { group = "org.greenrobot", name = "eventbus", version.ref = "eventbus" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

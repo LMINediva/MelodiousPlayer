@@ -6,6 +6,7 @@ import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
 import com.melodiousplayer.android.model.AudioBean
+import org.greenrobot.eventbus.EventBus
 
 class AudioService : Service() {
 
@@ -37,7 +38,18 @@ class AudioService : Service() {
     inner class AudioBinder : Binder(), IService, MediaPlayer.OnPreparedListener {
 
         override fun onPrepared(mp: MediaPlayer?) {
+            // 播放音乐
             mediaPlayer?.start()
+            // 通知界面更新
+            notifyUpdateUI()
+        }
+
+        /**
+         * 通知界面更新
+         */
+        private fun notifyUpdateUI() {
+            // 发送端
+            EventBus.getDefault().post(list?.get(position))
         }
 
         fun playItem() {
@@ -47,6 +59,28 @@ class AudioService : Service() {
                 it.setDataSource(list?.get(position)?.data)
                 it.prepareAsync()
             }
+        }
+
+        /**
+         * 更新播放状态
+         */
+        override fun updatePlayState() {
+            // 获取当前播放状态
+            val isPlaying = isPlaying()
+            // 切换播放状态
+            isPlaying?.let {
+                if (isPlaying) {
+                    // 播放，暂停
+                    mediaPlayer?.pause()
+                } else {
+                    // 暂停，播放
+                    mediaPlayer?.start()
+                }
+            }
+        }
+
+        override fun isPlaying(): Boolean? {
+            return mediaPlayer?.isPlaying
         }
 
     }
