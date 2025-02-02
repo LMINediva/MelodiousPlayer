@@ -83,6 +83,20 @@ class AudioService : Service() {
             return mediaPlayer?.isPlaying
         }
 
+        /**
+         * 获取总进度
+         */
+        override fun getDuration(): Int {
+            return mediaPlayer?.duration ?: 0
+        }
+
+        /**
+         * 获取当前播放进度
+         */
+        override fun getProgress(): Int {
+            return mediaPlayer?.currentPosition ?: 0
+        }
+
     }
 
 }
