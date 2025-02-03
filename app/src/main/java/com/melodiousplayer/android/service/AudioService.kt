@@ -35,7 +35,8 @@ class AudioService : Service() {
         return binder
     }
 
-    inner class AudioBinder : Binder(), IService, MediaPlayer.OnPreparedListener {
+    inner class AudioBinder : Binder(), IService, MediaPlayer.OnPreparedListener,
+        MediaPlayer.OnCompletionListener {
 
         override fun onPrepared(mp: MediaPlayer?) {
             // 播放音乐
@@ -56,6 +57,7 @@ class AudioService : Service() {
             mediaPlayer = MediaPlayer()
             mediaPlayer?.let {
                 it.setOnPreparedListener(this)
+                it.setOnCompletionListener(this)
                 it.setDataSource(list?.get(position)?.data)
                 it.prepareAsync()
             }
@@ -95,6 +97,20 @@ class AudioService : Service() {
          */
         override fun getProgress(): Int {
             return mediaPlayer?.currentPosition ?: 0
+        }
+
+        /**
+         * 跳转到当前进度播放
+         */
+        override fun seekTo(progress: Int) {
+            mediaPlayer?.seekTo(progress)
+        }
+
+        /**
+         * 歌曲播放完成之后回调
+         */
+        override fun onCompletion(mp: MediaPlayer?) {
+
         }
 
     }

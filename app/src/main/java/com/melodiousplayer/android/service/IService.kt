@@ -5,4 +5,5 @@ interface IService {
     fun isPlaying(): Boolean?
     fun getDuration(): Int
     fun getProgress(): Int
+    fun seekTo(progress: Int)
 }
