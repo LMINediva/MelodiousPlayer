@@ -6,4 +6,6 @@ interface IService {
     fun getDuration(): Int
     fun getProgress(): Int
     fun seekTo(progress: Int)
+    fun updatePlayMode()
+    fun getPlayMode(): Int
 }

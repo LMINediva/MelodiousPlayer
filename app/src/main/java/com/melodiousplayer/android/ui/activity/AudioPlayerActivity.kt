@@ -46,6 +46,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     private lateinit var back: ImageView
     private lateinit var progress: TextView
     private lateinit var progressSeekBar: SeekBar
+    private lateinit var mode: ImageView
 
     override fun getLayoutId(): Int {
         return R.layout.activity_audio_player
@@ -59,6 +60,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         back = findViewById(R.id.audio_back)
         progress = findViewById(R.id.progress)
         progressSeekBar = findViewById(R.id.progress_sk)
+        mode = findViewById(R.id.mode)
         // 注册EventBus
         EventBus.getDefault().register(this)
         // 通过AudioService播放音乐
@@ -95,11 +97,40 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         back.setOnClickListener { finish() }
         // 进度条变化监听
         progressSeekBar.setOnSeekBarChangeListener(this)
+        // 播放模式点击事件
+        mode.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.state -> updatePlayState()
+            R.id.mode -> updatePlayMode()
+        }
+    }
+
+    /**
+     * 更新播放模式
+     */
+    private fun updatePlayMode() {
+        // 修改Service中的mode
+        iService?.updatePlayMode()
+        // 修改界面模式图标
+        updatePlayModeBtn()
+    }
+
+    /**
+     * 根据播放模式修改播放模式图标
+     */
+    private fun updatePlayModeBtn() {
+        iService?.let {
+            // 获取播放模式
+            val modeI: Int = it.getPlayMode()
+            // 设置图标
+            when (modeI) {
+                AudioService.MODE_ALL -> mode.setImageResource(R.drawable.selector_btn_playmode_order)
+                AudioService.MODE_SINGLE -> mode.setImageResource(R.drawable.selector_btn_playmode_single)
+                AudioService.MODE_RANDOM -> mode.setImageResource(R.drawable.selector_btn_playmode_random)
+            }
         }
     }
 
@@ -189,6 +220,8 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         progressSeekBar.max = duration
         // 更新播放进度
         startUpdateProgress()
+        // 更新播放模式图标
+        updatePlayModeBtn()
     }
 
     /**
