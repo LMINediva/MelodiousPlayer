@@ -47,6 +47,9 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     private lateinit var progress: TextView
     private lateinit var progressSeekBar: SeekBar
     private lateinit var mode: ImageView
+    private lateinit var previous: ImageView
+    private lateinit var next: ImageView
+    private lateinit var playList: ImageView
 
     override fun getLayoutId(): Int {
         return R.layout.activity_audio_player
@@ -61,16 +64,19 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         progress = findViewById(R.id.progress)
         progressSeekBar = findViewById(R.id.progress_sk)
         mode = findViewById(R.id.mode)
+        previous = findViewById(R.id.pre)
+        next = findViewById(R.id.next)
+        playList = findViewById(R.id.playlist)
         // 注册EventBus
         EventBus.getDefault().register(this)
         // 通过AudioService播放音乐
         val intent = intent
         // 修改
         intent.setClass(this, AudioService::class.java)
-        // 先开启服务
-        startService(intent)
-        // 再绑定服务
+        // 先绑定服务
         bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        // 再开启服务
+        startService(intent)
     }
 
     inner class AudioConnection : ServiceConnection {
@@ -99,13 +105,28 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         progressSeekBar.setOnSeekBarChangeListener(this)
         // 播放模式点击事件
         mode.setOnClickListener(this)
+        // 上一曲和下一曲点击事件
+        previous.setOnClickListener(this)
+        next.setOnClickListener(this)
+        // 播放列表点击事件
+        playList.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.state -> updatePlayState()
             R.id.mode -> updatePlayMode()
+            R.id.pre -> iService?.playPrevious()
+            R.id.next -> iService?.playNext()
+            R.id.playlist -> showPlayList()
         }
+    }
+
+    /**
+     * 显示播放列表
+     */
+    private fun showPlayList() {
+
     }
 
     /**

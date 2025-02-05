@@ -8,4 +8,6 @@ interface IService {
     fun seekTo(progress: Int)
     fun updatePlayMode()
     fun getPlayMode(): Int
+    fun playPrevious()
+    fun playNext()
 }

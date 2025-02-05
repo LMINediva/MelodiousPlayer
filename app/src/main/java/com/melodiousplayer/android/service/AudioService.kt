@@ -13,7 +13,9 @@ import java.util.Random
 class AudioService : Service() {
 
     var list: ArrayList<AudioBean>? = null
-    var position: Int = 0
+
+    // 正在播放的position
+    var position: Int = -2
     var mediaPlayer: MediaPlayer? = null
     val binder by lazy { AudioBinder() }
 
@@ -35,11 +37,19 @@ class AudioService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // 获取list以及position
-        list = intent?.getParcelableArrayListExtra<AudioBean>("list")
-        position = intent?.getIntExtra("position", -1) ?: -1
-        // 开始播放音乐
-        binder.playItem()
+        // 想要播放的position
+        val pos = intent?.getIntExtra("position", -1) ?: -1
+        if (pos != position) {
+            position = pos
+            // 想要播放的条目和正在播放的条目不是同一首
+            // 获取list以及position
+            list = intent?.getParcelableArrayListExtra<AudioBean>("list")
+            // 开始播放音乐
+            binder.playItem()
+        } else {
+            // 主动通知界面更新
+            binder.notifyUpdateUI()
+        }
         // START_STICKY 粘性的 Service被强制杀死之后，会尝试重新启动Service，不会传递原来的Intent(null)
         // START_NOT_STICKY 非粘性的 Service被强制杀死之后，不会尝试重新启动Service
         // START_REDELIVER_INTENT Service被强制杀死之后，会尝试重新启动Service，会传递原来的Intent
@@ -63,12 +73,18 @@ class AudioService : Service() {
         /**
          * 通知界面更新
          */
-        private fun notifyUpdateUI() {
+        fun notifyUpdateUI() {
             // 发送端
             EventBus.getDefault().post(list?.get(position))
         }
 
         fun playItem() {
+            // 如果MediaPlayer已经存在，就先释放掉
+            if (mediaPlayer != null) {
+                mediaPlayer?.reset()
+                mediaPlayer?.release()
+                mediaPlayer = null
+            }
             mediaPlayer = MediaPlayer()
             mediaPlayer?.let {
                 it.setOnPreparedListener(this)
@@ -164,6 +180,40 @@ class AudioService : Service() {
          */
         override fun getPlayMode(): Int {
             return mode
+        }
+
+        /**
+         * 播放上一曲
+         */
+        override fun playPrevious() {
+            list?.let {
+                // 获取要播放歌曲的position
+                when (mode) {
+                    MODE_RANDOM -> position = Random().nextInt(it.size - 1)
+                    else -> {
+                        if (position == 0) {
+                            position = it.size - 1
+                        } else {
+                            position--
+                        }
+                    }
+                }
+                // 调用playItem方法进行播放
+                playItem()
+            }
+        }
+
+        /**
+         * 播放下一曲
+         */
+        override fun playNext() {
+            list?.let {
+                when (mode) {
+                    MODE_RANDOM -> position = Random().nextInt(it.size - 1)
+                    else -> position = (position + 1) % it.size
+                }
+            }
+            playItem()
         }
 
     }
