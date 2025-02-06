@@ -9,6 +9,7 @@ import android.os.IBinder
 import android.os.Message
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import com.melodiousplayer.android.R
@@ -17,6 +18,7 @@ import com.melodiousplayer.android.model.AudioBean
 import com.melodiousplayer.android.service.AudioService
 import com.melodiousplayer.android.service.IService
 import com.melodiousplayer.android.util.StringUtil
+import com.melodiousplayer.android.widget.PlayListPopupWindow
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -50,6 +52,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     private lateinit var previous: ImageView
     private lateinit var next: ImageView
     private lateinit var playList: ImageView
+    private lateinit var audioPlayerBottom: LinearLayout
 
     override fun getLayoutId(): Int {
         return R.layout.activity_audio_player
@@ -67,6 +70,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         previous = findViewById(R.id.pre)
         next = findViewById(R.id.next)
         playList = findViewById(R.id.playlist)
+        audioPlayerBottom = findViewById(R.id.audio_player_bottom)
         // 注册EventBus
         EventBus.getDefault().register(this)
         // 通过AudioService播放音乐
@@ -126,7 +130,10 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
      * 显示播放列表
      */
     private fun showPlayList() {
-
+        // 获取底部高度
+        val bottomHeight = audioPlayerBottom.height
+        val popupWindow = PlayListPopupWindow(this)
+        popupWindow.showAsDropDown(audioPlayerBottom, 0, bottomHeight)
     }
 
     /**
