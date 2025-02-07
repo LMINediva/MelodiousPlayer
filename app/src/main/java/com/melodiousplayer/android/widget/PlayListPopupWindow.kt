@@ -4,13 +4,17 @@ import android.content.Context
 import android.graphics.Point
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.AdapterView.OnItemClickListener
+import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.PopupWindow
 import com.melodiousplayer.android.R
 
-class PlayListPopupWindow(context: Context) : PopupWindow() {
+class PlayListPopupWindow(context: Context, adapter: BaseAdapter, listener: OnItemClickListener) :
+    PopupWindow() {
 
     init {
         // 设置布局
@@ -18,6 +22,9 @@ class PlayListPopupWindow(context: Context) : PopupWindow() {
         // 获取ListView
         val listView = view.findViewById<ListView>(R.id.listView)
         // 适配
+        listView.adapter = adapter
+        // 设置列表条目点击事件
+        listView.setOnItemClickListener(listener)
         contentView = view
         // 设置宽度和高度
         width = ViewGroup.LayoutParams.MATCH_PARENT
@@ -33,6 +40,18 @@ class PlayListPopupWindow(context: Context) : PopupWindow() {
         isOutsideTouchable = true
         // 能够响应返回按钮（低版本PopupWindow点击返回按钮能够dismiss的关键）
         setBackgroundDrawable(ColorDrawable())
+        // 处理PopupWindow弹出和隐藏的动画
+        animationStyle = R.style.popup
+    }
+
+    override fun showAsDropDown(anchor: View?, xoff: Int, yoff: Int, gravity: Int) {
+        super.showAsDropDown(anchor, xoff, yoff, gravity)
+        // PopupWindow已经显示
+    }
+
+    override fun dismiss() {
+        super.dismiss()
+        // PopupWindow已经隐藏
     }
 
 }

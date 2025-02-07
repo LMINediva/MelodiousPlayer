@@ -8,11 +8,13 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Message
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import com.melodiousplayer.android.R
+import com.melodiousplayer.android.adapter.PopupAdapter
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.model.AudioBean
 import com.melodiousplayer.android.service.AudioService
@@ -26,7 +28,8 @@ import org.greenrobot.eventbus.ThreadMode
 /**
  * 音乐播放界面
  */
-class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeekBarChangeListener,
+    AdapterView.OnItemClickListener {
 
     val connection by lazy { AudioConnection() }
     var iService: IService? = null
@@ -130,10 +133,15 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
      * 显示播放列表
      */
     private fun showPlayList() {
-        // 获取底部高度
-        val bottomHeight = audioPlayerBottom.height
-        val popupWindow = PlayListPopupWindow(this)
-        popupWindow.showAsDropDown(audioPlayerBottom, 0, bottomHeight)
+        val list = iService?.getPlayList()
+        list?.let {
+            // 创建adapter
+            val adapter = PopupAdapter(list)
+            // 获取底部高度
+            val bottomHeight = audioPlayerBottom.height
+            val popupWindow = PlayListPopupWindow(this, adapter, this)
+            popupWindow.showAsDropDown(audioPlayerBottom, 0, bottomHeight)
+        }
     }
 
     /**
@@ -282,6 +290,14 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         EventBus.getDefault().unregister(this)
         // 清空handler发送的所有消息
         handler.removeCallbacksAndMessages(null)
+    }
+
+    /**
+     * 弹出的播放列表条目点击事件
+     */
+    override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        // 播放当前的歌曲
+        iService?.playPosition(position)
     }
 
 }

@@ -216,6 +216,21 @@ class AudioService : Service() {
             playItem()
         }
 
+        /**
+         * 获取播放集合
+         */
+        override fun getPlayList(): List<AudioBean>? {
+            return list
+        }
+
+        /**
+         * 播放当前位置的歌曲
+         */
+        override fun playPosition(position: Int) {
+            this@AudioService.position = position
+            playItem()
+        }
+
     }
 
 }

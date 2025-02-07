@@ -1,5 +1,7 @@
 package com.melodiousplayer.android.service
 
+import com.melodiousplayer.android.model.AudioBean
+
 interface IService {
     fun updatePlayState()
     fun isPlaying(): Boolean?
@@ -10,4 +12,6 @@ interface IService {
     fun getPlayMode(): Int
     fun playPrevious()
     fun playNext()
+    fun getPlayList(): List<AudioBean>?
+    fun playPosition(position: Int)
 }
