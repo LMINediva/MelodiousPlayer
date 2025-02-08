@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.view.WindowManager
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.BaseAdapter
@@ -13,10 +14,20 @@ import android.widget.ListView
 import android.widget.PopupWindow
 import com.melodiousplayer.android.R
 
-class PlayListPopupWindow(context: Context, adapter: BaseAdapter, listener: OnItemClickListener) :
+class PlayListPopupWindow(
+    context: Context,
+    adapter: BaseAdapter,
+    listener: OnItemClickListener,
+    val window: Window
+) :
     PopupWindow() {
 
+    // 记录当前应用程序窗体透明度
+    var alpha: Float = 0f
+
     init {
+        // 记录当前窗体的透明度
+        alpha = window.attributes.alpha
         // 设置布局
         val view = LayoutInflater.from(context).inflate(R.layout.popup_playlist, null, false)
         // 获取ListView
@@ -47,11 +58,18 @@ class PlayListPopupWindow(context: Context, adapter: BaseAdapter, listener: OnIt
     override fun showAsDropDown(anchor: View?, xoff: Int, yoff: Int, gravity: Int) {
         super.showAsDropDown(anchor, xoff, yoff, gravity)
         // PopupWindow已经显示
+        val attributes = window.attributes
+        attributes.alpha = 0.3f
+        // 设置到应用程序窗体上
+        window.attributes = attributes
     }
 
     override fun dismiss() {
         super.dismiss()
-        // PopupWindow已经隐藏
+        // PopupWindow已经隐藏，恢复应用程序窗体透明度
+        val attributes = window.attributes
+        attributes.alpha = alpha
+        window.attributes = attributes
     }
 
 }
