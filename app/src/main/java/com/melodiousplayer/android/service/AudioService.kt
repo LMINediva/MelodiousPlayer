@@ -1,11 +1,18 @@
 package com.melodiousplayer.android.service
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
+import androidx.core.app.NotificationCompat
+import com.melodiousplayer.android.R
 import com.melodiousplayer.android.model.AudioBean
 import org.greenrobot.eventbus.EventBus
 import java.util.Random
@@ -13,6 +20,7 @@ import java.util.Random
 class AudioService : Service() {
 
     var list: ArrayList<AudioBean>? = null
+    var manager: NotificationManager? = null
 
     // 正在播放的position
     var position: Int = -2
@@ -34,6 +42,12 @@ class AudioService : Service() {
         super.onCreate()
         // 获取播放模式
         mode = sp.getInt("mode", 1)
+        manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel =
+                NotificationChannel("normal", "正常的", NotificationManager.IMPORTANCE_DEFAULT)
+            manager?.createNotificationChannel(channel)
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -68,6 +82,31 @@ class AudioService : Service() {
             mediaPlayer?.start()
             // 通知界面更新
             notifyUpdateUI()
+            // 显示通知
+            showNotification()
+        }
+
+        /**
+         * 显示通知
+         */
+        private fun showNotification() {
+            manager?.notify(1, getNotification())
+        }
+
+        /**
+         * 创建Notification
+         */
+        private fun getNotification(): Notification? {
+            val bitmap = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
+            val notification = NotificationCompat.Builder(this, "normal")
+                .setTicker("正在播放歌曲北京")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setCustomContentView(getRemoteViews()) // 自定义通知view
+                .setWhen(System.currentTimeMillis())
+                .setOngoing(true) // 设置不能滑动删除通知
+                .setContentIntent(getPendingIntent()) // 通知栏主体点击事件
+                .build()
+            return notification
         }
 
         /**
