@@ -7,7 +7,6 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.os.Binder
 import android.os.Build
@@ -25,6 +24,7 @@ class AudioService : Service() {
 
     var list: ArrayList<AudioBean>? = null
     var manager: NotificationManager? = null
+    var notification: Notification? = null
 
     // 正在播放的position
     var position: Int = -2
@@ -51,7 +51,6 @@ class AudioService : Service() {
         super.onCreate()
         // 获取播放模式
         mode = sp.getInt("mode", 1)
-        manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel =
                 NotificationChannel("normal", "正常的", NotificationManager.IMPORTANCE_DEFAULT)
@@ -63,13 +62,22 @@ class AudioService : Service() {
         // 判断进入Service的方法
         val from = intent?.getIntExtra("from", -1)
         when (from) {
-            FROM_PRE -> {binder.playPrevious()}
-            FROM_NEXT -> {binder.playNext()}
+            FROM_PRE -> {
+                binder.playPrevious()
+            }
+
+            FROM_NEXT -> {
+                binder.playNext()
+            }
+
             FROM_CONTENT -> {
                 binder.notifyUpdateUI()
             }
 
-            FROM_STATE -> {}
+            FROM_STATE -> {
+                binder.updatePlayState()
+            }
+
             else -> {
                 // 想要播放的position
                 val pos = intent?.getIntExtra("position", -1) ?: -1
@@ -101,7 +109,7 @@ class AudioService : Service() {
 
         override fun onPrepared(mp: MediaPlayer?) {
             // 播放音乐
-            mediaPlayer?.start()
+            start()
             // 通知界面更新
             notifyUpdateUI()
             // 显示通知
@@ -112,14 +120,15 @@ class AudioService : Service() {
          * 显示通知
          */
         private fun showNotification() {
-            manager?.notify(1, getNotification())
+            manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notification = getNotification()
+            manager?.notify(1, notification)
         }
 
         /**
          * 创建Notification
          */
         private fun getNotification(): Notification? {
-            val bitmap = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
             val notification = NotificationCompat.Builder(this@AudioService, "normal")
                 .setTicker("正在播放歌曲${list?.get(position)?.displayName}")
                 .setSmallIcon(R.mipmap.ic_launcher)
@@ -238,12 +247,42 @@ class AudioService : Service() {
             isPlaying?.let {
                 if (isPlaying) {
                     // 播放，暂停
-                    mediaPlayer?.pause()
+                    pause()
                 } else {
                     // 暂停，播放
-                    mediaPlayer?.start()
+                    start()
                 }
             }
+        }
+
+        /**
+         * 暂停
+         */
+        private fun pause() {
+            mediaPlayer?.pause()
+            EventBus.getDefault().post(list?.get(position))
+            // 更新图标
+            notification?.contentView?.setImageViewResource(
+                R.id.state,
+                R.drawable.selector_btn_audio_pause
+            )
+            // 重新显示
+            manager?.notify(1, notification)
+        }
+
+        /**
+         * 开始
+         */
+        private fun start() {
+            mediaPlayer?.start()
+            EventBus.getDefault().post(list?.get(position))
+            // 更新图标
+            notification?.contentView?.setImageViewResource(
+                R.id.state,
+                R.drawable.selector_btn_audio_play
+            )
+            // 重新显示
+            manager?.notify(1, notification)
         }
 
         override fun isPlaying(): Boolean? {
