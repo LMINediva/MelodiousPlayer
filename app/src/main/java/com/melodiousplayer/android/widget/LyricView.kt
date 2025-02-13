@@ -24,6 +24,7 @@ class LyricView : View {
     var smallSize = 0f
     var white = 0
     var green = 0
+    var lineHeight = 0
 
     constructor(context: Context?) : super(context)
 
@@ -40,6 +41,7 @@ class LyricView : View {
         smallSize = resources.getDimension(R.dimen.smallSize)
         white = resources.getColor(R.color.white)
         green = resources.getColor(R.color.green)
+        lineHeight = resources.getDimensionPixelOffset(R.dimen.lineHeight)
         // 画笔在x轴方向确定位置是通过中间位置确定坐标
         paint.textAlign = Paint.Align.CENTER
         // 循环添加歌词bean
@@ -62,6 +64,28 @@ class LyricView : View {
         val bounds = Rect()
         paint.getTextBounds(centerText, 0, centerText.length, bounds)
         val textH = bounds.height()
+        // 居中行Y值
+        val centerY = viewH / 2 + textH / 2
+        for ((index, value) in list.withIndex()) {
+            if (index == centerLine) {
+                // 绘制居中行
+                paint.color = green
+                paint.textSize = bigSize
+            } else {
+                // 其他行
+                paint.color = white
+                paint.textSize = smallSize
+            }
+            val curX = viewW / 2
+            val curY = centerY + (index - centerLine) * lineHeight
+            // 超出边界处理
+            // 处理超出上边界歌词
+            if (curY < 0) continue
+            // 处理超出下边界歌词
+            if (curY > viewH + lineHeight) break
+            val curText = list.get(index).content
+            canvas?.drawText(curText, curX.toFloat(), curY.toFloat(), paint)
+        }
     }
 
     /**
@@ -92,6 +116,34 @@ class LyricView : View {
         super.onSizeChanged(w, h, oldw, oldh)
         viewW = w
         viewH = h
+    }
+
+    /**
+     * 传递当前播放进度，实现歌词播放
+     */
+    fun updateProgress(progress: Int) {
+        // 获取居中行行号
+        // 先判断居中行是否是最后一行
+        if (progress >= list.get(list.size - 1).startTime) {
+            // progress >= 最后一行开始时间
+            // 最后一行居中
+            centerLine = list.size - 1
+        } else {
+            // 其他行居中，循环遍历集合
+            for (index in 0 until list.size - 1) {
+                // progress >= 当前行开始时间 & progress < 下一行开始时间
+                val curStartTime = list.get(index).startTime
+                val nextStartTime = list.get(index + 1).startTime
+                if (progress >= curStartTime && progress < nextStartTime) {
+                    centerLine = index
+                    break
+                }
+            }
+        }
+        // 找到居中行之后绘制当前多行歌词
+        invalidate() // onDraw方法
+        // postInvalidate() // onDraw方法，可以在子线程中刷新
+        // requestLayout() // view布局参数改变时刷新
     }
 
 }

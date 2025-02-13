@@ -20,6 +20,7 @@ import com.melodiousplayer.android.model.AudioBean
 import com.melodiousplayer.android.service.AudioService
 import com.melodiousplayer.android.service.IService
 import com.melodiousplayer.android.util.StringUtil
+import com.melodiousplayer.android.widget.LyricView
 import com.melodiousplayer.android.widget.PlayListPopupWindow
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -56,6 +57,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     private lateinit var next: ImageView
     private lateinit var playList: ImageView
     private lateinit var audioPlayerBottom: LinearLayout
+    private lateinit var lyricView: LyricView
 
     override fun getLayoutId(): Int {
         return R.layout.activity_audio_player
@@ -74,6 +76,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         next = findViewById(R.id.next)
         playList = findViewById(R.id.playlist)
         audioPlayerBottom = findViewById(R.id.audio_player_bottom)
+        lyricView = findViewById(R.id.lyricView)
         // 注册EventBus
         EventBus.getDefault().register(this)
         // 通过AudioService播放音乐
@@ -280,6 +283,8 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         progress.text = StringUtil.parseDuration(pro) + "/" + StringUtil.parseDuration(duration)
         // 更新进度条
         progressSeekBar.setProgress(pro)
+        // 更新歌词播放进度
+        lyricView.updateProgress(pro)
     }
 
     override fun onDestroy() {
