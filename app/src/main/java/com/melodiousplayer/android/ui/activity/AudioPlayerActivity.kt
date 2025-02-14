@@ -255,6 +255,8 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         drawable?.start()
         // 获取总进度
         duration = iService?.getDuration() ?: 0
+        // 设置歌词播放总进度
+        lyricView.setSongDuration(duration)
         // 进度条设置进度最大值
         progressSeekBar.max = duration
         // 更新播放进度
@@ -272,7 +274,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         // 更新进度数据
         updateProgress(progress)
         // 定时获取进度
-        handler.sendEmptyMessageDelayed(MSG_PROGRESS, 1000)
+        handler.sendEmptyMessage(MSG_PROGRESS)
     }
 
     /**

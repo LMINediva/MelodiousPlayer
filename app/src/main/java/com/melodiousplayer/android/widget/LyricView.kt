@@ -25,6 +25,8 @@ class LyricView : View {
     var white = 0
     var green = 0
     var lineHeight = 0
+    var duration = 0
+    var progress = 0
 
     constructor(context: Context?) : super(context)
 
@@ -60,12 +62,31 @@ class LyricView : View {
      * 绘制多行居中文本
      */
     private fun drawMultiLine(canvas: Canvas) {
+        // 求居中行偏移y
+        // 行可用时间
+        var lineTime = 0
+        // 判断是否是最后一行居中
+        if (centerLine == list.size - 1) {
+            // 最后一行居中，行可用时间 = duration - 最后一行开始时间
+            lineTime = duration - list.get(centerLine).startTime
+        } else {
+            // 其他行居中，行可用时间 = 下一行开始时间 - 居中行开始时间
+            val centerS = list.get(centerLine).startTime
+            val nextS = list.get(centerLine + 1).startTime
+            lineTime = nextS - centerS
+        }
+        // 偏移时间 = progress - 居中行开始时间
+        val offsetTime = progress - list.get(centerLine).startTime
+        // 偏移百分比 = 偏移时间 / 行可用时间
+        val offsetPercent = offsetTime / (lineTime.toFloat())
+        // 偏移y = 偏移百分比 * 行高
+        val offsetY = offsetPercent * lineHeight
         val centerText = list.get(centerLine).content
         val bounds = Rect()
         paint.getTextBounds(centerText, 0, centerText.length, bounds)
         val textH = bounds.height()
-        // 居中行Y值
-        val centerY = viewH / 2 + textH / 2
+        // 居中行y值
+        val centerY = viewH / 2 + textH / 2 - offsetY
         for ((index, value) in list.withIndex()) {
             if (index == centerLine) {
                 // 绘制居中行
@@ -122,6 +143,7 @@ class LyricView : View {
      * 传递当前播放进度，实现歌词播放
      */
     fun updateProgress(progress: Int) {
+        this.progress = progress
         // 获取居中行行号
         // 先判断居中行是否是最后一行
         if (progress >= list.get(list.size - 1).startTime) {
@@ -144,6 +166,13 @@ class LyricView : View {
         invalidate() // onDraw方法
         // postInvalidate() // onDraw方法，可以在子线程中刷新
         // requestLayout() // view布局参数改变时刷新
+    }
+
+    /**
+     * 设置当前播放歌曲总时长
+     */
+    fun setSongDuration(duration: Int) {
+        this.duration = duration
     }
 
 }
