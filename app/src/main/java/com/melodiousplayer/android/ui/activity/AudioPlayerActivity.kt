@@ -242,6 +242,8 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEventMainThread(itemBean: AudioBean) {
+        // 设置播放歌曲名称
+        lyricView.setSongName(itemBean.displayName)
         // 记录播放歌曲的bean
         this.audioBean = itemBean
         // 歌曲名

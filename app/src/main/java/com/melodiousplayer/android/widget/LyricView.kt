@@ -8,6 +8,8 @@ import android.util.AttributeSet
 import android.view.View
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.model.LyricBean
+import com.melodiousplayer.android.util.LyricLoader
+import com.melodiousplayer.android.util.LyricUtil
 
 /**
  * 自定义歌词view
@@ -47,9 +49,6 @@ class LyricView : View {
         // 画笔在x轴方向确定位置是通过中间位置确定坐标
         paint.textAlign = Paint.Align.CENTER
         // 循环添加歌词bean
-        for (i in 0 until 30) {
-            list.add(LyricBean(2000 * i, "正在播放第$i 行歌词"))
-        }
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -173,6 +172,15 @@ class LyricView : View {
      */
     fun setSongDuration(duration: Int) {
         this.duration = duration
+    }
+
+    /**
+     * 设置歌曲播放名称
+     * 解析歌词文件并且添加到集合中
+     */
+    fun setSongName(name: String) {
+        this.list.clear()
+        this.list.addAll(LyricUtil.parseLyric(LyricLoader.loadLyricFile(name)))
     }
 
 }

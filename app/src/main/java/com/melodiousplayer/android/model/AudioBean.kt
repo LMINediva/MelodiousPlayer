@@ -9,7 +9,7 @@ import android.provider.MediaStore.Audio.Media
  * 音乐列表条目bean
  */
 data class AudioBean(
-    var data: String, var size: Long, var displayName: String, var artist: String
+    var data: String, var size: Long, var displayName: String, var artist: String?
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
