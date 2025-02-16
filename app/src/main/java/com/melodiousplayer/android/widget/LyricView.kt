@@ -10,6 +10,9 @@ import com.melodiousplayer.android.R
 import com.melodiousplayer.android.model.LyricBean
 import com.melodiousplayer.android.util.LyricLoader
 import com.melodiousplayer.android.util.LyricUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 /**
  * 自定义歌词view
@@ -53,8 +56,13 @@ class LyricView : View {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        // drawSingleLine(canvas)
-        drawMultiLine(canvas)
+        if (list.size == 0) {
+            // 歌词没有加载
+            drawSingleLine(canvas)
+        } else {
+            // 歌词已经加载
+            drawMultiLine(canvas)
+        }
     }
 
     /**
@@ -179,8 +187,17 @@ class LyricView : View {
      * 解析歌词文件并且添加到集合中
      */
     fun setSongName(name: String) {
-        this.list.clear()
-        this.list.addAll(LyricUtil.parseLyric(LyricLoader.loadLyricFile(name)))
+        // 在IO调度器上启动一个协程
+        /*GlobalScope.launch(Dispatchers.IO) {
+            // 在这里执行异步操作
+            this@LyricView.list.clear()
+            this@LyricView.list.addAll(LyricUtil.parseLyric(LyricLoader.loadLyricFile(name)))
+        }*/
+
+        Thread {
+            this@LyricView.list.clear()
+            this@LyricView.list.addAll(LyricUtil.parseLyric(LyricLoader.loadLyricFile(name)))
+        }.start()
     }
 
 }

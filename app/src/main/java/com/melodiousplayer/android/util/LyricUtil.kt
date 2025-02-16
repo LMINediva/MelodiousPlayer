@@ -46,7 +46,17 @@ object LyricUtil {
         // 获取歌词内容
         val content = arr.get(arr.size - 1)
         for (index in 0 until arr.size - 1) {
-            val startTime: Int = parseTime(arr.get(index))
+            val value = arr.get(index)
+            // 将非时间内容进行过滤处理
+            if ((value.indexOf("[ar:") != -1) || (value.indexOf("[ti:") != -1)
+                || (value.indexOf("[by:") != -1)
+                || (value.indexOf("[al:") != -1)
+                || (value.indexOf("[offset:") != -1) || value.equals("")
+            ) {
+                list.add(LyricBean(0, content))
+                continue
+            }
+            val startTime: Int = parseTime(value)
             list.add(LyricBean(startTime, content))
         }
         // 返回集合

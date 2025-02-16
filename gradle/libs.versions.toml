@@ -16,6 +16,8 @@ glide = "4.16.0"
 swiperefreshlayout = "1.1.0"
 jiaozivideoplayer = "7.7.0"
 eventbus = "3.3.1"
+coroutinesCore = "1.9.0"
+coroutinesAndroid = "1.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -33,6 +35,8 @@ glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "gl
 swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 jiaozivideoplayer = { group = "cn.jzvd", name = "jiaozivideoplayer", version.ref = "jiaozivideoplayer" }
 eventbus = { group = "org.greenrobot", name = "eventbus", version.ref = "eventbus" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutinesCore" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutinesAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
