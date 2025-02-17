@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.model.LyricBean
@@ -22,7 +23,7 @@ class LyricView : View {
     // 通过惰性加载创建画笔Paint
     val paint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
     val list by lazy { ArrayList<LyricBean>() }
-    var centerLine = 10
+    var centerLine = 0
     var viewW: Int = 0
     var viewH: Int = 0
     var bigSize = 0f
@@ -32,6 +33,12 @@ class LyricView : View {
     var lineHeight = 0
     var duration = 0
     var progress = 0
+
+    // 指定是否可以通过progress进度更新歌词，默认为true
+    var updateByProgress = true
+    var downY = 0f
+    var offsetY = 0f
+    var markY = 0f
 
     constructor(context: Context?) : super(context)
 
@@ -69,25 +76,27 @@ class LyricView : View {
      * 绘制多行居中文本
      */
     private fun drawMultiLine(canvas: Canvas) {
-        // 求居中行偏移y
-        // 行可用时间
-        var lineTime = 0
-        // 判断是否是最后一行居中
-        if (centerLine == list.size - 1) {
-            // 最后一行居中，行可用时间 = duration - 最后一行开始时间
-            lineTime = duration - list.get(centerLine).startTime
-        } else {
-            // 其他行居中，行可用时间 = 下一行开始时间 - 居中行开始时间
-            val centerS = list.get(centerLine).startTime
-            val nextS = list.get(centerLine + 1).startTime
-            lineTime = nextS - centerS
+        if (updateByProgress) {
+            // 求居中行偏移y
+            // 行可用时间
+            var lineTime = 0
+            // 判断是否是最后一行居中
+            if (centerLine == list.size - 1) {
+                // 最后一行居中，行可用时间 = duration - 最后一行开始时间
+                lineTime = duration - list.get(centerLine).startTime
+            } else {
+                // 其他行居中，行可用时间 = 下一行开始时间 - 居中行开始时间
+                val centerS = list.get(centerLine).startTime
+                val nextS = list.get(centerLine + 1).startTime
+                lineTime = nextS - centerS
+            }
+            // 偏移时间 = progress - 居中行开始时间
+            val offsetTime = progress - list.get(centerLine).startTime
+            // 偏移百分比 = 偏移时间 / 行可用时间
+            val offsetPercent = offsetTime / (lineTime.toFloat())
+            // 偏移y = 偏移百分比 * 行高
+            offsetY = offsetPercent * lineHeight
         }
-        // 偏移时间 = progress - 居中行开始时间
-        val offsetTime = progress - list.get(centerLine).startTime
-        // 偏移百分比 = 偏移时间 / 行可用时间
-        val offsetPercent = offsetTime / (lineTime.toFloat())
-        // 偏移y = 偏移百分比 * 行高
-        val offsetY = offsetPercent * lineHeight
         val centerText = list.get(centerLine).content
         val bounds = Rect()
         paint.getTextBounds(centerText, 0, centerText.length, bounds)
@@ -150,6 +159,8 @@ class LyricView : View {
      * 传递当前播放进度，实现歌词播放
      */
     fun updateProgress(progress: Int) {
+        if (!updateByProgress) return
+        if (list.size == 0) return
         this.progress = progress
         // 获取居中行行号
         // 先判断居中行是否是最后一行
@@ -188,16 +199,52 @@ class LyricView : View {
      */
     fun setSongName(name: String) {
         // 在IO调度器上启动一个协程
-        /*GlobalScope.launch(Dispatchers.IO) {
+        GlobalScope.launch(Dispatchers.IO) {
             // 在这里执行异步操作
             this@LyricView.list.clear()
             this@LyricView.list.addAll(LyricUtil.parseLyric(LyricLoader.loadLyricFile(name)))
-        }*/
+        }
+    }
 
-        Thread {
-            this@LyricView.list.clear()
-            this@LyricView.list.addAll(LyricUtil.parseLyric(LyricLoader.loadLyricFile(name)))
-        }.start()
+    /**
+     * 歌词控件手势事件处理
+     * 1.手指按下时，停止通过进度更新歌词
+     */
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        event?.let {
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    // 停止通过进度更新歌词
+                    updateByProgress = false
+                    // 记录手指按下的y值
+                    downY = event.y
+                    // 记录原来进度已经更新y
+                    markY = this.offsetY
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    // 当前y值
+                    val endY = event.y
+                    // 求手指移动的y值
+                    val offsetY = downY - endY
+                    // 重新设置居中行偏移
+                    this.offsetY = offsetY + markY
+                    // 如果最终的y的偏移值大于行高，重新确定居中行
+                    if (Math.abs(this.offsetY) >= lineHeight) {
+                        // 求居中行行号偏移
+                        val offsetLine = (this.offsetY / lineHeight).toInt()
+                        centerLine += offsetLine
+                    }
+                    // 重新确定偏移y
+                    this.offsetY = this.offsetY % lineHeight
+                    // 重新绘制
+                    invalidate()
+                }
+
+                MotionEvent.ACTION_UP -> updateByProgress = true
+            }
+        }
+        return true
     }
 
 }
