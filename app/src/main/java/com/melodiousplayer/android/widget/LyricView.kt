@@ -40,6 +40,9 @@ class LyricView : View {
     var offsetY = 0f
     var markY = 0f
 
+    // 进度回调函数
+    private var listener: ((progress: Int) -> Unit)? = null
+
     constructor(context: Context?) : super(context)
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -234,9 +237,20 @@ class LyricView : View {
                         // 求居中行行号偏移
                         val offsetLine = (this.offsetY / lineHeight).toInt()
                         centerLine += offsetLine
+                        // 对居中行做边界处理
+                        if (centerLine < 0)
+                            centerLine = 0
+                        else if (centerLine > list.size - 1)
+                            centerLine = list.size - 1
+                        // downY重新设置
+                        this.downY = endY
+                        // 重新确定偏移y
+                        this.offsetY = this.offsetY % lineHeight
+                        // 重新记录y的偏移量
+                        markY = this.offsetY
+                        // 更新播放进度
+                        listener?.invoke(list.get(centerLine).startTime)
                     }
-                    // 重新确定偏移y
-                    this.offsetY = this.offsetY % lineHeight
                     // 重新绘制
                     invalidate()
                 }
@@ -245,6 +259,13 @@ class LyricView : View {
             }
         }
         return true
+    }
+
+    /**
+     * 设置进度回调函数的函数
+     */
+    fun setProgressListener(listener: (progress: Int) -> Unit) {
+        this.listener = listener
     }
 
 }

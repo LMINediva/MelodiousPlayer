@@ -120,6 +120,13 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         next.setOnClickListener(this)
         // 播放列表点击事件
         playList.setOnClickListener(this)
+        // 歌词拖动进度更新监听
+        lyricView.setProgressListener {
+            // 更新播放进度
+            iService?.seekTo(it)
+            // 更新进度显示
+            updateProgress(it)
+        }
     }
 
     override fun onClick(v: View?) {
