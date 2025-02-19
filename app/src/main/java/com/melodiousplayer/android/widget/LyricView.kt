@@ -22,7 +22,7 @@ class LyricView : View {
 
     // 通过惰性加载创建画笔Paint
     val paint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
-    val list by lazy { ArrayList<LyricBean>() }
+    var list: MutableList<LyricBean>
     var centerLine = 0
     var viewW: Int = 0
     var viewH: Int = 0
@@ -61,7 +61,7 @@ class LyricView : View {
         lineHeight = resources.getDimensionPixelOffset(R.dimen.lineHeight)
         // 画笔在x轴方向确定位置是通过中间位置确定坐标
         paint.textAlign = Paint.Align.CENTER
-        // 循环添加歌词bean
+        list = ArrayList()
     }
 
     override fun onDraw(canvas: Canvas) {
