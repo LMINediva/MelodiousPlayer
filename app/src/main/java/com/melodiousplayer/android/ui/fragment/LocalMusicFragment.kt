@@ -2,6 +2,7 @@ package com.melodiousplayer.android.ui.fragment
 
 import android.Manifest
 import android.content.AsyncQueryHandler
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
@@ -10,6 +11,7 @@ import android.view.View
 import android.widget.ListView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.adapter.LocalMusicAdapter
 import com.melodiousplayer.android.base.BaseFragment
@@ -43,46 +45,68 @@ class LocalMusicFragment : BaseFragment() {
      * 处理权限问题
      */
     private fun handlePermission() {
-        val permission = Manifest.permission.READ_EXTERNAL_STORAGE
+        val permissions = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.FOREGROUND_SERVICE
+        )
         // 查看是否有权限
-        val checkSelfPermission = context?.let {
-            ActivityCompat.checkSelfPermission(it, permission)
+        val hasAllPermissions = context?.let {
+            hasPermissions(it, permissions)
         }
-        if (checkSelfPermission == PackageManager.PERMISSION_GRANTED) {
+        if (hasAllPermissions == true) {
             // 已经获取权限
             loadSongs()
         } else {
             // 没有获取权限
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    requireActivity(),
-                    permission
-                )
-            ) {
-                // 需要弹出
-                AlertDialog.Builder(requireContext()).apply {
-                    setTitle("温馨提示")
-                    setMessage("我们只会访问音乐文件，不会访问隐私照片")
-                    setCancelable(false)
-                    setPositiveButton("OK") { dialog, which ->
-                        myRequestPermission()
-                    }
-                    setNegativeButton("Cancel") { dialog, which ->
+            for (permission in permissions) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(
+                        requireActivity(),
+                        permission
+                    )
+                ) {
+                    // 需要弹出
+                    AlertDialog.Builder(requireContext()).apply {
+                        setTitle("温馨提示")
+                        setMessage("我们只会访问音乐文件，不会访问隐私照片")
+                        setCancelable(false)
+                        setPositiveButton("OK") { dialog, which ->
+                            myRequestPermission()
+                        }
+                        setNegativeButton("Cancel") { dialog, which ->
 
+                        }
+                        show()
                     }
-                    show()
+                } else {
+                    // 不需要弹出
+                    myRequestPermission()
                 }
-            } else {
-                // 不需要弹出
-                myRequestPermission()
             }
         }
+    }
+
+    /**
+     * 检查多个权限是否授权
+     */
+    fun hasPermissions(context: Context, permissions: Array<String>): Boolean {
+        for (permission in permissions) {
+            if (ContextCompat.checkSelfPermission(context, permission) !=
+                PackageManager.PERMISSION_GRANTED
+            ) {
+                return false
+            }
+        }
+        return true
     }
 
     /**
      * 真正申请权限
      */
     private fun myRequestPermission() {
-        val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+        val permissions = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.FOREGROUND_SERVICE
+        )
         requestPermissions(permissions, 1)
     }
 
@@ -100,7 +124,14 @@ class LocalMusicFragment : BaseFragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             1 -> {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                var allPermissionsGranted = true
+                for (result in grantResults) {
+                    if (result != PackageManager.PERMISSION_GRANTED) {
+                        allPermissionsGranted = false
+                        break
+                    }
+                }
+                if (allPermissionsGranted) {
                     loadSongs()
                 }
             }

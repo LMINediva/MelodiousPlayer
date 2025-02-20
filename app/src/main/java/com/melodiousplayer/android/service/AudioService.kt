@@ -11,6 +11,7 @@ import android.media.MediaPlayer
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.melodiousplayer.android.R
@@ -51,11 +52,6 @@ class AudioService : Service() {
         super.onCreate()
         // 获取播放模式
         mode = sp.getInt("mode", 1)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel =
-                NotificationChannel("normal", "正常的", NotificationManager.IMPORTANCE_DEFAULT)
-            manager?.createNotificationChannel(channel)
-        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -121,8 +117,20 @@ class AudioService : Service() {
          */
         private fun showNotification() {
             manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channel =
+                    NotificationChannel(
+                        "normal",
+                        "音乐播放后台服务",
+                        NotificationManager.IMPORTANCE_DEFAULT
+                    )
+                manager?.createNotificationChannel(channel)
+                Log.d("Notification", "Notification created")
+            }
             notification = getNotification()
             manager?.notify(1, notification)
+            // 启动前台服务并显示通知
+            startForeground(1, notification)
         }
 
         /**
