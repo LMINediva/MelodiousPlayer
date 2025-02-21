@@ -11,7 +11,6 @@ import android.media.MediaPlayer
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.melodiousplayer.android.R
@@ -124,8 +123,11 @@ class AudioService : Service() {
                         "音乐播放后台服务",
                         NotificationManager.IMPORTANCE_DEFAULT
                     )
+                // 禁用震动
+                channel.enableVibration(false)
+                // 设置null来移除铃声
+                channel.setSound(null, null)
                 manager?.createNotificationChannel(channel)
-                Log.d("Notification", "Notification created")
             }
             notification = getNotification()
             manager?.notify(1, notification)
