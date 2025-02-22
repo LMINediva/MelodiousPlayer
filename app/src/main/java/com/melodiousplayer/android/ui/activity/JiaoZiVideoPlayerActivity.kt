@@ -42,6 +42,7 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
             val videoPlayBean = intent.getParcelableExtra<VideoPlayBean>("item")
             // 从应用内响应视频播放
             videoplayer.setUp(videoPlayBean?.url, videoPlayBean?.title, JzvdStd.SCREEN_NORMAL)
+            // videoplayer.videoRotation = 90
         } else {
             if (data.toString().startsWith("http")) {
                 // 应用外的网络视频请求
