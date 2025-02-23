@@ -7,7 +7,15 @@
     <cn.jzvd.JzvdStd
         android:id="@+id/jz_video"
         android:layout_width="match_parent"
-        android:layout_height="200dp" />
+        android:layout_height="200dp">
+
+        <Button
+            android:id="@+id/rotate_left"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/rotate_left" />
+
+    </cn.jzvd.JzvdStd>
 
     <RadioGroup
         android:id="@+id/rg"
