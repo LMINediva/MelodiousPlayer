@@ -4,18 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <cn.jzvd.JzvdStd
+    <com.melodiousplayer.android.widget.MyJzvdStdView
         android:id="@+id/jz_video"
         android:layout_width="match_parent"
-        android:layout_height="200dp">
-
-        <Button
-            android:id="@+id/rotate_left"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/rotate_left" />
-
-    </cn.jzvd.JzvdStd>
+        android:layout_height="200dp" />
 
     <RadioGroup
         android:id="@+id/rg"
