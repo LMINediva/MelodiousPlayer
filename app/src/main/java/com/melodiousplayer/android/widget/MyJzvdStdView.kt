@@ -13,11 +13,13 @@ class MyJzvdStdView : JzvdStd {
     private lateinit var rotateLeft: Button
     private lateinit var rotateRight: Button
     private lateinit var hideButtonHandler: Handler
+    private var isRotateButtonVisible = false
 
     // 延时隐藏按钮的Runnable对象
     private val hideButtonRunnable = Runnable {
         rotateLeft.visibility = GONE
         rotateRight.visibility = GONE
+        isRotateButtonVisible = false
     }
 
     constructor(context: Context?) : super(context)
@@ -43,6 +45,23 @@ class MyJzvdStdView : JzvdStd {
 
     override fun onClick(v: View?) {
         super.onClick(v)
+        var id = v?.id
+        when (id) {
+            R.id.start -> {
+                if (state == STATE_PLAYING) {
+                    // 隐藏视频画面向左和向右转90度按钮
+                    rotateLeft.visibility = GONE
+                    rotateRight.visibility = GONE
+                    isRotateButtonVisible = false
+                    println("播放状态，隐藏按钮")
+                } else if (state == STATE_PAUSE) {
+                    println("暂停状态，显示按钮")
+                    rotateLeft.visibility = VISIBLE
+                    rotateRight.visibility = VISIBLE
+                    isRotateButtonVisible = true
+                }
+            }
+        }
     }
 
     /**
@@ -53,6 +72,7 @@ class MyJzvdStdView : JzvdStd {
         // 隐藏视频画面向左和向右转90度按钮
         rotateLeft.visibility = GONE
         rotateRight.visibility = GONE
+        isRotateButtonVisible = false
     }
 
     /**
@@ -60,8 +80,9 @@ class MyJzvdStdView : JzvdStd {
      */
     override fun onStatePause() {
         super.onStatePause()
-        // 取消2.2秒后视频画面向左和向右转90度按钮
+        // 取消2.2秒后隐藏视频画面向左和向右转90度按钮
         hideButtonHandler.removeCallbacks(hideButtonRunnable)
+        isRotateButtonVisible = true
     }
 
     /**
@@ -70,23 +91,33 @@ class MyJzvdStdView : JzvdStd {
     override fun onClickUiToggle() {
         super.onClickUiToggle()
         // 点击视频播放界面空白处，显示视频画面向左和向右转90度按钮
-        rotateLeft.visibility = VISIBLE
-        rotateRight.visibility = VISIBLE
-        if (state == STATE_PLAYING) {
-            // 播放状态，2.2秒后视频画面向左和向右转90度按钮
+        /*rotateLeft.visibility = VISIBLE
+        rotateRight.visibility = VISIBLE*/
+        /*if (state == STATE_PLAYING) {
+            // 播放状态，2.2秒后隐藏视频画面向左和向右转90度按钮
             hideButtonHandler.postDelayed(hideButtonRunnable, 2200)
         } else if (state == STATE_PAUSE) {
-            println("暂停状态")
             // 暂停状态，切换视频画面向左和向右转90度按钮隐藏和显示状态
-            println("rotateLeft: " + rotateLeft.visibility)
-            println("rotateRight: " + rotateRight.visibility)
-            if (rotateLeft.visibility == VISIBLE && rotateRight.visibility == VISIBLE) {
-                rotateLeft.visibility = GONE
-                rotateRight.visibility = GONE
-            } else {
-                rotateLeft.visibility = VISIBLE
-                rotateRight.visibility = VISIBLE
-            }
+            toggleRotateButtonVisibility()
+        }*/
+        toggleRotateButtonVisibility()
+    }
+
+    /**
+     * 切换视频画面向左和向右转90度按钮隐藏和显示状态
+     */
+    private fun toggleRotateButtonVisibility() {
+        isRotateButtonVisible = !isRotateButtonVisible
+        if (isRotateButtonVisible) {
+            rotateLeft.visibility = VISIBLE
+            rotateRight.visibility = VISIBLE
+            // 2.2秒后隐藏视频画面向左和向右转90度按钮
+            hideButtonHandler.postDelayed(hideButtonRunnable, 2200)
+        } else {
+            // 取消2.2秒后隐藏视频画面向左和向右转90度按钮
+            hideButtonHandler.removeCallbacks(hideButtonRunnable)
+            rotateLeft.visibility = GONE
+            rotateRight.visibility = GONE
         }
     }
 
