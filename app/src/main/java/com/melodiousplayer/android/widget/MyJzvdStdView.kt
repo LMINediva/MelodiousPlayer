@@ -5,6 +5,7 @@ import android.os.Handler
 import android.util.AttributeSet
 import android.view.View
 import android.widget.Button
+import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
 import com.melodiousplayer.android.R
 
@@ -14,6 +15,7 @@ class MyJzvdStdView : JzvdStd {
     private lateinit var rotateRight: Button
     private lateinit var hideButtonHandler: Handler
     private var isRotateButtonVisible = false
+    private var currentRotation = 0
 
     // 延时隐藏按钮的Runnable对象
     private val hideButtonRunnable = Runnable {
@@ -53,13 +55,21 @@ class MyJzvdStdView : JzvdStd {
                     rotateLeft.visibility = GONE
                     rotateRight.visibility = GONE
                     isRotateButtonVisible = false
-                    println("播放状态，隐藏按钮")
                 } else if (state == STATE_PAUSE) {
-                    println("暂停状态，显示按钮")
                     rotateLeft.visibility = VISIBLE
                     rotateRight.visibility = VISIBLE
                     isRotateButtonVisible = true
                 }
+            }
+
+            R.id.rotate_left -> {
+                // 视频左转90度
+                rotateVideo(-90)
+            }
+
+            R.id.rotate_right -> {
+                // 视频右转90度
+                rotateVideo(90)
             }
         }
     }
@@ -90,16 +100,6 @@ class MyJzvdStdView : JzvdStd {
      */
     override fun onClickUiToggle() {
         super.onClickUiToggle()
-        // 点击视频播放界面空白处，显示视频画面向左和向右转90度按钮
-        /*rotateLeft.visibility = VISIBLE
-        rotateRight.visibility = VISIBLE*/
-        /*if (state == STATE_PLAYING) {
-            // 播放状态，2.2秒后隐藏视频画面向左和向右转90度按钮
-            hideButtonHandler.postDelayed(hideButtonRunnable, 2200)
-        } else if (state == STATE_PAUSE) {
-            // 暂停状态，切换视频画面向左和向右转90度按钮隐藏和显示状态
-            toggleRotateButtonVisibility()
-        }*/
         toggleRotateButtonVisibility()
     }
 
@@ -119,6 +119,15 @@ class MyJzvdStdView : JzvdStd {
             rotateLeft.visibility = GONE
             rotateRight.visibility = GONE
         }
+    }
+
+    /**
+     * 以指定角度旋转视频
+     */
+    private fun rotateVideo(degrees: Int) {
+        // 更新当前旋转角度，并限制在0~360度之间
+        currentRotation = (currentRotation + degrees + 360) % 360
+        Jzvd.setTextureViewRotation(currentRotation)
     }
 
 }
