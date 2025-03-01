@@ -4,7 +4,7 @@ import com.melodiousplayer.android.model.LyricBean
 import java.io.File
 
 /**
- * 歌词解析util
+ * 歌词解析工具类
  */
 object LyricUtil {
 

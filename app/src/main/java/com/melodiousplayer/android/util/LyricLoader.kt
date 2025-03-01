@@ -4,7 +4,7 @@ import android.os.Environment
 import java.io.File
 
 /**
- * 歌词文件加载util
+ * 歌词文件加载工具类
  */
 object LyricLoader {
 

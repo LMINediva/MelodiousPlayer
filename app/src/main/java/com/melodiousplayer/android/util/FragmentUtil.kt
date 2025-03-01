@@ -8,7 +8,7 @@ import com.melodiousplayer.android.ui.fragment.MusicListFragment
 import com.melodiousplayer.android.ui.fragment.LocalMusicFragment
 
 /**
- * 管理fragment的util类
+ * 管理fragment的工具类
  */
 class FragmentUtil private constructor() { // 私有化构造函数
 

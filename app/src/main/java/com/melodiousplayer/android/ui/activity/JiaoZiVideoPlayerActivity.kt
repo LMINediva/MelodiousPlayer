@@ -15,6 +15,7 @@ import com.melodiousplayer.android.R
 import com.melodiousplayer.android.adapter.VideoPagerAdapter
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.model.VideoPlayBean
+import com.melodiousplayer.android.util.FileUtil
 
 class JiaoZiVideoPlayerActivity : BaseActivity() {
 
@@ -55,8 +56,8 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
                     ActivityCompat.requestPermissions(this, permissions, 1)
                 } else {
                     // 应用外响应
-                    videoplayer.setUp(data?.path, data.toString(), JzvdStd.SCREEN_NORMAL)
-                    println("data: " + data.toString())
+                    val filePath = FileUtil.getFileFromUri(data, this)?.absolutePath
+                    videoplayer.setUp(filePath, filePath.toString(), JzvdStd.SCREEN_NORMAL)
                 }
             }
         }
@@ -93,7 +94,8 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
                 }
                 if (allPermissionsGranted) {
                     // 应用外响应
-                    videoplayer.setUp(data?.path, data.toString(), JzvdStd.SCREEN_NORMAL)
+                    val filePath = FileUtil.getFileFromUri(data, this)?.absolutePath
+                    videoplayer.setUp(filePath, filePath.toString(), JzvdStd.SCREEN_NORMAL)
                 } else {
                     Toast.makeText(this, "你拒绝了权限", Toast.LENGTH_SHORT).show()
                 }

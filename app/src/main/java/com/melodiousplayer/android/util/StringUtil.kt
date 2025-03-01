@@ -1,7 +1,7 @@
 package com.melodiousplayer.android.util
 
 /**
- * 处理时间
+ * 字符串处理工具类
  */
 object StringUtil {
 
@@ -9,6 +9,9 @@ object StringUtil {
     val MIN = 60 * 1000
     val SEC = 1000
 
+    /**
+     * 将音乐文件的时长解析为字符串格式
+     */
     fun parseDuration(progress: Int): String {
         val hour = progress / HOUR
         val min = progress % HOUR / MIN

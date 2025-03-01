@@ -2,6 +2,9 @@ package com.melodiousplayer.android.util;
 
 import android.util.Log;
 
+/**
+ * 应用所有网络请求的URL工具类
+ */
 public class URLProviderUtils {
 
     /**

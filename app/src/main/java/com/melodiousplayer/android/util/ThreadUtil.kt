@@ -4,7 +4,7 @@ import android.os.Handler
 import android.os.Looper
 
 /**
- * 静态类
+ * 线程工具类
  */
 object ThreadUtil {
 
