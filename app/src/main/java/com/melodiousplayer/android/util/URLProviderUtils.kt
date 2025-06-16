@@ -1,11 +1,15 @@
-package com.melodiousplayer.android.util;
+package com.melodiousplayer.android.util
 
-import android.util.Log;
+import android.os.Build
+import android.util.Log
 
 /**
  * 应用所有网络请求的URL工具类
  */
-public class URLProviderUtils {
+object URLProviderUtils {
+
+    private const val protocol = "http://"
+    private const val serverAddress = "192.168.124.2"
 
     /**
      * 获取首页的url
@@ -14,12 +18,12 @@ public class URLProviderUtils {
      * @param size   返回数据的条目个数
      * @return url
      */
-    public static String getHomeUrl(int offset, int size) {
-        String url = "http://192.168.124.10/front_page.json";
-        Log.i("Main_url", url);
-        Log.i("offset", String.valueOf(offset));
-        Log.i("size", String.valueOf(size));
-        return url;
+    fun getHomeUrl(offset: Int, size: Int): String {
+        val url = protocol + serverAddress + "/front_page.json"
+        Log.i("Main_url", url)
+        Log.i("offset", offset.toString())
+        Log.i("size", size.toString())
+        return url
     }
 
     /**
@@ -29,11 +33,11 @@ public class URLProviderUtils {
      * @param size   返回数据的条目个数
      * @return url
      */
-    public static String getMVListUrl(int offset, int size) {
-        String url = "http://192.168.124.10/list.json";
-        Log.i("offset", String.valueOf(offset));
-        Log.i("size", String.valueOf(size));
-        return url;
+    fun getMVListUrl(offset: Int, size: Int): String {
+        val url = protocol + serverAddress + "/list.json"
+        Log.i("offset", offset.toString())
+        Log.i("size", size.toString())
+        return url
     }
 
     /**
@@ -41,9 +45,9 @@ public class URLProviderUtils {
      *
      * @return url
      */
-    public static String getMVAreaUrl() {
-        String url = "http://192.168.124.10/get_mv_areas.json";
-        return url;
+    fun getMVAreaUrl(): String {
+        val url = protocol + serverAddress + "/get_mv_areas.json"
+        return url
     }
 
     /**
@@ -54,21 +58,22 @@ public class URLProviderUtils {
      * @param size   返回数据的条目个数
      * @return url
      */
-    public static String getMVAreaListUrl(String area, int offset, int size) {
-        String url = "http://192.168.124.10/get_mv_list.json";
-        return url;
+    fun getMVAreaListUrl(area: String?, offset: Int, size: Int): String {
+        val url = protocol + serverAddress + "/get_mv_list.json"
+        return url
     }
 
     /**
-     * <p>获取音乐节目列表</p>
+     *
+     * 获取音乐节目列表
      *
      * @param artistIds
      * @param offset
      * @param size
      * @return
      */
-    public static String getYinYueProgramList(String artistIds, int offset, int size) {
-        String url = "http://mapi.yinyuetai.com/playlist/show.json?deviceinfo="
+    fun getYinYueProgramList(artistIds: String, offset: Int, size: Int): String {
+        val url = ("http://mapi.yinyuetai.com/playlist/show.json?deviceinfo="
                 + "{\"aid\":\"10201036\",\"os\":\"Android\","
                 + "\"ov\":" + "\"" + getSystemVersion() + "\"" + ","
                 + "\"rn\":\"480*800\","
@@ -81,8 +86,8 @@ public class URLProviderUtils {
                 + "\"clid\":110025000}"
                 + "&offset=" + offset
                 + "&size=" + size
-                + "&artistIds=" + artistIds;
-        return url;
+                + "&artistIds=" + artistIds)
+        return url
     }
 
     /**
@@ -90,8 +95,8 @@ public class URLProviderUtils {
      *
      * @return
      */
-    public static String getVChartAreasUrl() {
-        String url = "http://mapi.yinyuetai.com/vchart/get_vchart_areas.json?deviceinfo="
+    fun getVChartAreasUrl(): String {
+        val url = ("http://mapi.yinyuetai.com/vchart/get_vchart_areas.json?deviceinfo="
                 + "{\"aid\":\"10201036\",\"os\":\"Android\","
                 + "\"ov\":" + "\"" + getSystemVersion() + "\"" + ","
                 + "\"rn\":\"480*800\","
@@ -101,8 +106,8 @@ public class URLProviderUtils {
                 + "\"WIFI\","
                 + "\"uid\":"
                 + "\"dbcaa6c4482bc05ecb0bf39dabf207d2\","
-                + "\"clid\":110025000}";
-        return url;
+                + "\"clid\":110025000}")
+        return url
     }
 
     /**
@@ -110,8 +115,8 @@ public class URLProviderUtils {
      *
      * @return
      */
-    public static String getVChartPeriodUrl(String area) {
-        String url = "http://mapi.yinyuetai.com/vchart/period.json?deviceinfo="
+    fun getVChartPeriodUrl(area: String): String {
+        val url = ("http://mapi.yinyuetai.com/vchart/period.json?deviceinfo="
                 + "{\"aid\":\"10201036\",\"os\":\"Android\","
                 + "\"ov\":" + "\"" + getSystemVersion() + "\"" + ","
                 + "\"rn\":\"480*800\","
@@ -122,8 +127,8 @@ public class URLProviderUtils {
                 + "\"uid\":"
                 + "\"dbcaa6c4482bc05ecb0bf39dabf207d2\","
                 + "\"clid\":110025000}"
-                + "&area=" + area;
-        return url;
+                + "&area=" + area)
+        return url
     }
 
     /**
@@ -133,8 +138,8 @@ public class URLProviderUtils {
      * @param dateCode
      * @return
      */
-    public static String getVChartListUrl(String area, int dateCode) {
-        String url = "http://mapi.yinyuetai.com/vchart/show.json?deviceinfo="
+    fun getVChartListUrl(area: String, dateCode: Int): String {
+        val url = ("http://mapi.yinyuetai.com/vchart/show.json?deviceinfo="
                 + "{\"aid\":\"10201036\",\"os\":\"Android\","
                 + "\"ov\":" + "\"" + getSystemVersion() + "\"" + ","
                 + "\"rn\":\"480*800\","
@@ -146,8 +151,8 @@ public class URLProviderUtils {
                 + "\"dbcaa6c4482bc05ecb0bf39dabf207d2\","
                 + "\"clid\":110025000}"
                 + "&area=" + area
-                + "&datecode=" + dateCode;
-        return url;
+                + "&datecode=" + dateCode)
+        return url
     }
 
     /**
@@ -156,8 +161,8 @@ public class URLProviderUtils {
      * @param id
      * @return
      */
-    public static String getRelativeVideoListUrl(int id) {
-        String url = "http://mapi.yinyuetai.com/video/show.json?deviceinfo="
+    fun getRelativeVideoListUrl(id: Int): String {
+        val url = ("http://mapi.yinyuetai.com/video/show.json?deviceinfo="
                 + "{\"aid\":\"10201036\",\"os\":\"Android\","
                 + "\"ov\":" + "\"" + getSystemVersion() + "\"" + ","
                 + "\"rn\":\"480*800\","
@@ -169,8 +174,8 @@ public class URLProviderUtils {
                 + "\"dbcaa6c4482bc05ecb0bf39dabf207d2\","
                 + "\"clid\":110025000}"
                 + "&relatedVideos=true"
-                + "&id=" + id;
-        return url;
+                + "&id=" + id)
+        return url
     }
 
     /**
@@ -179,8 +184,8 @@ public class URLProviderUtils {
      * @param id
      * @return
      */
-    public static String getPeopleYueDanList(int id) {
-        String url = "http://mapi.yinyuetai.com/playlist/show.json?deviceinfo="
+    fun getPeopleYueDanList(id: Int): String {
+        val url = ("http://mapi.yinyuetai.com/playlist/show.json?deviceinfo="
                 + "{\"aid\":\"10201036\",\"os\":\"Android\","
                 + "\"ov\":" + "\"" + getSystemVersion() + "\"" + ","
                 + "\"rn\":\"480*800\","
@@ -191,16 +196,16 @@ public class URLProviderUtils {
                 + "\"uid\":"
                 + "\"dbcaa6c4482bc05ecb0bf39dabf207d2\","
                 + "\"clid\":110025000}"
-                + "&id=" + id;
-        return url;
+                + "&id=" + id)
+        return url
     }
 
-    private static String getSystemVersion() {
-        return android.os.Build.VERSION.RELEASE;
+    fun getSystemVersion(): String {
+        return Build.VERSION.RELEASE
     }
 
-    private static String getPhoneModel() {
-        return android.os.Build.MODEL;
+    fun getPhoneModel(): String {
+        return Build.MODEL
     }
+
 }
-
