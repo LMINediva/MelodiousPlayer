@@ -1,5 +1,6 @@
 package com.melodiousplayer.android.base
 
+import android.content.Context
 import android.graphics.Color
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,7 +16,7 @@ import com.melodiousplayer.android.R
  * Presenter -> BaseListPresenter
  */
 abstract class BaseListFragment<RESPONSE, ITEMBEAN, ITEMVIEW : View> : BaseFragment(),
-    BaseView<RESPONSE> {
+    BaseView<RESPONSE>, OnDataChangedListener {
 
     // 适配
     val adapter by lazy { getSpecialAdapter() }
@@ -23,6 +24,7 @@ abstract class BaseListFragment<RESPONSE, ITEMBEAN, ITEMVIEW : View> : BaseFragm
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var refreshLayout: SwipeRefreshLayout
+    private var listener: MessageListener? = null
 
     override fun initView(): View? {
         val view = View.inflate(context, R.layout.fragment_list, null)
@@ -84,6 +86,7 @@ abstract class BaseListFragment<RESPONSE, ITEMBEAN, ITEMVIEW : View> : BaseFragm
 
     override fun onError(message: String?) {
         myToast("加载数据失败")
+        sendMessage("error")
     }
 
     override fun loadSuccess(response: RESPONSE?) {
@@ -95,6 +98,24 @@ abstract class BaseListFragment<RESPONSE, ITEMBEAN, ITEMVIEW : View> : BaseFragm
 
     override fun loadMore(response: RESPONSE?) {
         adapter.loadMoreList(getList(response))
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        listener = context as? MessageListener
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        listener = null
+    }
+
+    fun sendMessage(message: String) {
+        listener?.onMessageReceived(message)
+    }
+
+    override fun onDataChanged() {
+        presenter.loadDatas()
     }
 
     /**

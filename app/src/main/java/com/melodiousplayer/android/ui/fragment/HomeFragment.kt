@@ -13,6 +13,10 @@ import com.melodiousplayer.android.widget.HomeItemView
  */
 class HomeFragment : BaseListFragment<List<HomeItemBean>, HomeItemBean, HomeItemView>() {
 
+    override fun onDataChanged() {
+        super.onDataChanged()
+    }
+
     override fun getSpecialAdapter(): BaseListAdapter<HomeItemBean, HomeItemView> {
         return HomeAdapter()
     }

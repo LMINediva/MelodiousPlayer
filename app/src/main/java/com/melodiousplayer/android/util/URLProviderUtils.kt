@@ -8,8 +8,8 @@ import android.util.Log
  */
 object URLProviderUtils {
 
-    private const val protocol = "http://"
-    private const val serverAddress = "192.168.124.2"
+    const val protocol = "http://"
+    var serverAddress = "192.168.124.2"
 
     /**
      * 获取首页的url

@@ -9,6 +9,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.model.HomeItemBean
+import com.melodiousplayer.android.util.URLProviderUtils
 
 /**
  * 首页子项布局
@@ -44,7 +45,10 @@ class HomeItemView : RelativeLayout {
         // 简介
         description.setText(data.description)
         // 背景图片
-        Glide.with(context).load(data.posterPic).into(bg)
+        Glide.with(context).load(
+            URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                    + data.posterPic
+        ).into(bg)
     }
 
 }
