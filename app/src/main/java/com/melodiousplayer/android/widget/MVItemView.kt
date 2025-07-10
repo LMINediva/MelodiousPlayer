@@ -9,6 +9,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.model.VideosBean
+import com.melodiousplayer.android.util.URLProviderUtils
 
 /**
  * MV每一个界面条目view
@@ -41,7 +42,10 @@ class MVItemView : RelativeLayout {
         // 歌曲名称
         title.text = data.title
         // 背景图
-        Glide.with(context).load(data.playListPic).into(bg)
+        Glide.with(context).load(
+            URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                    + data.playListPic
+        ).into(bg)
     }
 
 }

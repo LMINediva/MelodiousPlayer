@@ -16,6 +16,7 @@ import com.melodiousplayer.android.adapter.VideoPagerAdapter
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.model.VideoPlayBean
 import com.melodiousplayer.android.util.FileUtil
+import com.melodiousplayer.android.util.URLProviderUtils
 
 class JiaoZiVideoPlayerActivity : BaseActivity() {
 
@@ -42,7 +43,10 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
             // 获取传递的数据
             val videoPlayBean = intent.getParcelableExtra<VideoPlayBean>("item")
             // 从应用内响应视频播放
-            videoplayer.setUp(videoPlayBean?.url, videoPlayBean?.title, JzvdStd.SCREEN_NORMAL)
+            videoplayer.setUp(
+                URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                        + videoPlayBean?.url, videoPlayBean?.title, JzvdStd.SCREEN_NORMAL
+            )
         } else {
             if (data.toString().startsWith("http")) {
                 // 应用外的网络视频请求

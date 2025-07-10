@@ -1,15 +1,36 @@
 package com.melodiousplayer.android.model
 
+import java.time.LocalDateTime
+
 data class MVPagerBean(var totalCount: Int, var videos: List<VideosBean>)
 
 data class VideosBean(
-    var id: Int, var title: String, var description: String, var artistName: String,
-    var posterPic: String, var thumbnailPic: String, var albumImg: String, var regdate: String,
-    var videoSourceTypeName: String, var totalViews: Int, var totalPcViews: Int,
-    var totalMobileViews: Int, var totalComments: Int, var url: String,
-    var hdUrl: String, var uhdUrl: String, var shdUrl: String, var videoSize: Int,
-    var hdVideoSize: Int, var uhdVideoSize: Int, var shdVideoSize: Int, var duration: Int,
-    var status: Int, var linkId: Int, var playListPic: String, var artists: List<ArtistsBean>
+    var id: Int,
+    var title: String,
+    var description: String,
+    var artistName: String,
+    var posterPic: String,
+    var thumbnailPic: String,
+    var albumImg: String,
+    var regdate: String,
+    var videoSourceTypeName: String,
+    var totalViews: Int,
+    var totalPcViews: Int,
+    var totalMobileViews: Int,
+    var totalComments: Int,
+    var url: String,
+    var hdUrl: String,
+    var uhdUrl: String,
+    var shdUrl: String,
+    var videoSize: Float,
+    var hdVideoSize: Float,
+    var uhdVideoSize: Float,
+    var shdVideoSize: Float,
+    var duration: String,
+    var status: Int,
+    var linkId: Int,
+    var playListPic: String,
+    var artists: List<ArtistsBean>
 )
 
 data class ArtistsBean(var artistId: Int, var artistName: String)

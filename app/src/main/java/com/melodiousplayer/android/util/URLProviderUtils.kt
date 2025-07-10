@@ -9,7 +9,7 @@ import android.util.Log
 object URLProviderUtils {
 
     const val protocol = "http://"
-    var serverAddress = "192.168.124.2"
+    var serverAddress = "192.168.124.3"
 
     /**
      * 获取首页的url
@@ -19,10 +19,33 @@ object URLProviderUtils {
      * @return url
      */
     fun getHomeUrl(offset: Int, size: Int): String {
-        val url = protocol + serverAddress + "/front_page.json"
+        val url = protocol + serverAddress + "/front_page"
         Log.i("Main_url", url)
         Log.i("offset", offset.toString())
         Log.i("size", size.toString())
+        return url
+    }
+
+    /**
+     * 获取MV界面区域数据的url
+     *
+     * @return url
+     */
+    fun getMVAreaUrl(): String {
+        val url = protocol + serverAddress + "/get_mv_areas"
+        return url
+    }
+
+    /**
+     * 获取MV界面区域数据列表的url
+     *
+     * @param area   区域数据类型
+     * @param offset 数据偏移量
+     * @param size   返回数据的条目个数
+     * @return url
+     */
+    fun getMVAreaListUrl(area: String?, offset: Int, size: Int): String {
+        val url = protocol + serverAddress + "/get_mv_list"
         return url
     }
 
@@ -37,29 +60,6 @@ object URLProviderUtils {
         val url = protocol + serverAddress + "/list.json"
         Log.i("offset", offset.toString())
         Log.i("size", size.toString())
-        return url
-    }
-
-    /**
-     * 获取MV界面区域数据的url
-     *
-     * @return url
-     */
-    fun getMVAreaUrl(): String {
-        val url = protocol + serverAddress + "/get_mv_areas.json"
-        return url
-    }
-
-    /**
-     * 获取MV界面区域数据列表的url
-     *
-     * @param area   区域数据类型
-     * @param offset 数据偏移量
-     * @param size   返回数据的条目个数
-     * @return url
-     */
-    fun getMVAreaListUrl(area: String?, offset: Int, size: Int): String {
-        val url = protocol + serverAddress + "/get_mv_list.json"
         return url
     }
 
