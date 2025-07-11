@@ -34,14 +34,23 @@ abstract class BaseListAdapter<ITEMBEAN, ITEMVIEW : View> :
      */
     fun loadMoreList(list: List<ITEMBEAN>?) {
         list?.let {
-            this.list.addAll(list)
-            notifyDataSetChanged()
+            // 如果不是最后一页数据
+            if (list.size >= 20) {
+                this.list.addAll(list)
+                notifyDataSetChanged()
+            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseListHolder {
         if (viewType == 1) {
             // 最后一条
+            if (list.size < 20) {
+                // 最后一页数据
+                val loadMoreView = LoadMoreView(parent.context)
+                loadMoreView.setData()
+                return BaseListHolder(loadMoreView)
+            }
             return BaseListHolder(LoadMoreView(parent.context))
         } else {
             // 普通条目

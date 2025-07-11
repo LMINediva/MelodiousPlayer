@@ -19,7 +19,7 @@ object URLProviderUtils {
      * @return url
      */
     fun getHomeUrl(offset: Int, size: Int): String {
-        val url = protocol + serverAddress + "/front_page"
+        val url = protocol + serverAddress + "/front_page" + "?offset=" + offset + "&size=" + size
         Log.i("Main_url", url)
         Log.i("offset", offset.toString())
         Log.i("size", size.toString())
@@ -45,7 +45,7 @@ object URLProviderUtils {
      * @return url
      */
     fun getMVAreaListUrl(area: String?, offset: Int, size: Int): String {
-        val url = protocol + serverAddress + "/get_mv_list"
+        val url = protocol + serverAddress + "/get_mv_list" + "?offset=" + offset + "&size=" + size
         return url
     }
 
@@ -57,7 +57,7 @@ object URLProviderUtils {
      * @return url
      */
     fun getMVListUrl(offset: Int, size: Int): String {
-        val url = protocol + serverAddress + "/list.json"
+        val url = protocol + serverAddress + "/list" + "?offset=" + offset + "&size=" + size
         Log.i("offset", offset.toString())
         Log.i("size", size.toString())
         return url

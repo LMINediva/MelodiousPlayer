@@ -26,7 +26,7 @@ class MusicListBean {
         var rank: Int = 0
 
         class CreatorBean {
-            var uid: Int = 0
+            var id: Int = 0
             var nickName: String? = null
             var smallAvatar: String? = null
             var largeAvatar: String? = null

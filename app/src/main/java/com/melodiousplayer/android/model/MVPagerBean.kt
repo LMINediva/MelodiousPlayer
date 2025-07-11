@@ -1,7 +1,5 @@
 package com.melodiousplayer.android.model
 
-import java.time.LocalDateTime
-
 data class MVPagerBean(var totalCount: Int, var videos: List<VideosBean>)
 
 data class VideosBean(
@@ -33,7 +31,7 @@ data class VideosBean(
     var artists: List<ArtistsBean>
 )
 
-data class ArtistsBean(var artistId: Int, var artistName: String)
+data class ArtistsBean(var id: Int, var artistName: String)
 //class MvPagerBean {
 //    var totalCount: Int = 0
 //    var videos: List<VideosBean>? = null

@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.model.MusicListBean
+import com.melodiousplayer.android.util.URLProviderUtils
 
 /**
  * 悦单界面每个条目的自定义view
@@ -46,9 +47,15 @@ class MusicListItemView : RelativeLayout {
         // MV列表数量
         count.text = data.videoCount.toString()
         // 背景
-        Glide.with(context).load(data.playListBigPic).into(bg)
+        Glide.with(context).load(
+            URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                    + data.playListBigPic
+        ).into(bg)
         // 歌手头像
-        Glide.with(context).load(data.creator?.largeAvatar)
+        Glide.with(context).load(
+            URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                    + data.creator?.largeAvatar
+        )
             .transform(CircleCrop()).into(author_image)
     }
 
