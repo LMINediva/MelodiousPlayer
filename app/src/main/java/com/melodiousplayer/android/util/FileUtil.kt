@@ -13,9 +13,18 @@ import java.io.InputStream
 import java.io.OutputStream
 
 /**
- * 应用外的本地视频请求，真实播放路径获取工具类
+ * 应用外的本地视频请求，真实播放路径获取工具类，
+ * 适用于Android 7.0 之后SD卡文件访问问题
  */
 object FileUtil {
+
+    /**
+     * 解析网络视频的URL，获取文件名
+     */
+    fun getFileNameFromUrl(url: String): String {
+        val fileName = url.substringAfterLast('/')
+        return fileName
+    }
 
     /**
      * 通过应用外的本地视频请求提供的URI，获取本地视频的真实路径
@@ -109,7 +118,7 @@ object FileUtil {
      * 创建临时的视频文件
      */
     @Throws(IOException::class)
-    private fun createTemporalFileFrom(
+    fun createTemporalFileFrom(
         context: Context?,
         inputStream: InputStream?,
         fileName: String

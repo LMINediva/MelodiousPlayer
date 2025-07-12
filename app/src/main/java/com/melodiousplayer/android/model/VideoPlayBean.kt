@@ -6,10 +6,16 @@ import android.os.Parcelable
 /**
  * 传递给视频播放界面的bean类
  */
-data class VideoPlayBean(var id: Int, var title: String, var url: String) : Parcelable {
+data class VideoPlayBean(
+    var id: Int,
+    var title: String,
+    var url: String,
+    var thumbnailPic: String
+) : Parcelable {
 
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
+        parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readString().toString()
     ) {
@@ -19,6 +25,7 @@ data class VideoPlayBean(var id: Int, var title: String, var url: String) : Parc
         parcel.writeInt(id)
         parcel.writeString(title)
         parcel.writeString(url)
+        parcel.writeString(thumbnailPic)
     }
 
     override fun describeContents(): Int {
