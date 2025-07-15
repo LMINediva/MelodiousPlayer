@@ -10,11 +10,13 @@ data class VideoPlayBean(
     var id: Int,
     var title: String,
     var url: String,
-    var thumbnailPic: String
+    var thumbnailPic: String,
+    var description: String
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
+        parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readString().toString()
@@ -26,6 +28,7 @@ data class VideoPlayBean(
         parcel.writeString(title)
         parcel.writeString(url)
         parcel.writeString(thumbnailPic)
+        parcel.writeString(description)
     }
 
     override fun describeContents(): Int {

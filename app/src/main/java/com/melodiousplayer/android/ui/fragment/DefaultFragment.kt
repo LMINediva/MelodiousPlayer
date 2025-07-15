@@ -15,7 +15,7 @@ class DefaultFragment : BaseFragment() {
         val tv = TextView(context)
         tv.gravity = Gravity.CENTER
         tv.setTextColor(Color.RED)
-        tv.text = "该功能暂未实现"
+        tv.text = "暂无"
         return tv
     }
 

@@ -40,7 +40,8 @@ class MVPagerFragment : BaseListFragment<MVPagerBean, VideosBean, MVItemView>(),
         super.initListener()
         // 设置条目点击事件监听函数
         adapter.setMyListener {
-            val videoPlayBean = VideoPlayBean(it.id, it.title, it.url, it.thumbnailPic)
+            val videoPlayBean =
+                VideoPlayBean(it.id, it.title, it.url, it.thumbnailPic, it.description)
             // 跳转到视频播放界面
             val intent = Intent(activity, JiaoZiVideoPlayerActivity::class.java)
             intent.putExtra("item", videoPlayBean)

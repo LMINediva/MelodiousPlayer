@@ -44,6 +44,7 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
     )
     private var hasPermissions: Boolean = true
     private val client by lazy { OkHttpClient() }
+    private var videoPlayBean: VideoPlayBean? = null
 
     override fun getLayoutId(): Int {
         return R.layout.activity_video_player_jiaozi
@@ -56,7 +57,7 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
         data = intent.data
         if (data == null) {
             // 获取传递的数据
-            val videoPlayBean = intent.getParcelableExtra<VideoPlayBean>("item")
+            videoPlayBean = intent.getParcelableExtra("item")
             // 从应用内响应视频播放
             videoplayer.setUp(
                 URLProviderUtils.protocol + URLProviderUtils.serverAddress
@@ -205,7 +206,7 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
 
     override fun initListener() {
         // 适配ViewPager
-        viewPager.adapter = VideoPagerAdapter(supportFragmentManager)
+        viewPager.adapter = VideoPagerAdapter(supportFragmentManager, videoPlayBean)
         // RadioGroup选中监听
         rg.setOnCheckedChangeListener { radioGroup, i ->
             when (i) {
