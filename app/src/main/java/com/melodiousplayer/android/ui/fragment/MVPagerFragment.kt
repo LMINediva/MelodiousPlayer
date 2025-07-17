@@ -14,7 +14,7 @@ import com.melodiousplayer.android.view.MVListView
 import com.melodiousplayer.android.widget.MVItemView
 
 /**
- * MV界面每一个页面的fragment
+ * MV界面中的每一个子页面的fragment
  */
 class MVPagerFragment : BaseListFragment<MVPagerBean, VideosBean, MVItemView>(), MVListView {
 

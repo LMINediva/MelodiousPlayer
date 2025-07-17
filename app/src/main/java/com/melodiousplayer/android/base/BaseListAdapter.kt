@@ -11,8 +11,8 @@ import com.melodiousplayer.android.widget.LoadMoreView
  */
 abstract class BaseListAdapter<ITEMBEAN, ITEMVIEW : View> :
     RecyclerView.Adapter<BaseListAdapter.BaseListHolder>() {
-
-    private var list = ArrayList<ITEMBEAN>()
+    var list = ArrayList<ITEMBEAN>()
+    var position: Int? = null
 
     class BaseListHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -63,6 +63,7 @@ abstract class BaseListAdapter<ITEMBEAN, ITEMVIEW : View> :
     }
 
     override fun onBindViewHolder(holder: BaseListHolder, position: Int) {
+        this.position = holder.adapterPosition
         // 如果是最后一条，不需要刷新view
         if (position == list.size) return
         // 条目数据
