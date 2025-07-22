@@ -10,6 +10,8 @@ object URLProviderUtils {
 
     const val protocol = "http://"
     var serverAddress = "192.168.124.3"
+    const val imagePath = "/image/musicPicture/"
+    const val musicPath = "/audio/music/"
 
     /**
      * 获取首页的url
@@ -19,7 +21,8 @@ object URLProviderUtils {
      * @return url
      */
     fun getHomeUrl(offset: Int, size: Int): String {
-        val url = protocol + serverAddress + "/front_page" + "?offset=" + offset + "&size=" + size
+        val url =
+            protocol + serverAddress + "/data/music/front_page" + "?offset=" + offset + "&size=" + size
         Log.i("Main_url", url)
         Log.i("offset", offset.toString())
         Log.i("size", size.toString())

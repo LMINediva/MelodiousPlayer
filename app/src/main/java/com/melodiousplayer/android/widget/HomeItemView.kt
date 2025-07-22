@@ -47,7 +47,7 @@ class HomeItemView : RelativeLayout {
         // 背景图片
         Glide.with(context).load(
             URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                    + data.posterPic
+                    + URLProviderUtils.imagePath + data.posterPic
         ).into(bg)
     }
 

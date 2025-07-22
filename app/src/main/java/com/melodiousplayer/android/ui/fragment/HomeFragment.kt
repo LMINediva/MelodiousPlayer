@@ -45,7 +45,7 @@ class HomeFragment : BaseListFragment<List<HomeItemBean>, HomeItemBean, HomeItem
                     list.add(
                         AudioBean(
                             URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                                    + homeItem.url,
+                                    + URLProviderUtils.musicPath + homeItem.url,
                             homeItem.musicSize.toLong(),
                             homeItem.title,
                             homeItem.artistName
@@ -54,7 +54,7 @@ class HomeFragment : BaseListFragment<List<HomeItemBean>, HomeItemBean, HomeItem
                 }
             }
             // 位置position
-            val position = adapter.position?.minus(1)
+            val position = adapter.position
             // 跳转到音乐播放界面
             val intent = Intent(activity, AudioPlayerActivity::class.java)
             intent.putExtra("list", list)

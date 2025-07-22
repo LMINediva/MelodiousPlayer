@@ -12,7 +12,7 @@ import com.melodiousplayer.android.widget.LoadMoreView
 abstract class BaseListAdapter<ITEMBEAN, ITEMVIEW : View> :
     RecyclerView.Adapter<BaseListAdapter.BaseListHolder>() {
     var list = ArrayList<ITEMBEAN>()
-    var position: Int? = null
+    var position: Int = 0
 
     class BaseListHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -63,7 +63,6 @@ abstract class BaseListAdapter<ITEMBEAN, ITEMVIEW : View> :
     }
 
     override fun onBindViewHolder(holder: BaseListHolder, position: Int) {
-        this.position = holder.adapterPosition
         // 如果是最后一条，不需要刷新view
         if (position == list.size) return
         // 条目数据
@@ -74,6 +73,7 @@ abstract class BaseListAdapter<ITEMBEAN, ITEMVIEW : View> :
         refreshItemView(itemView, data)
         // 设置条目点击事件
         itemView.setOnClickListener {
+            this.position = position
             // 条目点击事件
             listener?.let {
                 it(data)
