@@ -249,8 +249,13 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEventMainThread(itemBean: AudioBean) {
-        // 设置播放歌曲名称
-        lyricView.setSongName(itemBean.displayName)
+        if (itemBean.isOnline && itemBean.lyric!!.endsWith(".lrc")) {
+            // 设置在线播放歌曲名称
+            lyricView.setOnlineSongName(itemBean.lyric!!)
+        } else {
+            // 设置本地播放歌曲名称
+            lyricView.setSongName(itemBean.displayName)
+        }
         // 记录播放歌曲的bean
         this.audioBean = itemBean
         // 歌曲名

@@ -35,6 +35,32 @@ object LyricUtil {
     }
 
     /**
+     * 解析在线歌词文件获取歌词集合
+     */
+    fun parseOnlineLyric(lyric: String?): List<LyricBean> {
+        // 创建集合
+        val list = ArrayList<LyricBean>()
+        // 判断歌词是否为空
+        if (lyric == null) {
+            list.add(LyricBean(0, "在线歌词未找到"))
+            return list
+        }
+        // 解析歌词文件，添加到集合中
+        // 读取歌词文件，返回每一行数据集合
+        val linesList = lyric.lines()
+        for (line in linesList) {
+            // 解析一行
+            val lineList: List<LyricBean> = parseLine(line)
+            // 添加到集合中
+            list.addAll(lineList)
+        }
+        // 歌词排序
+        list.sortBy { it.startTime }
+        // 返回集合
+        return list
+    }
+
+    /**
      * 解析一行歌词
      * [01:33.67 [02:46.87 伤心的泪儿谁来擦
      */

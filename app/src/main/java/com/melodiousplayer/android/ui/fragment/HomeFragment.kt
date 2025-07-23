@@ -48,7 +48,10 @@ class HomeFragment : BaseListFragment<List<HomeItemBean>, HomeItemBean, HomeItem
                                     + URLProviderUtils.musicPath + homeItem.url,
                             homeItem.musicSize.toLong(),
                             homeItem.title,
-                            homeItem.artistName
+                            homeItem.artistName,
+                            URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                                    + URLProviderUtils.lyricPath + homeItem.lyric,
+                            true
                         )
                     )
                 }

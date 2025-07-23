@@ -14,11 +14,16 @@ import com.melodiousplayer.android.util.LyricUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.io.IOException
 
 /**
  * 自定义歌词view
  */
 class LyricView : View {
+
+    private val client by lazy { OkHttpClient() }
 
     // 通过惰性加载创建画笔Paint
     val paint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
@@ -206,6 +211,28 @@ class LyricView : View {
             // 在这里执行异步操作
             this@LyricView.list.clear()
             this@LyricView.list.addAll(LyricUtil.parseLyric(LyricLoader.loadLyricFile(name)))
+        }
+    }
+
+    /**
+     * 设置在线歌曲播放名称
+     * 解析歌词文件并且添加到集合中
+     */
+    fun setOnlineSongName(url: String) {
+        // 在IO调度器上启动一个协程
+        GlobalScope.launch(Dispatchers.IO) {
+            // 在这里执行异步操作
+            // 加载在线音乐
+            val request = Request.Builder()
+                .url(url)
+                .build()
+            client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) throw IOException("Failed to load lyric.")
+                this@LyricView.list.clear()
+                this@LyricView.list.addAll(LyricUtil.parseOnlineLyric(response.body?.string()))
+                // 关闭响应，释放资源
+                response.close()
+            }
         }
     }
 

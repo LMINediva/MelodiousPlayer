@@ -7,7 +7,8 @@ data class HomeItemBean(
     var type: String, var id: Int, var title: String,
     var artistName: String, var description: String?,
     var posterPic: String?, var thumbnailPic: String?,
-    var url: String, var hdUrl: String?, var uhdUrl: String?,
-    var musicSize: Float, var hdMusicSize: Float, var uhdMusicSize: Float,
+    var lyric: String?, var url: String, var hdUrl: String?,
+    var uhdUrl: String?, var musicSize: Float,
+    var hdMusicSize: Float, var uhdMusicSize: Float,
     var status: Int
 )

@@ -9,14 +9,21 @@ import android.provider.MediaStore.Audio.Media
  * 音乐列表条目bean
  */
 data class AudioBean(
-    var data: String, var size: Long, var displayName: String, var artist: String?
+    var data: String,
+    var size: Long,
+    var displayName: String,
+    var artist: String?,
+    var lyric: String?,
+    var isOnline: Boolean
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
         parcel.readString().toString(),
         parcel.readLong(),
         parcel.readString().toString(),
-        parcel.readString().toString()
+        parcel.readString().toString(),
+        parcel.readString().toString(),
+        parcel.readByte() != 0.toByte()
     ) {
     }
 
@@ -25,6 +32,8 @@ data class AudioBean(
         parcel.writeLong(size)
         parcel.writeString(displayName)
         parcel.writeString(artist)
+        parcel.writeString(lyric)
+        parcel.writeByte(if (isOnline) 1 else 0)
     }
 
     override fun describeContents(): Int {
@@ -46,7 +55,7 @@ data class AudioBean(
          */
         fun getAudioBean(cursor: Cursor?): AudioBean {
             // 创建AudioBean对象
-            val audioBean = AudioBean("", 0, "", "")
+            val audioBean = AudioBean("", 0, "", "", "", false)
             // 判断Cursor是否为空
             cursor?.let {
                 // 解析Cursor并且设置到Bean对象中

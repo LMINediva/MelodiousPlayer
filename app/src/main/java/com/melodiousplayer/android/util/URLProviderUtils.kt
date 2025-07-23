@@ -12,6 +12,7 @@ object URLProviderUtils {
     var serverAddress = "192.168.124.3"
     const val imagePath = "/image/musicPicture/"
     const val musicPath = "/audio/music/"
+    const val lyricPath = "/audio/lyric/"
 
     /**
      * 获取首页的url
