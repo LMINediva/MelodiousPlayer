@@ -9,7 +9,6 @@ data class VideosBean(
     var artistName: String,
     var posterPic: String,
     var thumbnailPic: String,
-    var albumImg: String,
     var regdate: String,
     var videoSourceTypeName: String,
     var totalViews: Int,
@@ -19,19 +18,14 @@ data class VideosBean(
     var url: String,
     var hdUrl: String,
     var uhdUrl: String,
-    var shdUrl: String,
     var videoSize: Float,
     var hdVideoSize: Float,
     var uhdVideoSize: Float,
-    var shdVideoSize: Float,
     var duration: String,
-    var status: Int,
-    var linkId: Int,
-    var playListPic: String,
-    var artists: List<ArtistsBean>
+    var status: Int
 )
 
-data class ArtistsBean(var id: Int, var artistName: String)
+//data class ArtistsBean(var id: Int, var artistName: String)
 //class MvPagerBean {
 //    var totalCount: Int = 0
 //    var videos: List<VideosBean>? = null

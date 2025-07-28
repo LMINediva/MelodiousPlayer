@@ -13,6 +13,8 @@ object URLProviderUtils {
     const val imagePath = "/image/musicPicture/"
     const val musicPath = "/audio/music/"
     const val lyricPath = "/audio/lyric/"
+    const val mvImagePath = "/image/mvPicture/"
+    const val mvPath = "/video/mv/"
 
     /**
      * 获取首页的url
@@ -49,7 +51,8 @@ object URLProviderUtils {
      * @return url
      */
     fun getMVAreaListUrl(area: String?, offset: Int, size: Int): String {
-        val url = protocol + serverAddress + "/get_mv_list" + "?offset=" + offset + "&size=" + size
+        val url =
+            protocol + serverAddress + "/data/mv/get_mv_list" + "?offset=" + offset + "&size=" + size
         return url
     }
 

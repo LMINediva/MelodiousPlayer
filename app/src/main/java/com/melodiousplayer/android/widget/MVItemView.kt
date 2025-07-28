@@ -44,7 +44,7 @@ class MVItemView : RelativeLayout {
         // 背景图
         Glide.with(context).load(
             URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                    + data.playListPic
+                    + URLProviderUtils.mvImagePath + data.posterPic
         ).into(bg)
     }
 

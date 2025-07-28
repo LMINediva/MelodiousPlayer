@@ -61,13 +61,15 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
             // 从应用内响应视频播放
             videoplayer.setUp(
                 URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                        + videoPlayBean?.url, videoPlayBean?.title, JzvdStd.SCREEN_NORMAL
+                        + URLProviderUtils.mvPath + videoPlayBean?.url,
+                videoPlayBean?.title,
+                JzvdStd.SCREEN_NORMAL
             )
             // 设置视频缩略图
             Glide.with(this)
                 .load(
                     URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                            + videoPlayBean?.thumbnailPic
+                            + URLProviderUtils.mvImagePath + videoPlayBean?.thumbnailPic
                 )
                 .into(videoplayer.posterImageView)
         } else {
