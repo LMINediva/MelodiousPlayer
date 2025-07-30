@@ -48,5 +48,4 @@ class MVFragment : BaseFragment(), MVView {
         viewPager.adapter = adapter
         tabLayout.setupWithViewPager(viewPager)
     }
-
 }

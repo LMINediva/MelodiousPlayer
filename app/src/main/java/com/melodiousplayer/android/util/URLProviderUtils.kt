@@ -51,8 +51,9 @@ object URLProviderUtils {
      * @return url
      */
     fun getMVAreaListUrl(area: String?, offset: Int, size: Int): String {
-        val url =
-            protocol + serverAddress + "/data/mv/get_mv_list" + "?offset=" + offset + "&size=" + size
+        val url = protocol + serverAddress + "/data/mv/get_mv_list" +
+                "?offset=" + offset + "&size=" + size + "&area=" + area
+        println("getMVAreaListUrl code = " + area)
         return url
     }
 

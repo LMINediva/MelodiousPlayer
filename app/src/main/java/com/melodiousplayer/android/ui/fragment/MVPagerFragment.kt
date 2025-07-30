@@ -10,7 +10,6 @@ import com.melodiousplayer.android.model.VideoPlayBean
 import com.melodiousplayer.android.model.VideosBean
 import com.melodiousplayer.android.presenter.impl.MVListPresenterImpl
 import com.melodiousplayer.android.ui.activity.JiaoZiVideoPlayerActivity
-import com.melodiousplayer.android.util.URLProviderUtils
 import com.melodiousplayer.android.view.MVListView
 import com.melodiousplayer.android.widget.MVItemView
 
