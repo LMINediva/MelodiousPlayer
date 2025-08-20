@@ -6,13 +6,15 @@ plugins {
 android {
     namespace = "com.melodiousplayer.android"
     compileSdk = 35
+    aaptOptions.cruncherEnabled = false
+    aaptOptions.useNewCruncher = false
 
     defaultConfig {
         applicationId = "com.melodiousplayer.android"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
