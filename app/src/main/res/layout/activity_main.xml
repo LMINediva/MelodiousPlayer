@@ -1,29 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--顶部标题栏-->
-    <include layout="@layout/toolbar" />
-
-    <!--中间内容容器-->
-    <FrameLayout
-        android:id="@+id/container"
+    <!--主屏幕中显示的内容-->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <!-- 底部导航栏 -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomBar"
+        <!--顶部标题栏-->
+        <include layout="@layout/toolbar" />
+
+        <!--中间内容容器-->
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- 底部导航栏 -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:itemIconTint="@color/main_item_selector"
+            app:itemTextColor="@color/main_item_selector"
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/bottombar_tabs" />
+
+    </LinearLayout>
+
+    <!--滑动菜单栏中显示的内容-->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        app:itemIconTint="@color/main_item_selector"
-        app:itemTextColor="@color/main_item_selector"
-        app:labelVisibilityMode="labeled"
-        app:menu="@menu/bottombar_tabs" />
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_menu" />
 
-</LinearLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

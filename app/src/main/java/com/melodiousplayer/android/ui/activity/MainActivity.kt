@@ -1,8 +1,14 @@
 package com.melodiousplayer.android.ui.activity
 
+import android.content.Intent
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.base.BaseFragment
@@ -22,6 +28,8 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
     OnDataChangedListener {
 
     private lateinit var bottomBar: BottomNavigationView
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navView: NavigationView
 
     // 惰性加载
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
@@ -32,12 +40,27 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
 
     override fun initData() {
         initMainToolBar()
+        setSupportActionBar(toolbar)
+        supportActionBar?.let {
+            it.setDisplayHomeAsUpEnabled(true)
+            it.setHomeAsUpIndicator(R.drawable.ic_menu)
+        }
         bottomBar = findViewById(R.id.bottomBar)
+        drawerLayout = findViewById(R.id.drawerLayout)
+        navView = findViewById(R.id.navView)
         // 将首页添加到fragment中
         val homeFragment = FragmentUtil.fragmentUtil.getFragment(R.id.tab_home)
         if (homeFragment != null) {
             replaceFragment(homeFragment, R.id.tab_home.toString())
         }
+        // 设置侧边菜单栏默认选中项
+        navView.setCheckedItem(R.id.navCall)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        // 设置action按钮
+        menuInflater.inflate(R.menu.main, menu)
+        return true
     }
 
     override fun initListener() {
@@ -50,6 +73,22 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
             }
             true
         }
+        // 设置侧边菜单栏项的点击事件
+        navView.setNavigationItemSelectedListener {
+            drawerLayout.closeDrawers()
+            true
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.setting -> {
+                startActivity(Intent(this, SettingActivity::class.java))
+            }
+
+            android.R.id.home -> drawerLayout.openDrawer(GravityCompat.START)
+        }
+        return true
     }
 
     /**
