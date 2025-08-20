@@ -1,7 +1,9 @@
 package com.melodiousplayer.android.net
 
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.melodiousplayer.android.adapter.DateTypeAdapter
 import java.lang.reflect.ParameterizedType
+import java.util.Date
 
 /**
  * 所有请求基类
@@ -16,7 +18,9 @@ open class MRequest<RESPONSE>(
      * 解析网络请求结果
      */
     fun parseResult(result: String?): RESPONSE {
-        val gson = Gson()
+        val gson = GsonBuilder()
+            .registerTypeAdapter(Date::class.java, DateTypeAdapter())
+            .create()
         // 获取泛型类型
         val type = (this.javaClass
             .genericSuperclass as ParameterizedType).actualTypeArguments[0]

@@ -9,12 +9,14 @@ import android.util.Log
 object URLProviderUtils {
 
     const val protocol = "http://"
-    var serverAddress = "192.168.124.3"
+    var serverAddress = "192.168.27.10"
     const val imagePath = "/image/musicPicture/"
     const val musicPath = "/audio/music/"
     const val lyricPath = "/audio/lyric/"
     const val mvImagePath = "/image/mvPicture/"
     const val mvPath = "/video/mv/"
+    const val listPicturePath = "/image/listPicture/"
+    const val userAvatarPath = "/image/userAvatar/"
 
     /**
      * 获取首页的url
@@ -53,7 +55,6 @@ object URLProviderUtils {
     fun getMVAreaListUrl(area: String?, offset: Int, size: Int): String {
         val url = protocol + serverAddress + "/data/mv/get_mv_list" +
                 "?offset=" + offset + "&size=" + size + "&area=" + area
-        println("getMVAreaListUrl code = " + area)
         return url
     }
 
@@ -65,7 +66,8 @@ object URLProviderUtils {
      * @return url
      */
     fun getMVListUrl(offset: Int, size: Int): String {
-        val url = protocol + serverAddress + "/list" + "?offset=" + offset + "&size=" + size
+        val url =
+            protocol + serverAddress + "/data/list/get_list" + "?offset=" + offset + "&size=" + size
         Log.i("offset", offset.toString())
         Log.i("size", size.toString())
         return url

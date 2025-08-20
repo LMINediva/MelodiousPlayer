@@ -20,7 +20,7 @@
             android:background="@mipmap/default_splash_bg"
             android:scaleType="centerCrop" />
 
-        <!--歌手头像-->
+        <!--悦单创建者头像-->
         <ImageView
             android:id="@+id/author_image"
             android:layout_width="60dp"
@@ -40,13 +40,14 @@
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
 
-        <!--歌手名称-->
+        <!--悦单创建者用户名-->
         <TextView
             android:id="@+id/author_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/count"
             android:layout_toRightOf="@+id/author_image"
+            android:ellipsize="end"
             android:maxLines="1"
             android:text="歌手名称"
             android:textColor="#FFFFFF"

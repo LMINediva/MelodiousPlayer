@@ -40,21 +40,21 @@ class MusicListItemView : RelativeLayout {
         val count: TextView = findViewById(R.id.count)
         val bg: ImageView = findViewById(R.id.bg)
         val author_image: ImageView = findViewById(R.id.author_image)
-        // MV列表名称
-        title.text = data.title
-        // 歌手名称
-        author_name.text = data.creator?.nickName
-        // MV列表数量
-        count.text = data.videoCount.toString()
+        // 悦单标题
+        title.text = "标题：" + data.title
+        // 悦单创建者用户名
+        author_name.text = "创建者：" + data.sysUser?.username
+        // 悦单中MV的数量
+        count.text = "MV数量：" + data.videoCount.toString()
         // 背景
         Glide.with(context).load(
             URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                    + data.playListBigPic
+                    + URLProviderUtils.listPicturePath + data.thumbnailPic
         ).into(bg)
-        // 歌手头像
+        // 悦单创建者头像
         Glide.with(context).load(
             URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                    + data.creator?.largeAvatar
+                    + URLProviderUtils.userAvatarPath + data.sysUser?.avatar
         )
             .transform(CircleCrop()).into(author_image)
     }
