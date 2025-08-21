@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">悦听影音</string>
+    <string name="user_name_error">用户名不合法，3到20位</string>
+    <string name="password_error">密码不合法，3到20位数字或字母</string>
 </resources>

@@ -4,6 +4,8 @@ import android.content.Intent
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -25,11 +27,12 @@ import com.melodiousplayer.android.util.URLProviderUtils
  * 主界面
  */
 class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, MessageListener,
-    OnDataChangedListener {
+    OnDataChangedListener, View.OnClickListener {
 
     private lateinit var bottomBar: BottomNavigationView
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navView: NavigationView
+    private lateinit var toLogin: TextView
 
     // 惰性加载
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
@@ -48,13 +51,14 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
         bottomBar = findViewById(R.id.bottomBar)
         drawerLayout = findViewById(R.id.drawerLayout)
         navView = findViewById(R.id.navView)
+        val headerLayout = navView.inflateHeaderView(R.layout.nav_header)
+        toLogin = headerLayout.findViewById(R.id.toLogin)
         // 将首页添加到fragment中
         val homeFragment = FragmentUtil.fragmentUtil.getFragment(R.id.tab_home)
         if (homeFragment != null) {
             replaceFragment(homeFragment, R.id.tab_home.toString())
         }
-        // 设置侧边菜单栏默认选中项
-        navView.setCheckedItem(R.id.navCall)
+        toLogin.setOnClickListener(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -80,6 +84,20 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
         }
     }
 
+    /**
+     * 侧边栏头部控件的点击事件
+     */
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.toLogin -> {
+                startActivity(Intent(this, LoginActivity::class.java))
+            }
+        }
+    }
+
+    /**
+     * 自定义标题栏上的图标按钮点击事件
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.setting -> {

@@ -16,4 +16,7 @@
     <color name="green">#FF1EC399</color>
     <color name="transparent_layer">#7F000000</color>
     <color name="colorMusicProgress">#FFCD2E</color>
+    <color name="qq_blue">#00ACFF</color>
+    <color name="qq_blue_pressed">#00A1DB</color>
+    <color name="qq_blue_disabled">#559C9C9C</color>
 </resources>
