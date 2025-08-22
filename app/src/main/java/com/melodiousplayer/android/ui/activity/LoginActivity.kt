@@ -31,15 +31,22 @@ class LoginActivity : BaseActivity(), LoginContract.View {
     }
 
     override fun onStartLogin() {
-        TODO("Not yet implemented")
+        // 弹出进度条
+        showProgress(getString(R.string.logging))
     }
 
     override fun onLoginSuccess() {
-        TODO("Not yet implemented")
+        // 隐藏进度条
+        dismissProgress()
+        // 进入主界面，并退出LoginActivity
+        startActivityAndFinish<MainActivity>()
     }
 
     override fun onLoginFailed() {
-        TODO("Not yet implemented")
+        // 隐藏进度条
+        dismissProgress()
+        // 弹出Toast
+        myToast(getString(R.string.login_failed))
     }
 
 }

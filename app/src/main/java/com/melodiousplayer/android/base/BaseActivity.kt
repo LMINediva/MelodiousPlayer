@@ -1,5 +1,6 @@
 package com.melodiousplayer.android.base
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -52,6 +53,28 @@ abstract class BaseActivity : AppCompatActivity() {
         val intent = Intent(this, T::class.java)
         startActivity(intent)
         finish()
+    }
+
+    /**
+     * 进度条弹窗
+     */
+    val progressDialog by lazy {
+        ProgressDialog(this)
+    }
+
+    /**
+     * 显示进度条弹窗
+     */
+    fun showProgress(message: String) {
+        progressDialog.setMessage(message)
+        progressDialog.show()
+    }
+
+    /**
+     * 关闭进度条弹窗
+     */
+    fun dismissProgress() {
+        progressDialog.dismiss()
     }
 
 }

@@ -188,7 +188,7 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
                         )
                     }
                 } else {
-                    Toast.makeText(this, "你拒绝了权限", Toast.LENGTH_SHORT).show()
+                    myToast("你拒绝了权限")
                 }
             }
         }
