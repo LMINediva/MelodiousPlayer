@@ -74,6 +74,15 @@ object URLProviderUtils {
     }
 
     /**
+     * 用户登录请求url
+     */
+    fun postLoginUrl(userName: String, password: String): String {
+        val url =
+            protocol + serverAddress + "/login?" + "username=" + userName + "&password=" + password
+        return url
+    }
+
+    /**
      *
      * 获取音乐节目列表
      *

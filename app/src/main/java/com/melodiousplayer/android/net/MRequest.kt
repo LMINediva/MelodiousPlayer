@@ -29,10 +29,17 @@ open class MRequest<RESPONSE>(
     }
 
     /**
-     * 发送网络请求
+     * 发送GET网络请求
      */
     fun execute() {
         NetManager.manager.sendRequest(this)
+    }
+
+    /**
+     * 发送POST网络请求
+     */
+    fun executePost(params: Pair<String, Any>?) {
+        NetManager.manager.sendPostRequest(this, params)
     }
 
 }

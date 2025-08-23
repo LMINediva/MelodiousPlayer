@@ -3,8 +3,12 @@ package com.melodiousplayer.android.presenter.impl
 import com.melodiousplayer.android.contract.LoginContract
 import com.melodiousplayer.android.extension.isValidPassword
 import com.melodiousplayer.android.extension.isValidUserName
+import com.melodiousplayer.android.model.ResultBean
+import com.melodiousplayer.android.net.LoginRequest
+import com.melodiousplayer.android.net.ResponseHandler
 
-class LoginPresenterImpl(val view: LoginContract.View) : LoginContract.Presenter {
+class LoginPresenterImpl(val view: LoginContract.View) : LoginContract.Presenter,
+    ResponseHandler<ResultBean> {
 
     override fun login(userName: String, password: String) {
         if (userName.isValidUserName()) {
@@ -23,7 +27,19 @@ class LoginPresenterImpl(val view: LoginContract.View) : LoginContract.Presenter
     }
 
     private fun loginRequest(userName: String, password: String) {
-        TODO("Not yet implemented")
+        LoginRequest(userName, password, this).executePost(null)
+    }
+
+    override fun onSuccess(type: Int, result: ResultBean) {
+        if (result.code == 200) {
+            view.onLoginSuccess()
+        } else {
+            view.onLoginFailed()
+        }
+    }
+
+    override fun onError(type: Int, msg: String?) {
+        view.onLoginFailed()
     }
 
 }
