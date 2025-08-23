@@ -3,6 +3,7 @@ package com.melodiousplayer.android.base
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
@@ -10,6 +11,20 @@ import androidx.appcompat.app.AppCompatActivity
  * 所有activity的基类
  */
 abstract class BaseActivity : AppCompatActivity() {
+
+    /**
+     * 进度条弹窗
+     */
+    val progressDialog by lazy {
+        ProgressDialog(this)
+    }
+
+    /**
+     * 软键盘管理
+     */
+    val inputMethodManager by lazy {
+        getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,13 +71,6 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     /**
-     * 进度条弹窗
-     */
-    val progressDialog by lazy {
-        ProgressDialog(this)
-    }
-
-    /**
      * 显示进度条弹窗
      */
     fun showProgress(message: String) {
@@ -75,6 +83,13 @@ abstract class BaseActivity : AppCompatActivity() {
      */
     fun dismissProgress() {
         progressDialog.dismiss()
+    }
+
+    /**
+     * 隐藏软键盘
+     */
+    fun hideSoftKeyboard() {
+        inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
     }
 
 }
