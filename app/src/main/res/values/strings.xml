@@ -2,6 +2,10 @@
     <string name="app_name">悦听影音</string>
     <string name="user_name_error">用户名不合法，3到20位</string>
     <string name="password_error">密码不合法，3到20位数字或字母</string>
+    <string name="confirm_password_error">密码和确认密码不一致</string>
     <string name="logging">正在登录</string>
     <string name="login_failed">登录失败</string>
+    <string name="registering">正在注册</string>
+    <string name="register_success">注册成功</string>
+    <string name="register_failed">注册失败</string>
 </resources>
