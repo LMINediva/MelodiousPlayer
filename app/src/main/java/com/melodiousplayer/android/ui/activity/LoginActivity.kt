@@ -1,7 +1,9 @@
 package com.melodiousplayer.android.ui.activity
 
+import android.content.Intent
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.contract.LoginContract
@@ -15,6 +17,7 @@ class LoginActivity : BaseActivity(), LoginContract.View {
     private lateinit var userName: EditText
     private lateinit var password: EditText
     private lateinit var login: Button
+    private lateinit var newUser: TextView
     private val presenter = LoginPresenterImpl(this)
 
     override fun getLayoutId(): Int {
@@ -25,6 +28,7 @@ class LoginActivity : BaseActivity(), LoginContract.View {
         userName = findViewById(R.id.userName)
         password = findViewById(R.id.password)
         login = findViewById(R.id.login)
+        newUser = findViewById(R.id.newUser)
     }
 
     override fun initListener() {
@@ -34,6 +38,9 @@ class LoginActivity : BaseActivity(), LoginContract.View {
         password.setOnEditorActionListener { v, actionId, event ->
             login()
             true
+        }
+        newUser.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
 
