@@ -83,6 +83,22 @@ object URLProviderUtils {
     }
 
     /**
+     * 检查用户名是否存在url
+     */
+    fun checkUserName(): String {
+        val url = protocol + serverAddress + "/checkUserName"
+        return url
+    }
+
+    /**
+     * 用户注册请求url
+     */
+    fun postRegisterUrl(): String {
+        val url = protocol + serverAddress + "/addUser"
+        return url
+    }
+
+    /**
      *
      * 获取音乐节目列表
      *

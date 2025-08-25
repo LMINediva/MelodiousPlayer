@@ -42,4 +42,8 @@ open class MRequest<RESPONSE>(
         NetManager.manager.sendPostRequest(this, params)
     }
 
+    fun executePostWithJSON(json: String) {
+        NetManager.manager.sendPostWithJSONRequest(this, json)
+    }
+
 }

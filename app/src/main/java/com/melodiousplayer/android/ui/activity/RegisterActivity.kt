@@ -52,6 +52,12 @@ class RegisterActivity : BaseActivity(), RegisterContract.View {
         userName.error = getString(R.string.user_name_error)
     }
 
+    override fun onUserNameExistError() {
+        dismissProgress()
+        myToast(getString(R.string.register_failed))
+        userName.error = getString(R.string.user_name_exist_error)
+    }
+
     override fun onPasswordError() {
         password.error = getString(R.string.password_error)
     }

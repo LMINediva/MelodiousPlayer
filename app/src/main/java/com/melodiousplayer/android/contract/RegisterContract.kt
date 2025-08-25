@@ -11,6 +11,7 @@ interface RegisterContract {
 
     interface View {
         fun onUserNameError()
+        fun onUserNameExistError()
         fun onPasswordError()
         fun onConfirmPasswordError()
         fun onStartRegister()
