@@ -45,16 +45,20 @@ class RegisterPresenterImpl(val view: RegisterContract.View) : RegisterContract.
 
     override fun onSuccess(type: Int, result: RegisterResultBean) {
         if (result.code == 200) {
+            // 注册成功
             view.onRegisterSuccess()
         } else if (result.code == 501) {
+            // 用户名已经存在
             view.onUserNameExistError()
         } else {
+            // 注册失败
             view.onRegisterFailed()
         }
     }
 
     override fun onError(type: Int, msg: String?) {
-        view.onRegisterFailed()
+        // 网络错误
+        view.onNetworkError()
     }
 
 }

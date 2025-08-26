@@ -79,4 +79,11 @@ class LoginActivity : BaseActivity(), LoginContract.View {
         myToast(getString(R.string.login_failed))
     }
 
+    override fun onNetworkError() {
+        // 隐藏进度条
+        dismissProgress()
+        // 弹出Toast
+        myToast(getString(R.string.network_error))
+    }
+
 }

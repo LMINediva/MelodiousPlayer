@@ -39,7 +39,7 @@ class LoginPresenterImpl(val view: LoginContract.View) : LoginContract.Presenter
     }
 
     override fun onError(type: Int, msg: String?) {
-        view.onLoginFailed()
+        view.onNetworkError()
     }
 
 }

@@ -15,6 +15,7 @@ interface LoginContract {
         fun onStartLogin()
         fun onLoginSuccess()
         fun onLoginFailed()
+        fun onNetworkError()
     }
 
 }

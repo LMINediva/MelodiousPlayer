@@ -54,7 +54,7 @@ class RegisterActivity : BaseActivity(), RegisterContract.View {
 
     override fun onUserNameExistError() {
         dismissProgress()
-        myToast(getString(R.string.register_failed))
+        myToast(getString(R.string.user_name_exist_error))
         userName.error = getString(R.string.user_name_exist_error)
     }
 
@@ -72,12 +72,18 @@ class RegisterActivity : BaseActivity(), RegisterContract.View {
 
     override fun onRegisterSuccess() {
         dismissProgress()
+        myToast(getString(R.string.register_success))
         finish()
     }
 
     override fun onRegisterFailed() {
         dismissProgress()
         myToast(getString(R.string.register_failed))
+    }
+
+    override fun onNetworkError() {
+        dismissProgress()
+        myToast(getString(R.string.network_error))
     }
 
 }
