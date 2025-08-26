@@ -1,5 +1,6 @@
 package com.melodiousplayer.android.model
 
+import java.io.Serializable
 import java.util.Date
 
 data class UserBean(
@@ -14,4 +15,4 @@ data class UserBean(
     var createTime: Date?,
     var updateTime: Date?,
     var remark: String?,
-)
+) : Serializable

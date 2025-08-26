@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.melodiousplayer.android.R
@@ -17,11 +18,13 @@ import com.melodiousplayer.android.base.BaseFragment
 import com.melodiousplayer.android.base.InputDialogListener
 import com.melodiousplayer.android.base.MessageListener
 import com.melodiousplayer.android.base.OnDataChangedListener
+import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.ui.fragment.HomeFragment
 import com.melodiousplayer.android.ui.fragment.InputDialogFragment
 import com.melodiousplayer.android.util.FragmentUtil
 import com.melodiousplayer.android.util.ToolBarManager
 import com.melodiousplayer.android.util.URLProviderUtils
+import de.hdodenhof.circleimageview.CircleImageView
 
 /**
  * 主界面
@@ -33,6 +36,8 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navView: NavigationView
     private lateinit var toLogin: TextView
+    private lateinit var usernameText: TextView
+    private lateinit var avatarImage: CircleImageView
 
     // 惰性加载
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
@@ -53,12 +58,27 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
         navView = findViewById(R.id.navView)
         val headerLayout = navView.inflateHeaderView(R.layout.nav_header)
         toLogin = headerLayout.findViewById(R.id.toLogin)
+        usernameText = headerLayout.findViewById(R.id.usernameText)
+        avatarImage = headerLayout.findViewById(R.id.avatarImage)
         // 将首页添加到fragment中
         val homeFragment = FragmentUtil.fragmentUtil.getFragment(R.id.tab_home)
         if (homeFragment != null) {
             replaceFragment(homeFragment, R.id.tab_home.toString())
         }
         toLogin.setOnClickListener(this)
+        val userSerialized = intent.getSerializableExtra("user")
+        // 登录成功显示用户名和头像
+        if (userSerialized != null) {
+            val user = userSerialized as UserBean
+            usernameText.text = user.username
+            usernameText.visibility = View.VISIBLE
+            toLogin.visibility = View.GONE
+            Glide.with(this).load(
+                URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                        + URLProviderUtils.userAvatarPath + user.avatar
+            ).into(avatarImage)
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -90,7 +110,7 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.toLogin -> {
-                startActivity(Intent(this, LoginActivity::class.java))
+                startActivityAndFinish<LoginActivity>()
             }
         }
     }

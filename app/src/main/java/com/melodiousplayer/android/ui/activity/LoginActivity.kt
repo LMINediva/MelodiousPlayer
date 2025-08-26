@@ -7,6 +7,7 @@ import android.widget.TextView
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.contract.LoginContract
+import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.presenter.impl.LoginPresenterImpl
 
 /**
@@ -65,11 +66,16 @@ class LoginActivity : BaseActivity(), LoginContract.View {
         showProgress(getString(R.string.logging))
     }
 
-    override fun onLoginSuccess() {
+    override fun onLoginSuccess(user: UserBean?) {
         // 隐藏进度条
         dismissProgress()
-        // 进入主界面，并退出LoginActivity
-        startActivityAndFinish<MainActivity>()
+        // 弹出Toast
+        myToast(getString(R.string.login_success))
+        // 进入主界面，传递用户信息，并退出LoginActivity
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("user", user)
+        startActivity(intent)
+        finish()
     }
 
     override fun onLoginFailed() {
@@ -84,6 +90,12 @@ class LoginActivity : BaseActivity(), LoginContract.View {
         dismissProgress()
         // 弹出Toast
         myToast(getString(R.string.network_error))
+    }
+
+    override fun onBackPressed() {
+        // 当用户按下返回键时，跳转回到主界面
+        startActivityAndFinish<MainActivity>()
+        super.onBackPressed()
     }
 
 }

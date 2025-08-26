@@ -6,28 +6,20 @@
     android:padding="10dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/iconImage"
+        android:id="@+id/avatarImage"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_centerInParent="true"
         android:src="@drawable/nav_icon" />
 
     <TextView
-        android:id="@+id/mailText"
+        android:id="@+id/usernameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="2424097242@qq.com"
-        android:textColor="#FFF"
-        android:textSize="14sp"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/userText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/mailText"
-        android:text="java1234"
+        android:layout_below="@id/avatarImage"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="用户名"
         android:textColor="#FFF"
         android:textSize="14sp"
         android:visibility="gone" />
@@ -36,7 +28,7 @@
         android:id="@+id/toLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/iconImage"
+        android:layout_below="@id/avatarImage"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:text="立即登录"
