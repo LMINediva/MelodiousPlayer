@@ -83,10 +83,11 @@ object URLProviderUtils {
     }
 
     /**
-     * 检查用户名是否存在url
+     * 用户Token登录获取用户信息url
      */
-    fun checkUserName(): String {
-        val url = protocol + serverAddress + "/checkUserName"
+    fun postTokenLoginUrl(): String {
+        val url =
+            protocol + serverAddress + "/userInfo"
         return url
     }
 

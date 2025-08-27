@@ -31,15 +31,15 @@ open class MRequest<RESPONSE>(
     /**
      * 发送GET网络请求
      */
-    fun execute() {
-        NetManager.manager.sendRequest(this)
+    fun execute(token: String = "") {
+        NetManager.manager.sendRequest(this, token)
     }
 
     /**
      * 发送POST网络请求
      */
-    fun executePost(params: Pair<String, Any>?) {
-        NetManager.manager.sendPostRequest(this, params)
+    fun executePost(params: Pair<String, Any>?, token: String = "") {
+        NetManager.manager.sendPostRequest(this, params, token)
     }
 
     fun executePostWithJSON(json: String) {

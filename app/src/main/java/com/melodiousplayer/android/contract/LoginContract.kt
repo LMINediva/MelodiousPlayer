@@ -1,6 +1,6 @@
 package com.melodiousplayer.android.contract
 
-import com.melodiousplayer.android.model.UserBean
+import com.melodiousplayer.android.model.UserResultBean
 
 /**
  * 登录协议持久化接口
@@ -15,7 +15,7 @@ interface LoginContract {
         fun onUserNameError()
         fun onPasswordError()
         fun onStartLogin()
-        fun onLoginSuccess(user: UserBean?)
+        fun onLoginSuccess(userResult: UserResultBean?)
         fun onLoginFailed()
         fun onNetworkError()
     }

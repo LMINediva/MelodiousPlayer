@@ -1,5 +1,6 @@
 package com.melodiousplayer.android.ui.activity
 
+import android.content.Context
 import android.content.Intent
 import android.widget.Button
 import android.widget.EditText
@@ -7,7 +8,7 @@ import android.widget.TextView
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.contract.LoginContract
-import com.melodiousplayer.android.model.UserBean
+import com.melodiousplayer.android.model.UserResultBean
 import com.melodiousplayer.android.presenter.impl.LoginPresenterImpl
 
 /**
@@ -66,14 +67,18 @@ class LoginActivity : BaseActivity(), LoginContract.View {
         showProgress(getString(R.string.logging))
     }
 
-    override fun onLoginSuccess(user: UserBean?) {
+    override fun onLoginSuccess(userResult: UserResultBean?) {
         // 隐藏进度条
         dismissProgress()
+        // 将token存储到SharedPreferences文件中
+        val editor = getSharedPreferences("data", Context.MODE_PRIVATE).edit()
+        editor.putString("token", userResult?.authorization)
+        editor.apply()
         // 弹出Toast
         myToast(getString(R.string.login_success))
         // 进入主界面，传递用户信息，并退出LoginActivity
         val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("user", user)
+        intent.putExtra("user", userResult?.currentUser)
         startActivity(intent)
         finish()
     }

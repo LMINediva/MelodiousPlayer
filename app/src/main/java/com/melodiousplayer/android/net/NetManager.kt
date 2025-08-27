@@ -27,10 +27,11 @@ class NetManager private constructor() {
     /**
      * 发送GET网络请求
      */
-    fun <RESPONSE> sendRequest(req: MRequest<RESPONSE>) {
+    fun <RESPONSE> sendRequest(req: MRequest<RESPONSE>, token: String) {
         val request = Request.Builder()
             .url(req.url)
             .get()
+            .addHeader("token", token)
             .build()
         client.newCall(request).enqueue(object : Callback {
             /**
@@ -63,7 +64,11 @@ class NetManager private constructor() {
     /**
      * 发送POST网络请求
      */
-    fun <RESPONSE> sendPostRequest(req: MRequest<RESPONSE>, params: Pair<String, Any>?) {
+    fun <RESPONSE> sendPostRequest(
+        req: MRequest<RESPONSE>,
+        params: Pair<String, Any>?,
+        token: String
+    ) {
         var requestBody: RequestBody? = null
         if (params !== null) {
             val builder = FormBody.Builder()
@@ -75,6 +80,7 @@ class NetManager private constructor() {
         val request = Request.Builder()
             .url(req.url)
             .post(requestBody)
+            .addHeader("token", token)
             .build()
         client.newCall(request).enqueue(object : Callback {
             /**

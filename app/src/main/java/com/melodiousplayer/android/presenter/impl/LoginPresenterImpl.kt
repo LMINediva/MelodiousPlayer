@@ -32,7 +32,7 @@ class LoginPresenterImpl(val view: LoginContract.View) : LoginContract.Presenter
 
     override fun onSuccess(type: Int, result: UserResultBean) {
         if (result.code == 200) {
-            view.onLoginSuccess(result.currentUser)
+            view.onLoginSuccess(result)
         } else {
             view.onLoginFailed()
         }
