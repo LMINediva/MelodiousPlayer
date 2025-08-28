@@ -19,10 +19,10 @@ import com.melodiousplayer.android.base.BaseFragment
 import com.melodiousplayer.android.base.InputDialogListener
 import com.melodiousplayer.android.base.MessageListener
 import com.melodiousplayer.android.base.OnDataChangedListener
+import com.melodiousplayer.android.contract.TokenLoginContract
 import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.model.UserResultBean
-import com.melodiousplayer.android.net.ResponseHandler
-import com.melodiousplayer.android.net.TokenLoginRequest
+import com.melodiousplayer.android.presenter.impl.TokenLoginPresenterImpl
 import com.melodiousplayer.android.ui.fragment.HomeFragment
 import com.melodiousplayer.android.ui.fragment.InputDialogFragment
 import com.melodiousplayer.android.util.FragmentUtil
@@ -34,7 +34,7 @@ import de.hdodenhof.circleimageview.CircleImageView
  * 主界面
  */
 class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, MessageListener,
-    OnDataChangedListener, View.OnClickListener, ResponseHandler<UserResultBean> {
+    OnDataChangedListener, View.OnClickListener, TokenLoginContract.View {
 
     private lateinit var bottomBar: BottomNavigationView
     private lateinit var drawerLayout: DrawerLayout
@@ -43,6 +43,7 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
     private lateinit var usernameText: TextView
     private lateinit var avatarImage: CircleImageView
     private lateinit var currentUser: UserBean
+    private val presenter = TokenLoginPresenterImpl(this)
 
     // 惰性加载
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
@@ -75,7 +76,7 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
         val token = getSharedPreferences("data", Context.MODE_PRIVATE)
             .getString("token", "")
         if (!token.isNullOrEmpty()) {
-            TokenLoginRequest(this).execute(token)
+            presenter.tokenLogin(token)
         }
         // 登录成功显示用户名和头像
         val userSerialized = intent.getSerializableExtra("user")
@@ -175,27 +176,24 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
         onDataChanged()
     }
 
-    override fun onError(type: Int, msg: String?) {
-        myToast(getString(R.string.network_error))
+    override fun onTokenLoginSuccess(userResult: UserResultBean?) {
+        myToast(getString(R.string.login_success))
+        currentUser = userResult?.currentUser!!
+        usernameText.text = currentUser.username
+        usernameText.visibility = View.VISIBLE
+        toLogin.visibility = View.GONE
+        Glide.with(this).load(
+            URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                    + URLProviderUtils.userAvatarPath + currentUser.avatar
+        ).into(avatarImage)
     }
 
-    override fun onSuccess(type: Int, result: UserResultBean) {
-        when (result.code) {
-            4000 -> myToast(getString(R.string.token_null_error))
-            4001 -> myToast(getString(R.string.token_expire_error))
-            4002 -> myToast(getString(R.string.token_fail_error))
-        }
-        if (result.currentUser !== null) {
-            myToast(getString(R.string.login_success))
-            currentUser = result.currentUser!!
-            usernameText.text = currentUser.username
-            usernameText.visibility = View.VISIBLE
-            toLogin.visibility = View.GONE
-            Glide.with(this).load(
-                URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                        + URLProviderUtils.userAvatarPath + currentUser.avatar
-            ).into(avatarImage)
-        }
+    override fun onTokenLoginFailed(msg: String?) {
+        msg?.let { myToast(it) }
+    }
+
+    override fun onNetworkError() {
+        myToast(getString(R.string.network_error))
     }
 
 }
