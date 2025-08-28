@@ -81,13 +81,13 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
         // 登录成功显示用户名和头像
         val userSerialized = intent.getSerializableExtra("user")
         if (userSerialized != null) {
-            val user = userSerialized as UserBean
-            usernameText.text = user.username
+            currentUser = userSerialized as UserBean
+            usernameText.text = currentUser.username
             usernameText.visibility = View.VISIBLE
             toLogin.visibility = View.GONE
             Glide.with(this).load(
                 URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                        + URLProviderUtils.userAvatarPath + user.avatar
+                        + URLProviderUtils.userAvatarPath + currentUser.avatar
             ).into(avatarImage)
             drawerLayout.openDrawer(GravityCompat.START)
         }
@@ -110,9 +110,34 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
             true
         }
         // 设置侧边菜单栏项的点击事件
-        navView.setNavigationItemSelectedListener {
+        navView.setNavigationItemSelectedListener { menuItem ->
+            // 处理菜单项点击事件
+            handleMenuItemClick(menuItem.itemId)
             drawerLayout.closeDrawers()
             true
+        }
+    }
+
+    private fun handleMenuItemClick(itemId: Int) {
+        when (itemId) {
+            R.id.navUserInfo -> {
+                // 进入用户个人信息界面，传递用户信息
+                val intent = Intent(this, UserInfoActivity::class.java)
+                intent.putExtra("user", currentUser)
+                startActivity(intent)
+            }
+
+            R.id.navChangePassword -> {
+
+            }
+
+            R.id.navMyWorks -> {
+
+            }
+
+            R.id.navLogout -> {
+
+            }
         }
     }
 

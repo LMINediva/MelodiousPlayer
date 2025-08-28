@@ -24,4 +24,12 @@ interface ToolBarManager {
         toolbar.setTitle("设置界面")
     }
 
+    /**
+     * 初始化个人信息界面中的toolbar
+     */
+    fun initUserInfoToolBar() {
+        // 设置标题
+        toolbar.setTitle("个人信息")
+    }
+
 }

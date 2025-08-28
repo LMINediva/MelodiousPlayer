@@ -19,4 +19,6 @@
     <color name="qq_blue">#00ACFF</color>
     <color name="qq_blue_pressed">#00A1DB</color>
     <color name="qq_blue_disabled">#559C9C9C</color>
+    <color name="qq_red">#FF0000</color>
+    <color name="qq_red_dark">#AA0000</color>
 </resources>

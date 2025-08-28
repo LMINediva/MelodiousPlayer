@@ -37,7 +37,7 @@ class RegisterPresenterImpl(val view: RegisterContract.View) : RegisterContract.
         val user = UserBean(
             null, userName, password,
             null, null, null, null,
-            null, null, null, null
+            null, null, null, null, null
         )
         val json = Gson().toJson(user)
         RegisterRequest(this).executePostWithJSON(json)
