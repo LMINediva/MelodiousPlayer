@@ -19,9 +19,11 @@ import com.melodiousplayer.android.base.BaseFragment
 import com.melodiousplayer.android.base.InputDialogListener
 import com.melodiousplayer.android.base.MessageListener
 import com.melodiousplayer.android.base.OnDataChangedListener
+import com.melodiousplayer.android.contract.LogoutContract
 import com.melodiousplayer.android.contract.TokenLoginContract
 import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.model.UserResultBean
+import com.melodiousplayer.android.presenter.impl.LogoutPresenterImpl
 import com.melodiousplayer.android.presenter.impl.TokenLoginPresenterImpl
 import com.melodiousplayer.android.ui.fragment.HomeFragment
 import com.melodiousplayer.android.ui.fragment.InputDialogFragment
@@ -29,12 +31,13 @@ import com.melodiousplayer.android.util.FragmentUtil
 import com.melodiousplayer.android.util.ToolBarManager
 import com.melodiousplayer.android.util.URLProviderUtils
 import de.hdodenhof.circleimageview.CircleImageView
+import java.io.Serializable
 
 /**
  * 主界面
  */
 class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, MessageListener,
-    OnDataChangedListener, View.OnClickListener, TokenLoginContract.View {
+    OnDataChangedListener, View.OnClickListener, TokenLoginContract.View, LogoutContract.View {
 
     private lateinit var bottomBar: BottomNavigationView
     private lateinit var drawerLayout: DrawerLayout
@@ -43,10 +46,14 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
     private lateinit var usernameText: TextView
     private lateinit var avatarImage: CircleImageView
     private lateinit var currentUser: UserBean
+    private lateinit var menu: Menu
+    private var userSerialized: Serializable? = null
     private val presenter = TokenLoginPresenterImpl(this)
+    private val logoutPresenter = LogoutPresenterImpl(this)
 
     // 惰性加载
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
+    override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
 
     override fun getLayoutId(): Int {
         return R.layout.activity_main
@@ -58,6 +65,8 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
         supportActionBar?.let {
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeAsUpIndicator(R.drawable.ic_menu)
+            // 隐藏默认标题
+            it.setDisplayShowTitleEnabled(false)
         }
         bottomBar = findViewById(R.id.bottomBar)
         drawerLayout = findViewById(R.id.drawerLayout)
@@ -79,7 +88,8 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
             presenter.tokenLogin(token)
         }
         // 登录成功显示用户名和头像
-        val userSerialized = intent.getSerializableExtra("user")
+        menu = navView.menu
+        userSerialized = intent.getSerializableExtra("user")
         if (userSerialized != null) {
             currentUser = userSerialized as UserBean
             usernameText.text = currentUser.username
@@ -89,7 +99,16 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
                 URLProviderUtils.protocol + URLProviderUtils.serverAddress
                         + URLProviderUtils.userAvatarPath + currentUser.avatar
             ).into(avatarImage)
+            // 显示侧边栏所有菜单项
+            for (i in 0 until menu.size()) {
+                menu.getItem(i).isVisible = true
+            }
             drawerLayout.openDrawer(GravityCompat.START)
+        } else {
+            // 隐藏侧边栏所有菜单项
+            for (i in 0 until menu.size()) {
+                menu.getItem(i).isVisible = false
+            }
         }
     }
 
@@ -136,7 +155,7 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
             }
 
             R.id.navLogout -> {
-
+                logoutPresenter.logout()
             }
         }
     }
@@ -214,6 +233,31 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
     }
 
     override fun onTokenLoginFailed(msg: String?) {
+        msg?.let { myToast(it) }
+    }
+
+    override fun onLogoutSuccess(msg: String?) {
+        msg?.let { myToast(it) }
+        currentUser = UserBean(
+            null, null, null,
+            null, null, null, null,
+            null, null, null, null, null
+        )
+        userSerialized = null
+        // 在SharedPreferences文件中删除token的值
+        getSharedPreferences("data", Context.MODE_PRIVATE)
+            .edit().remove("token").apply()
+        usernameText.text = ""
+        usernameText.visibility = View.GONE
+        toLogin.visibility = View.VISIBLE
+        Glide.with(this).load(R.drawable.nav_icon).into(avatarImage)
+        // 隐藏侧边栏所有菜单项
+        for (i in 0 until menu.size()) {
+            menu.getItem(i).isVisible = false
+        }
+    }
+
+    override fun onLogoutFailed(msg: String?) {
         msg?.let { myToast(it) }
     }
 

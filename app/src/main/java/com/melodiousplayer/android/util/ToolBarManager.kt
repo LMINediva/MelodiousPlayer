@@ -1,5 +1,6 @@
 package com.melodiousplayer.android.util
 
+import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 
 /**
@@ -8,20 +9,21 @@ import androidx.appcompat.widget.Toolbar
 interface ToolBarManager {
 
     val toolbar: Toolbar
+    val toolbarTitle: TextView
 
     /**
      * 初始化主界面中的toolbar
      */
     fun initMainToolBar() {
         // 设置标题
-        toolbar.setTitle("悦听影音")
+        toolbarTitle.text = "悦听影音"
     }
 
     /**
      * 处理设置界面的toolbar
      */
     fun initSettingToolbar() {
-        toolbar.setTitle("设置界面")
+        toolbarTitle.text = "设置界面"
     }
 
     /**
@@ -29,7 +31,7 @@ interface ToolBarManager {
      */
     fun initUserInfoToolBar() {
         // 设置标题
-        toolbar.setTitle("个人信息")
+        toolbarTitle.text = "个人信息"
     }
 
 }

@@ -27,6 +27,7 @@ class UserInfoActivity : BaseActivity(), ToolBarManager {
     private lateinit var createTime: TextView
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
+    override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
 
     override fun getLayoutId(): Int {
         return R.layout.activity_user_info
@@ -40,6 +41,8 @@ class UserInfoActivity : BaseActivity(), ToolBarManager {
             it.setDisplayHomeAsUpEnabled(true)
             // 显示返回按钮
             it.setDisplayShowHomeEnabled(true)
+            // 隐藏默认标题
+            it.setDisplayShowTitleEnabled(false)
         }
         avatarImage = findViewById(R.id.userAvatar)
         username = findViewById(R.id.userName)
