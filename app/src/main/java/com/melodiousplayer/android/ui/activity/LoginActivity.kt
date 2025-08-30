@@ -3,6 +3,7 @@ package com.melodiousplayer.android.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import com.melodiousplayer.android.R
@@ -10,6 +11,7 @@ import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.contract.LoginContract
 import com.melodiousplayer.android.model.UserResultBean
 import com.melodiousplayer.android.presenter.impl.LoginPresenterImpl
+import com.melodiousplayer.android.util.EncryptUtil
 
 /**
  * 用户登录界面
@@ -20,6 +22,7 @@ class LoginActivity : BaseActivity(), LoginContract.View {
     private lateinit var password: EditText
     private lateinit var login: Button
     private lateinit var newUser: TextView
+    private lateinit var rememberPassword: CheckBox
     private val presenter = LoginPresenterImpl(this)
 
     override fun getLayoutId(): Int {
@@ -31,6 +34,20 @@ class LoginActivity : BaseActivity(), LoginContract.View {
         password = findViewById(R.id.password)
         login = findViewById(R.id.login)
         newUser = findViewById(R.id.newUser)
+        rememberPassword = findViewById(R.id.rememberPassword)
+        val prefs = getSharedPreferences("data", Context.MODE_PRIVATE)
+        val isRemember = prefs.getBoolean("remember_password", false)
+        if (isRemember) {
+            // 将账号和密码都设置到文本框中
+            val storedUsername = prefs.getString("username", "")
+            val storedPassword = prefs.getString("password", "")
+            userName.setText(storedUsername)
+            storedPassword?.let {
+                val decryptedPassword = EncryptUtil.decrypt(it, EncryptUtil.key)
+                password.setText(decryptedPassword)
+            }
+            rememberPassword.isChecked = true
+        }
     }
 
     override fun initListener() {
@@ -70,9 +87,21 @@ class LoginActivity : BaseActivity(), LoginContract.View {
     override fun onLoginSuccess(userResult: UserResultBean?) {
         // 隐藏进度条
         dismissProgress()
-        // 将token存储到SharedPreferences文件中
         val editor = getSharedPreferences("data", Context.MODE_PRIVATE).edit()
+        // 将token存储到SharedPreferences文件中
         editor.putString("token", userResult?.authorization)
+        // 检查复选框是否被选中
+        if (rememberPassword.isChecked) {
+            editor.putBoolean("remember_password", true)
+            editor.putString("username", userName.text.trim().toString())
+            val encryptedPassword =
+                EncryptUtil.encrypt(password.text.trim().toString(), EncryptUtil.key)
+            editor.putString("password", encryptedPassword)
+        } else {
+            editor.remove("remember_password")
+            editor.remove("username")
+            editor.remove("password")
+        }
         editor.apply()
         // 弹出Toast
         myToast(getString(R.string.login_success))
