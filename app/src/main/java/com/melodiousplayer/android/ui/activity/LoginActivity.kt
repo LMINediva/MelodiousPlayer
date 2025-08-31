@@ -17,7 +17,6 @@ import com.melodiousplayer.android.util.EncryptUtil
  * 用户登录界面
  */
 class LoginActivity : BaseActivity(), LoginContract.View {
-
     private lateinit var userName: EditText
     private lateinit var password: EditText
     private lateinit var login: Button

@@ -19,15 +19,10 @@ object EncryptUtil {
     private const val TRANSFORMATION = "AES/CBC/PKCS5Padding"
 
     // 初始化向量，长度必须是16字节
-    private val ivBytes = ByteArray(16)
+    private val ivBytes = byteArrayOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
 
     // 密钥，需要保密且足够复杂，最好是随机生成的字符串或密钥管理服务提供的密钥
     const val key = "secret-key"
-
-    init {
-        // 初始化向量ivBytes，这里使用随机数填充，实际应用中应确保每次加密的iv不同，以保证安全性
-        java.util.Random().nextBytes(ivBytes)
-    }
 
     /**
      * 加密
