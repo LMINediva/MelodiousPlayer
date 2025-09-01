@@ -5,13 +5,16 @@ import android.content.Intent
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.contract.LoginContract
 import com.melodiousplayer.android.model.UserResultBean
 import com.melodiousplayer.android.presenter.impl.LoginPresenterImpl
 import com.melodiousplayer.android.util.EncryptUtil
+import com.melodiousplayer.android.util.URLProviderUtils
 
 /**
  * 用户登录界面
@@ -22,6 +25,8 @@ class LoginActivity : BaseActivity(), LoginContract.View {
     private lateinit var login: Button
     private lateinit var newUser: TextView
     private lateinit var rememberPassword: CheckBox
+    private lateinit var verificationCode: EditText
+    private lateinit var verificationCodeImage: ImageView
     private val presenter = LoginPresenterImpl(this)
 
     override fun getLayoutId(): Int {
@@ -34,6 +39,8 @@ class LoginActivity : BaseActivity(), LoginContract.View {
         login = findViewById(R.id.login)
         newUser = findViewById(R.id.newUser)
         rememberPassword = findViewById(R.id.rememberPassword)
+        verificationCode = findViewById(R.id.verificationCode)
+        verificationCodeImage = findViewById(R.id.verificationCodeImage)
         val prefs = getSharedPreferences("data", Context.MODE_PRIVATE)
         val isRemember = prefs.getBoolean("remember_password", false)
         if (isRemember) {
@@ -47,6 +54,10 @@ class LoginActivity : BaseActivity(), LoginContract.View {
             }
             rememberPassword.isChecked = true
         }
+        // 显示验证码
+        Glide.with(this).load(
+            URLProviderUtils.getVerificationCode()
+        ).into(verificationCodeImage)
     }
 
     override fun initListener() {
@@ -59,6 +70,11 @@ class LoginActivity : BaseActivity(), LoginContract.View {
         }
         newUser.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
+        }
+        verificationCodeImage.setOnClickListener {
+            Glide.with(this).load(
+                URLProviderUtils.getVerificationCode() + "?d=" + System.currentTimeMillis()
+            ).into(verificationCodeImage)
         }
     }
 
@@ -76,6 +92,10 @@ class LoginActivity : BaseActivity(), LoginContract.View {
 
     override fun onPasswordError() {
         password.error = getString(R.string.password_error)
+    }
+
+    override fun onVerificationCodeError(msg: String?) {
+        TODO("Not yet implemented")
     }
 
     override fun onStartLogin() {

@@ -108,6 +108,22 @@ object URLProviderUtils {
     }
 
     /**
+     * 获取验证码
+     */
+    fun getVerificationCode(): String {
+        val url = protocol + serverAddress + "/captcha"
+        return url
+    }
+
+    /**
+     * 比较验证码
+     */
+    fun postCompareVerificationCode(): String {
+        val url = protocol + serverAddress + "/compareCode"
+        return url
+    }
+
+    /**
      *
      * 获取音乐节目列表
      *

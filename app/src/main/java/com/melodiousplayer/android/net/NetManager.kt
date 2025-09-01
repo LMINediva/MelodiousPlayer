@@ -107,7 +107,7 @@ class NetManager private constructor() {
      * 发送POST带JSON参数的网络请求
      */
     fun <RESPONSE> sendPostWithJSONRequest(req: MRequest<RESPONSE>, json: String) {
-        var requestBody: RequestBody =
+        val requestBody: RequestBody =
             RequestBody.create("application/json;charset=utf-8".toMediaType(), json)
         val request = Request.Builder()
             .url(req.url)

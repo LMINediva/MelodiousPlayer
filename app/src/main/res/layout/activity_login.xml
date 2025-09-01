@@ -29,9 +29,34 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:hint="密码"
-        android:imeOptions="actionGo"
+        android:imeOptions="actionNext"
         android:inputType="textPassword"
         android:textColor="@color/black" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/verificationCode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="验证码"
+            android:imeOptions="actionGo"
+            android:inputType="text"
+            android:textColor="@color/black" />
+
+        <ImageView
+            android:id="@+id/verificationCodeImage"
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:contentDescription="验证码图片" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

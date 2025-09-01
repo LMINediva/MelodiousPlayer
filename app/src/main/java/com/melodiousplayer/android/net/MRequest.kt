@@ -42,6 +42,9 @@ open class MRequest<RESPONSE>(
         NetManager.manager.sendPostRequest(this, params, token)
     }
 
+    /**
+     * 发送带JSON参数的POST网络请求
+     */
     fun executePostWithJSON(json: String) {
         NetManager.manager.sendPostWithJSONRequest(this, json)
     }

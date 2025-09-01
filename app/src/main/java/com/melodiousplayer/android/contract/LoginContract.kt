@@ -14,6 +14,7 @@ interface LoginContract {
     interface View {
         fun onUserNameError()
         fun onPasswordError()
+        fun onVerificationCodeError(msg: String?)
         fun onStartLogin()
         fun onLoginSuccess(userResult: UserResultBean?)
         fun onLoginFailed()
