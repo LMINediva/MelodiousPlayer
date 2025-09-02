@@ -8,8 +8,9 @@ import com.melodiousplayer.android.model.UserResultBean
 import com.melodiousplayer.android.model.VerificationCodeResultBean
 import com.melodiousplayer.android.net.LoginRequest
 import com.melodiousplayer.android.net.ResponseHandler
-import com.melodiousplayer.android.util.ThreadUtil
 import com.melodiousplayer.android.util.URLProviderUtils
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
@@ -24,15 +25,13 @@ class LoginPresenterImpl(val view: LoginContract.View) : LoginContract.Presenter
     ResponseHandler<UserResultBean> {
 
     private val client by lazy { OkHttpClient() }
-    private var isValidVerificationCode: Boolean = false
 
     override fun login(userName: String, password: String, verificationCode: String) {
         if (userName.isValidUserName()) {
             // 用户名合法，继续校验密码
             if (password.isValidPassword()) {
                 // 密码合法，继续校验验证码
-                compareVerificationCodeRequest(verificationCode)
-                if (isValidVerificationCode) {
+                if (compareVerificationCodeRequest(verificationCode)) {
                     // 验证码正确，开始登录
                     view.onStartLogin()
                     // 登录到后端服务器
@@ -46,7 +45,7 @@ class LoginPresenterImpl(val view: LoginContract.View) : LoginContract.Presenter
         }
     }
 
-    private fun compareVerificationCodeRequest(verificationCode: String) {
+    private fun compareVerificationCodeRequest(verificationCode: String): Boolean {
         val jsonObject = JSONObject()
         jsonObject.put("code", verificationCode)
         val requestBody: RequestBody =
@@ -58,6 +57,7 @@ class LoginPresenterImpl(val view: LoginContract.View) : LoginContract.Presenter
             .url(URLProviderUtils.postCompareVerificationCode())
             .post(requestBody)
             .build()
+        var isValidVerificationCode = false
         client.newCall(request).enqueue(object : Callback {
             /**
              * 请求成功，子线程中调用
@@ -69,13 +69,11 @@ class LoginPresenterImpl(val view: LoginContract.View) : LoginContract.Presenter
                     result,
                     VerificationCodeResultBean::class.java
                 )
-                ThreadUtil.runOnMainThread {
-                    if (verificationCodeResult.code == 200) {
-                        isValidVerificationCode = true
-                    } else {
-                        isValidVerificationCode = false
-                        view.onVerificationCodeError(verificationCodeResult.msg)
-                    }
+                if (verificationCodeResult.code == 200) {
+                    isValidVerificationCode = true
+                } else {
+                    isValidVerificationCode = false
+                    view.onVerificationCodeError(verificationCodeResult.msg)
                 }
             }
 
@@ -83,12 +81,16 @@ class LoginPresenterImpl(val view: LoginContract.View) : LoginContract.Presenter
              * 请求失败，子线程中调用
              */
             override fun onFailure(call: Call, e: IOException) {
-                ThreadUtil.runOnMainThread {
-                    // 回调到view层处理
-                    view.onNetworkError()
-                }
+                isValidVerificationCode = false
+                // 回调到view层处理
+                view.onNetworkError()
             }
         })
+        // 延时500ms，确保isValidVerificationCode变量更新成功
+        runBlocking {
+            delay(500)
+        }
+        return isValidVerificationCode
     }
 
     private fun loginRequest(userName: String, password: String) {

@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.contract.LoginContract
@@ -54,10 +55,13 @@ class LoginActivity : BaseActivity(), LoginContract.View {
             }
             rememberPassword.isChecked = true
         }
-        // 显示验证码
-        Glide.with(this).load(
-            URLProviderUtils.getVerificationCode()
-        ).into(verificationCodeImage)
+        // 显示验证码，同时禁用Glide内存和磁盘缓存
+        Glide.with(this)
+            .load(
+                URLProviderUtils.getVerificationCode()
+            ).skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .into(verificationCodeImage)
     }
 
     override fun initListener() {

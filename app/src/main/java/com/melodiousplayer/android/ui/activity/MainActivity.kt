@@ -230,9 +230,17 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
             URLProviderUtils.protocol + URLProviderUtils.serverAddress
                     + URLProviderUtils.userAvatarPath + currentUser.avatar
         ).into(avatarImage)
+        // 显示侧边栏所有菜单项
+        for (i in 0 until menu.size()) {
+            menu.getItem(i).isVisible = true
+        }
     }
 
     override fun onTokenLoginFailed(msg: String?) {
+        // 隐藏侧边栏所有菜单项
+        for (i in 0 until menu.size()) {
+            menu.getItem(i).isVisible = false
+        }
         msg?.let { myToast(it) }
     }
 
