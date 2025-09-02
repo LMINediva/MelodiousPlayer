@@ -1,9 +1,11 @@
 package com.melodiousplayer.android.presenter.impl
 
+import com.google.gson.Gson
 import com.melodiousplayer.android.contract.LoginContract
 import com.melodiousplayer.android.extension.isValidPassword
 import com.melodiousplayer.android.extension.isValidUserName
 import com.melodiousplayer.android.model.UserResultBean
+import com.melodiousplayer.android.model.VerificationCodeResultBean
 import com.melodiousplayer.android.net.LoginRequest
 import com.melodiousplayer.android.net.ResponseHandler
 import com.melodiousplayer.android.util.ThreadUtil
@@ -22,15 +24,20 @@ class LoginPresenterImpl(val view: LoginContract.View) : LoginContract.Presenter
     ResponseHandler<UserResultBean> {
 
     private val client by lazy { OkHttpClient() }
+    private var isValidVerificationCode: Boolean = false
 
-    override fun login(userName: String, password: String) {
+    override fun login(userName: String, password: String, verificationCode: String) {
         if (userName.isValidUserName()) {
             // 用户名合法，继续校验密码
             if (password.isValidPassword()) {
-                // 密码合法，开始登录
-                view.onStartLogin()
-                // 登录到后端服务器
-                loginRequest(userName, password)
+                // 密码合法，继续校验验证码
+                compareVerificationCodeRequest(verificationCode)
+                if (isValidVerificationCode) {
+                    // 验证码正确，开始登录
+                    view.onStartLogin()
+                    // 登录到后端服务器
+                    loginRequest(userName, password)
+                }
             } else {
                 view.onPasswordError()
             }
@@ -53,23 +60,32 @@ class LoginPresenterImpl(val view: LoginContract.View) : LoginContract.Presenter
             .build()
         client.newCall(request).enqueue(object : Callback {
             /**
-             * 子线程中调用
+             * 请求成功，子线程中调用
+             */
+            override fun onResponse(call: Call, response: Response) {
+                val result = response.body?.string()
+                val gson = Gson()
+                val verificationCodeResult = gson.fromJson(
+                    result,
+                    VerificationCodeResultBean::class.java
+                )
+                ThreadUtil.runOnMainThread {
+                    if (verificationCodeResult.code == 200) {
+                        isValidVerificationCode = true
+                    } else {
+                        isValidVerificationCode = false
+                        view.onVerificationCodeError(verificationCodeResult.msg)
+                    }
+                }
+            }
+
+            /**
+             * 请求失败，子线程中调用
              */
             override fun onFailure(call: Call, e: IOException) {
                 ThreadUtil.runOnMainThread {
                     // 回调到view层处理
                     view.onNetworkError()
-                }
-            }
-
-            /**
-             * 子线程中调用
-             */
-            override fun onResponse(call: Call, response: Response) {
-                val result = response.body?.string()
-//                val parseResult = req.parseResult(result)
-                ThreadUtil.runOnMainThread {
-//                    req.handler.onSuccess(req.type, parseResult)
                 }
             }
         })

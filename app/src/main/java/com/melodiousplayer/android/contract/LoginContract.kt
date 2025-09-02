@@ -8,7 +8,7 @@ import com.melodiousplayer.android.model.UserResultBean
 interface LoginContract {
 
     interface Presenter : BasePresenter {
-        fun login(userName: String, password: String)
+        fun login(userName: String, password: String, verificationCode: String)
     }
 
     interface View {

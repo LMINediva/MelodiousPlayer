@@ -83,7 +83,8 @@ class LoginActivity : BaseActivity(), LoginContract.View {
         hideSoftKeyboard()
         val userNameString = userName.text.trim().toString()
         val passwordString = password.text.trim().toString()
-        presenter.login(userNameString, passwordString)
+        val verificationCodeString = verificationCode.text.trim().toString()
+        presenter.login(userNameString, passwordString, verificationCodeString)
     }
 
     override fun onUserNameError() {
@@ -95,7 +96,7 @@ class LoginActivity : BaseActivity(), LoginContract.View {
     }
 
     override fun onVerificationCodeError(msg: String?) {
-        TODO("Not yet implemented")
+        verificationCode.error = msg
     }
 
     override fun onStartLogin() {
