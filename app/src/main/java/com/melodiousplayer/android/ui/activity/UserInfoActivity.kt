@@ -1,8 +1,17 @@
 package com.melodiousplayer.android.ui.activity
 
+import android.content.Context
 import android.text.Editable
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
@@ -17,14 +26,19 @@ import de.hdodenhof.circleimageview.CircleImageView
 /**
  * 个人信息界面
  */
-class UserInfoActivity : BaseActivity(), ToolBarManager {
+class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
 
     private lateinit var avatarImage: CircleImageView
+    private lateinit var changePicture: ImageView
     private lateinit var username: EditText
     private lateinit var phonenumber: EditText
     private lateinit var email: EditText
     private lateinit var role: TextView
     private lateinit var createTime: TextView
+    private lateinit var albums: TextView
+    private lateinit var cancel: LinearLayout
+    private lateinit var photograph: TextView
+    private var popupWindow: PopupWindow? = null
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -45,6 +59,7 @@ class UserInfoActivity : BaseActivity(), ToolBarManager {
             it.setDisplayShowTitleEnabled(false)
         }
         avatarImage = findViewById(R.id.userAvatar)
+        changePicture = findViewById(R.id.changePicture)
         username = findViewById(R.id.userName)
         phonenumber = findViewById(R.id.phonenumber)
         email = findViewById(R.id.email)
@@ -65,6 +80,26 @@ class UserInfoActivity : BaseActivity(), ToolBarManager {
         }
     }
 
+    override fun initListener() {
+        avatarImage.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.userAvatar -> {
+                showPopupWindow()
+            }
+
+            R.id.changePicture -> {
+                showPopupWindow()
+            }
+
+            R.id.cancel -> {
+                popupWindow?.dismiss()
+            }
+        }
+    }
+
     /**
      * Toolbar上的图标按钮点击事件
      */
@@ -76,6 +111,25 @@ class UserInfoActivity : BaseActivity(), ToolBarManager {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun showPopupWindow() {
+        var layoutInflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        if (popupWindow == null) {
+            val view = layoutInflater.inflate(R.layout.popup_select_photograph, null)
+            val width = ViewGroup.LayoutParams.MATCH_PARENT
+            val height = 500
+            albums = view.findViewById(R.id.albums)
+            photograph = view.findViewById(R.id.photograph)
+            cancel = view.findViewById(R.id.cancel)
+            popupWindow = PopupWindow(view, width, height, true)
+            cancel.setOnClickListener(this)
+        }
+        popupWindow?.animationStyle = R.style.bottom_popup
+        popupWindow?.isOutsideTouchable = true
+        popupWindow?.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+        // 显示PopupWindow，参数为锚点View和重力、偏移量，这里设置为底部弹出
+        popupWindow?.showAtLocation(window.decorView, Gravity.BOTTOM, 0, 0)
     }
 
 }

@@ -20,8 +20,8 @@
     </style>
 
     <style name="pop">
-        <item name="android:windowEnterAnimation">@anim/pop_enter</item>
-        <item name="android:windowExitAnimation">@anim/pop_exit</item>
+        <item name="android:windowEnterAnimation">@anim/bottom_popup_enter</item>
+        <item name="android:windowExitAnimation">@anim/bottom_popup_exit</item>
     </style>
 
 </resources>

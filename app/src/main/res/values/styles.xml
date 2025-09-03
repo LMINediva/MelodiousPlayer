@@ -6,4 +6,9 @@
         <item name="android:windowExitAnimation">@anim/popup_exit</item>
     </style>
 
+    <style name="bottom_popup">
+        <item name="android:windowEnterAnimation">@anim/bottom_popup_enter</item>
+        <item name="android:windowExitAnimation">@anim/bottom_popup_exit</item>
+    </style>
+
 </resources>

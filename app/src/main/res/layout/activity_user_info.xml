@@ -7,13 +7,27 @@
 
     <include layout="@layout/toolbar" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/userAvatar"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="20dp"
-        android:src="@drawable/nav_icon" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/userAvatar"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/nav_icon" />
+
+        <ImageView
+            android:id="@+id/changePicture"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignEnd="@id/userAvatar"
+            android:layout_alignBottom="@id/userAvatar"
+            android:src="@drawable/change_picture" />
+
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
