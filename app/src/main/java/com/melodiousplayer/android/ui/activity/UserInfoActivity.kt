@@ -4,10 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
-import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -34,6 +31,8 @@ import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.util.DateUtil
 import com.melodiousplayer.android.util.ToolBarManager
 import com.melodiousplayer.android.util.URLProviderUtils
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
 import de.hdodenhof.circleimageview.CircleImageView
 import java.io.File
 
@@ -54,11 +53,15 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
     private lateinit var photograph: TextView
     private var popupWindow: PopupWindow? = null
     private val CAMERA_PERMISSION_REQUEST = 1
+    private val PERMISSION_REQUEST = 1
+    private val READ_EXTERNAL_STORAGE_PERMISSION_REQUEST = 2
+    private val WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST = 3
     private val TAKE_PHOTO_REQUEST = 1
     private val CROP_PHOTO_REQUEST = 2
     private val ALBUM_REQUEST = 3
     private lateinit var imageUri: Uri
     private lateinit var outputImage: File
+    private var hasAllPermission: Boolean = true
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -98,10 +101,12 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
                         + URLProviderUtils.userAvatarPath + currentUser.avatar
             ).into(avatarImage)
         }
+        requestPermissions()
     }
 
     override fun initListener() {
         avatarImage.setOnClickListener(this)
+        changePicture.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -115,20 +120,17 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
             }
 
             R.id.photograph -> {
-                if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
-                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        ActivityCompat.requestPermissions(
-                            this, arrayOf(Manifest.permission.CAMERA),
-                            CAMERA_PERMISSION_REQUEST
-                        )
-                    } else {
-                        takePhoto()
-                    }
-                } else {
-                    myToast("设备没有相机")
-                }
+                takePhoto()
+                popupWindow?.dismiss()
+            }
+
+            R.id.albums -> {
+                // 打开文件选择器
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+                intent.addCategory(Intent.CATEGORY_OPENABLE)
+                // 指定只显示图片
+                intent.type = "image/*"
+                startActivityForResult(intent, ALBUM_REQUEST)
                 popupWindow?.dismiss()
             }
 
@@ -151,6 +153,29 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun requestPermissions() {
+        if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
+            val permissions = arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA
+            )
+            for (permission in permissions) {
+                if (ContextCompat.checkSelfPermission(this, permission)
+                    != PackageManager.PERMISSION_GRANTED
+                ) {
+                    ActivityCompat.requestPermissions(
+                        this, permissions,
+                        PERMISSION_REQUEST
+                    )
+                    hasAllPermission = false
+                }
+            }
+        } else {
+            myToast("设备没有相机")
+        }
+    }
+
     /**
      * 权限请求结果
      */
@@ -161,13 +186,11 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            CAMERA_PERMISSION_REQUEST -> {
-                if (grantResults.isNotEmpty() &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED
-                ) {
-                    takePhoto()
-                } else {
-                    myToast("相机权限被拒绝")
+            PERMISSION_REQUEST -> {
+                for (result in grantResults) {
+                    if (result != PackageManager.PERMISSION_GRANTED) {
+                        break
+                    }
                 }
             }
         }
@@ -182,11 +205,12 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
             val view = layoutInflater.inflate(R.layout.popup_select_photograph, null)
             val width = ViewGroup.LayoutParams.MATCH_PARENT
             val height = 500
-            albums = view.findViewById(R.id.albums)
             photograph = view.findViewById(R.id.photograph)
+            albums = view.findViewById(R.id.albums)
             cancel = view.findViewById(R.id.cancel)
             popupWindow = PopupWindow(view, width, height, true)
             photograph.setOnClickListener(this)
+            albums.setOnClickListener(this)
             cancel.setOnClickListener(this)
         }
         popupWindow?.animationStyle = R.style.bottom_popup
@@ -201,13 +225,36 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
         when (requestCode) {
             TAKE_PHOTO_REQUEST -> {
                 if (resultCode == RESULT_OK) {
-                    // 将拍摄的照片显示出来
+                    // 在截图界面显示拍摄好的照片
+                    val intent = CropImage.activity(imageUri)
+                        .setGuidelines(CropImageView.Guidelines.ON)
+                        .setAspectRatio(1, 1)
+                        .getIntent(this)
+                    startActivityForResult(intent, CROP_PHOTO_REQUEST)
+                }
+            }
+
+            CROP_PHOTO_REQUEST -> {
+                if (resultCode == RESULT_OK) {
+                    val resultUri = CropImage.getActivityResult(data).uri
                     val bitmap = BitmapFactory.decodeStream(
-                        contentResolver.openInputStream(imageUri)
+                        contentResolver.openInputStream(resultUri)
                     )
-                    avatarImage.setImageBitmap(rotateIfRequired(bitmap))
-                    // 销毁临时文件
-                    // outputImage.delete()
+                    // 将拍摄并裁剪好的照片显示出来
+                    avatarImage.setImageBitmap(bitmap)
+                }
+            }
+
+            ALBUM_REQUEST -> {
+                if (resultCode == RESULT_OK && data != null) {
+                    data.data?.let { uri ->
+                        // 在截图界面显示选择好的照片
+                        val intent = CropImage.activity(uri)
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .setAspectRatio(1, 1)
+                            .getIntent(this)
+                        startActivityForResult(intent, CROP_PHOTO_REQUEST)
+                    }
                 }
             }
         }
@@ -219,6 +266,7 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
     private fun takePhoto() {
         // 创建File对象，用于存储拍照后的图片
         outputImage = File(externalCacheDir, "output_image.jpg")
+        // 销毁临时文件
         if (outputImage.exists()) {
             outputImage.delete()
         }
@@ -234,32 +282,6 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
         val intent = Intent("android.media.action.IMAGE_CAPTURE")
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
         startActivityForResult(intent, TAKE_PHOTO_REQUEST)
-    }
-
-    private fun rotateIfRequired(bitmap: Bitmap): Bitmap {
-        val exif = ExifInterface(outputImage.path)
-        val orientation = exif.getAttributeInt(
-            ExifInterface.TAG_ORIENTATION,
-            ExifInterface.ORIENTATION_NORMAL
-        )
-        return when (orientation) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> rotateBitmap(bitmap, 90)
-            ExifInterface.ORIENTATION_ROTATE_180 -> rotateBitmap(bitmap, 180)
-            ExifInterface.ORIENTATION_ROTATE_270 -> rotateBitmap(bitmap, 270)
-            else -> bitmap
-        }
-    }
-
-    private fun rotateBitmap(bitmap: Bitmap, degree: Int): Bitmap {
-        val matrix = Matrix()
-        matrix.postRotate(degree.toFloat())
-        val rotatedBitmap = Bitmap.createBitmap(
-            bitmap, 0, 0, bitmap.width,
-            bitmap.height, matrix, true
-        )
-        // 将不再需要的Bitmap对象回收
-        bitmap.recycle()
-        return rotatedBitmap
     }
 
     private fun getBitmapFromUri(uri: Uri) = contentResolver

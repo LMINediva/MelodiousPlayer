@@ -19,6 +19,7 @@ eventbus = "3.3.1"
 coroutinesCore = "1.9.0"
 coroutinesAndroid = "1.9.0"
 circleimageview = "3.1.0"
+androidImageCropper = "2.8.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -39,6 +40,7 @@ eventbus = { group = "org.greenrobot", name = "eventbus", version.ref = "eventbu
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutinesCore" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutinesAndroid" }
 circleimageview = { group = "de.hdodenhof", name = "circleimageview", version.ref = "circleimageview" }
+android-image-cropper = { group = "com.theartofdev.edmodo", name = "android-image-cropper", version.ref = "androidImageCropper" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
