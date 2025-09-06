@@ -9,7 +9,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="120dp">
+        android:layout_height="200dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/userAvatar"
@@ -26,6 +26,19 @@
             android:layout_alignEnd="@id/userAvatar"
             android:layout_alignBottom="@id/userAvatar"
             android:src="@drawable/change_picture" />
+
+        <Button
+            android:id="@+id/updatePicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/changePicture"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"
+            android:background="@drawable/btn_danger"
+            android:gravity="center"
+            android:text="确认更换"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
 
     </RelativeLayout>
 

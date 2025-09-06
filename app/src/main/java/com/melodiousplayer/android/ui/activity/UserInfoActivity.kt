@@ -52,10 +52,7 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
     private lateinit var cancel: LinearLayout
     private lateinit var photograph: TextView
     private var popupWindow: PopupWindow? = null
-    private val CAMERA_PERMISSION_REQUEST = 1
     private val PERMISSION_REQUEST = 1
-    private val READ_EXTERNAL_STORAGE_PERMISSION_REQUEST = 2
-    private val WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST = 3
     private val TAKE_PHOTO_REQUEST = 1
     private val CROP_PHOTO_REQUEST = 2
     private val ALBUM_REQUEST = 3
@@ -126,9 +123,15 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
 
             R.id.albums -> {
                 // 打开文件选择器
-                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-                intent.addCategory(Intent.CATEGORY_OPENABLE)
+//                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+//                intent.addCategory(Intent.CATEGORY_OPENABLE)
                 // 指定只显示图片
+//                intent.type = "image/*"
+//                startActivityForResult(intent, ALBUM_REQUEST)
+
+                val intent =
+                    Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                // 通过setType方法限制类型为图像，否则有些android版本会同时显示视频
                 intent.type = "image/*"
                 startActivityForResult(intent, ALBUM_REQUEST)
                 popupWindow?.dismiss()
