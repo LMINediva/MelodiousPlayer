@@ -4,12 +4,15 @@ import com.melodiousplayer.android.util.ThreadUtil
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.FormBody
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.Response
+import java.io.File
 import java.io.IOException
 
 /**
@@ -109,6 +112,41 @@ class NetManager private constructor() {
     fun <RESPONSE> sendPostWithJSONRequest(req: MRequest<RESPONSE>, json: String) {
         val requestBody: RequestBody =
             RequestBody.create("application/json;charset=utf-8".toMediaType(), json)
+        val request = Request.Builder()
+            .url(req.url)
+            .post(requestBody)
+            .build()
+        client.newCall(request).enqueue(object : Callback {
+            /**
+             * 子线程中调用
+             */
+            override fun onFailure(call: Call, e: IOException) {
+                ThreadUtil.runOnMainThread { // 回调到view层处理
+                    req.handler.onError(req.type, e.message)
+                }
+            }
+
+            /**
+             * 子线程中调用
+             */
+            override fun onResponse(call: Call, response: Response) {
+                val result = response.body?.string()
+                val parseResult = req.parseResult(result)
+                ThreadUtil.runOnMainThread { req.handler.onSuccess(req.type, parseResult) }
+            }
+        })
+    }
+
+    /**
+     * 发送POST上传图片的网络请求
+     */
+    fun <RESPONSE> sendPostUploadImageRequest(req: MRequest<RESPONSE>, file: File) {
+        val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+        val requestBody =
+            MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", file.name, requestFile)
+                .build()
         val request = Request.Builder()
             .url(req.url)
             .post(requestBody)

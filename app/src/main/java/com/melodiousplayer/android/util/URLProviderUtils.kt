@@ -124,6 +124,14 @@ object URLProviderUtils {
     }
 
     /**
+     * 上传头像
+     */
+    fun postUploadAvatar(): String {
+        val url = protocol + serverAddress + "/sys/user/uploadImage"
+        return url
+    }
+
+    /**
      *
      * 获取音乐节目列表
      *
