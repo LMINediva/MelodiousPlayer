@@ -2,6 +2,7 @@ package com.melodiousplayer.android.net
 
 import com.google.gson.GsonBuilder
 import com.melodiousplayer.android.adapter.DateTypeAdapter
+import java.io.File
 import java.lang.reflect.ParameterizedType
 import java.util.Date
 
@@ -45,8 +46,15 @@ open class MRequest<RESPONSE>(
     /**
      * 发送带JSON参数的POST网络请求
      */
-    fun executePostWithJSON(json: String) {
-        NetManager.manager.sendPostWithJSONRequest(this, json)
+    fun executePostWithJSON(token: String = "", json: String) {
+        NetManager.manager.sendPostWithJSONRequest(this, token, json)
+    }
+
+    /**
+     * 发送POST上传图片的网络请求
+     */
+    fun executePostUploadImage(token: String = "", file: File) {
+        NetManager.manager.sendPostUploadImageRequest(this, token, file)
     }
 
 }

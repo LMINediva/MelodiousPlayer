@@ -109,12 +109,13 @@ class NetManager private constructor() {
     /**
      * 发送POST带JSON参数的网络请求
      */
-    fun <RESPONSE> sendPostWithJSONRequest(req: MRequest<RESPONSE>, json: String) {
+    fun <RESPONSE> sendPostWithJSONRequest(req: MRequest<RESPONSE>, token: String, json: String) {
         val requestBody: RequestBody =
             RequestBody.create("application/json;charset=utf-8".toMediaType(), json)
         val request = Request.Builder()
             .url(req.url)
             .post(requestBody)
+            .addHeader("token", token)
             .build()
         client.newCall(request).enqueue(object : Callback {
             /**
@@ -140,7 +141,11 @@ class NetManager private constructor() {
     /**
      * 发送POST上传图片的网络请求
      */
-    fun <RESPONSE> sendPostUploadImageRequest(req: MRequest<RESPONSE>, file: File) {
+    fun <RESPONSE> sendPostUploadImageRequest(
+        req: MRequest<RESPONSE>,
+        token: String,
+        file: File
+    ) {
         val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
         val requestBody =
             MultipartBody.Builder()
@@ -150,6 +155,7 @@ class NetManager private constructor() {
         val request = Request.Builder()
             .url(req.url)
             .post(requestBody)
+            .addHeader("token", token)
             .build()
         client.newCall(request).enqueue(object : Callback {
             /**

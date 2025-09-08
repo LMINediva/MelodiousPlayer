@@ -40,7 +40,7 @@ class RegisterPresenterImpl(val view: RegisterContract.View) : RegisterContract.
             null, null, null, null, null
         )
         val json = Gson().toJson(user)
-        RegisterRequest(this).executePostWithJSON(json)
+        RegisterRequest(this).executePostWithJSON(json = json)
     }
 
     override fun onSuccess(type: Int, result: RegisterResultBean) {

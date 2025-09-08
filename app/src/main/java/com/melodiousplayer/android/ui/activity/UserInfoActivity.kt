@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -25,9 +24,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
+import com.melodiousplayer.android.contract.UpdateAvatarContract
+import com.melodiousplayer.android.contract.UploadAvatarContract
+import com.melodiousplayer.android.model.UploadImageResultBean
 import com.melodiousplayer.android.model.UserBean
+import com.melodiousplayer.android.presenter.impl.UpdateAvatarPresenterImpl
+import com.melodiousplayer.android.presenter.impl.UploadAvatarPresenterImpl
 import com.melodiousplayer.android.util.DateUtil
 import com.melodiousplayer.android.util.ToolBarManager
 import com.melodiousplayer.android.util.URLProviderUtils
@@ -39,7 +44,8 @@ import java.io.File
 /**
  * 个人信息界面
  */
-class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
+class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
+    UploadAvatarContract.View, UpdateAvatarContract.View {
 
     private lateinit var avatarImage: CircleImageView
     private lateinit var changePicture: ImageView
@@ -58,7 +64,12 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
     private val ALBUM_REQUEST = 3
     private lateinit var imageUri: Uri
     private lateinit var outputImage: File
+    private lateinit var currentUser: UserBean
+    private lateinit var token: String
+    private lateinit var newAvatar: String
     private var hasAllPermission: Boolean = true
+    private val uploadAvatarPresenter = UploadAvatarPresenterImpl(this)
+    private val updataAvatarPresenter = UpdateAvatarPresenterImpl(this)
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -87,17 +98,24 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
         createTime = findViewById(R.id.createTime)
         val userSerialized = intent.getSerializableExtra("user")
         if (userSerialized != null) {
-            val currentUser = userSerialized as UserBean
+            currentUser = userSerialized as UserBean
             username.text = Editable.Factory.getInstance().newEditable(currentUser.username)
             phonenumber.text = Editable.Factory.getInstance().newEditable(currentUser.phonenumber)
             email.text = Editable.Factory.getInstance().newEditable(currentUser.email)
             role.text = currentUser.roles
             createTime.text = currentUser.createTime?.let { DateUtil.formatDateToString(it) }
-            Glide.with(this).load(
-                URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                        + URLProviderUtils.userAvatarPath + currentUser.avatar
-            ).into(avatarImage)
+            Glide.with(this)
+                .load(
+                    URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                            + URLProviderUtils.userAvatarPath + currentUser.avatar
+                )
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(avatarImage)
         }
+        // 从SharedPreferences文件中读取token的值
+        token = getSharedPreferences("data", Context.MODE_PRIVATE)
+            .getString("token", "").toString()
         requestPermissions()
     }
 
@@ -122,13 +140,6 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
             }
 
             R.id.albums -> {
-                // 打开文件选择器
-//                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-//                intent.addCategory(Intent.CATEGORY_OPENABLE)
-                // 指定只显示图片
-//                intent.type = "image/*"
-//                startActivityForResult(intent, ALBUM_REQUEST)
-
                 val intent =
                     Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                 // 通过setType方法限制类型为图像，否则有些android版本会同时显示视频
@@ -240,11 +251,13 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
             CROP_PHOTO_REQUEST -> {
                 if (resultCode == RESULT_OK) {
                     val resultUri = CropImage.getActivityResult(data).uri
-                    val bitmap = BitmapFactory.decodeStream(
-                        contentResolver.openInputStream(resultUri)
-                    )
-                    // 将拍摄并裁剪好的照片显示出来
-                    avatarImage.setImageBitmap(bitmap)
+                    // 将拍摄并裁剪好的照片上传到服务器
+                    if (resultUri != null) {
+                        if (token.isNotEmpty()) {
+                            resultUri.path?.let { File(it) }
+                                ?.let { uploadAvatarPresenter.uploadAvatar(token, it) }
+                        }
+                    }
                 }
             }
 
@@ -287,9 +300,40 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
         startActivityForResult(intent, TAKE_PHOTO_REQUEST)
     }
 
-    private fun getBitmapFromUri(uri: Uri) = contentResolver
-        .openFileDescriptor(uri, "r")?.use {
-            BitmapFactory.decodeFileDescriptor(it.fileDescriptor)
-        }
+    override fun onUploadAvatarSuccess(result: UploadImageResultBean) {
+        val user = UserBean(
+            currentUser.id, null, null,
+            result.data?.title, null, null, null,
+            null, null, null, null, null
+        )
+        newAvatar = result.data?.title.toString()
+        // 发送更新头像请求
+        updataAvatarPresenter.updateAvatar(token, user)
+    }
+
+    override fun onUploadAvatarFailed() {
+        myToast(getString(R.string.upload_avatar_failed))
+    }
+
+    override fun onUpdateAvatarSuccess() {
+        // 将上传并更新成功的头像显示出来
+        Glide.with(this)
+            .load(
+                URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                        + URLProviderUtils.userAvatarPath + newAvatar
+            )
+            .skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .into(avatarImage)
+        myToast(getString(R.string.update_avatar_success))
+    }
+
+    override fun onUpdateAvatarFailed() {
+        myToast(getString(R.string.update_avatar_failed))
+    }
+
+    override fun onNetworkError() {
+        myToast(getString(R.string.network_error))
+    }
 
 }

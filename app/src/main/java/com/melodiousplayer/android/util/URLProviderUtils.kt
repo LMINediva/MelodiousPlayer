@@ -132,6 +132,14 @@ object URLProviderUtils {
     }
 
     /**
+     * 更新头像
+     */
+    fun postUpdateAvatar(): String {
+        val url = protocol + serverAddress + "/sys/user/updateAvatar"
+        return url
+    }
+
+    /**
      *
      * 获取音乐节目列表
      *

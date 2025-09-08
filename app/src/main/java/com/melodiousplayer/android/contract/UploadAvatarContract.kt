@@ -1,16 +1,17 @@
 package com.melodiousplayer.android.contract
 
+import com.melodiousplayer.android.model.UploadImageResultBean
 import java.io.File
 
 interface UploadAvatarContract {
 
     interface Presenter : BasePresenter {
-        fun uploadImage(file: File)
+        fun uploadAvatar(token: String, file: File)
     }
 
     interface View {
-        fun onUploadImageSuccess()
-        fun onUploadImageFailed()
+        fun onUploadAvatarSuccess(result: UploadImageResultBean)
+        fun onUploadAvatarFailed()
         fun onNetworkError()
     }
 
