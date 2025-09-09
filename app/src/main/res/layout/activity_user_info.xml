@@ -74,7 +74,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:imeOptions="actionNext"
-            android:inputType="text"
+            android:inputType="phone"
             android:textColor="@color/black" />
 
     </LinearLayout>
@@ -99,7 +99,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:imeOptions="actionGo"
-            android:inputType="text"
+            android:inputType="textEmailAddress"
             android:textColor="@color/black" />
 
     </LinearLayout>

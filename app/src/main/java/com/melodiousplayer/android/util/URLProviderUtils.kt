@@ -95,7 +95,7 @@ object URLProviderUtils {
      * 用户注册请求url
      */
     fun postRegisterUrl(): String {
-        val url = protocol + serverAddress + "/addUser"
+        val url = protocol + serverAddress + "/register"
         return url
     }
 

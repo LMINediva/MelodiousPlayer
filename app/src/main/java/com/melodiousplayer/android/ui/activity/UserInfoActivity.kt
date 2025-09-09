@@ -66,7 +66,7 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private lateinit var outputImage: File
     private lateinit var currentUser: UserBean
     private lateinit var token: String
-    private lateinit var newAvatar: String
+    private var newAvatar: String? = null
     private var hasAllPermission: Boolean = true
     private val uploadAvatarPresenter = UploadAvatarPresenterImpl(this)
     private val updataAvatarPresenter = UpdateAvatarPresenterImpl(this)
@@ -160,6 +160,9 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
+                val intent = Intent()
+                intent.putExtra("newAvatar", newAvatar)
+                setResult(RESULT_OK, intent)
                 finish()
                 return true
             }
@@ -334,6 +337,14 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
 
     override fun onNetworkError() {
         myToast(getString(R.string.network_error))
+    }
+
+    override fun onBackPressed() {
+        val intent = Intent()
+        intent.putExtra("newAvatar", newAvatar)
+        setResult(RESULT_OK, intent)
+        finish()
+        super.onBackPressed()
     }
 
 }

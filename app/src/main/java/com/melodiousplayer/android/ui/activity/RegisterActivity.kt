@@ -1,5 +1,6 @@
 package com.melodiousplayer.android.ui.activity
 
+import android.content.Intent
 import android.widget.Button
 import android.widget.EditText
 import com.melodiousplayer.android.R
@@ -73,6 +74,10 @@ class RegisterActivity : BaseActivity(), RegisterContract.View {
     override fun onRegisterSuccess() {
         dismissProgress()
         myToast(getString(R.string.register_success))
+        val intent = Intent()
+        intent.putExtra("username", userName.text.trim().toString())
+        intent.putExtra("password", password.text.trim().toString())
+        setResult(RESULT_OK, intent)
         finish()
     }
 

@@ -28,6 +28,7 @@ class LoginActivity : BaseActivity(), LoginContract.View {
     private lateinit var rememberPassword: CheckBox
     private lateinit var verificationCode: EditText
     private lateinit var verificationCodeImage: ImageView
+    private val REGISTER_REQUEST = 1
     private val presenter = LoginPresenterImpl(this)
 
     override fun getLayoutId(): Int {
@@ -73,12 +74,24 @@ class LoginActivity : BaseActivity(), LoginContract.View {
             true
         }
         newUser.setOnClickListener {
-            startActivity(Intent(this, RegisterActivity::class.java))
+            startActivityForResult(Intent(this, RegisterActivity::class.java), REGISTER_REQUEST)
         }
         verificationCodeImage.setOnClickListener {
             Glide.with(this).load(
                 URLProviderUtils.getVerificationCode() + "?d=" + System.currentTimeMillis()
             ).into(verificationCodeImage)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            REGISTER_REQUEST -> if (resultCode == RESULT_OK) {
+                val userNameString = data?.getStringExtra("username")
+                val passwordString = data?.getStringExtra("password")
+                userName.setText(userNameString)
+                password.setText(passwordString)
+            }
         }
     }
 
@@ -100,7 +113,9 @@ class LoginActivity : BaseActivity(), LoginContract.View {
     }
 
     override fun onVerificationCodeError(msg: String?) {
-        verificationCode.error = msg
+        runOnUiThread {
+            verificationCode.error = msg
+        }
     }
 
     override fun onStartLogin() {

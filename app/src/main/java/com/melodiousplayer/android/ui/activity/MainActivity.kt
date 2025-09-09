@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.melodiousplayer.android.R
@@ -47,6 +48,7 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
     private lateinit var avatarImage: CircleImageView
     private lateinit var currentUser: UserBean
     private lateinit var menu: Menu
+    private val UPDATE_REQUEST = 1
     private var userSerialized: Serializable? = null
     private val presenter = TokenLoginPresenterImpl(this)
     private val logoutPresenter = LogoutPresenterImpl(this)
@@ -95,10 +97,14 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
             usernameText.text = currentUser.username
             usernameText.visibility = View.VISIBLE
             toLogin.visibility = View.GONE
-            Glide.with(this).load(
-                URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                        + URLProviderUtils.userAvatarPath + currentUser.avatar
-            ).into(avatarImage)
+            Glide.with(this)
+                .load(
+                    URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                            + URLProviderUtils.userAvatarPath + currentUser.avatar
+                )
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(avatarImage)
             // 显示侧边栏所有菜单项
             for (i in 0 until menu.size()) {
                 menu.getItem(i).isVisible = true
@@ -143,7 +149,7 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
                 // 进入用户个人信息界面，传递用户信息
                 val intent = Intent(this, UserInfoActivity::class.java)
                 intent.putExtra("user", currentUser)
-                startActivity(intent)
+                startActivityForResult(intent, UPDATE_REQUEST)
             }
 
             R.id.navChangePassword -> {
@@ -271,6 +277,26 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
 
     override fun onNetworkError() {
         myToast(getString(R.string.network_error))
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            UPDATE_REQUEST -> if (resultCode == RESULT_OK) {
+                val newAvatar = data?.getStringExtra("newAvatar")
+                if (!newAvatar.isNullOrEmpty()) {
+                    currentUser.avatar = newAvatar
+                    Glide.with(this)
+                        .load(
+                            URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                                    + URLProviderUtils.userAvatarPath + newAvatar
+                        )
+                        .skipMemoryCache(true)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(avatarImage)
+                }
+            }
+        }
     }
 
 }
