@@ -1,5 +1,5 @@
 package com.melodiousplayer.android.model
 
-data class UpdateImageResultBean(
+data class ResultBean(
     var code: Int?
 )
