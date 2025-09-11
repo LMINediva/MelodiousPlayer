@@ -14,5 +14,9 @@
     <string name="upload_avatar_failed">上传头像失败</string>
     <string name="update_avatar_success">更新头像成功</string>
     <string name="update_avatar_failed">更新头像失败</string>
+    <string name="phone_number_error">手机号不合法</string>
+    <string name="email_error">邮箱格式不正确</string>
+    <string name="update_user_info_success">更新用户信息成功</string>
+    <string name="update_user_info_failed">更新用户信息失败</string>
     <string name="network_error">网络错误</string>
 </resources>

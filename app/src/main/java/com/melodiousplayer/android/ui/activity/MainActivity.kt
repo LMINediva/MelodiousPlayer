@@ -284,6 +284,7 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
         when (requestCode) {
             UPDATE_REQUEST -> if (resultCode == RESULT_OK) {
                 val newAvatar = data?.getStringExtra("newAvatar")
+                val newUsername = data?.getStringExtra("newUsername")
                 if (!newAvatar.isNullOrEmpty()) {
                     currentUser.avatar = newAvatar
                     Glide.with(this)
@@ -294,6 +295,10 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
                         .skipMemoryCache(true)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(avatarImage)
+                }
+                if (!newUsername.isNullOrEmpty()) {
+                    currentUser.username = newUsername
+                    usernameText.text = newUsername
                 }
             }
         }

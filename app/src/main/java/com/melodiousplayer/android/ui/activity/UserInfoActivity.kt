@@ -14,6 +14,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -28,10 +29,12 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.contract.UpdateAvatarContract
+import com.melodiousplayer.android.contract.UpdateUserInfoContract
 import com.melodiousplayer.android.contract.UploadAvatarContract
 import com.melodiousplayer.android.model.UploadImageResultBean
 import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.presenter.impl.UpdateAvatarPresenterImpl
+import com.melodiousplayer.android.presenter.impl.UpdateUserInfoPresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadAvatarPresenterImpl
 import com.melodiousplayer.android.util.DateUtil
 import com.melodiousplayer.android.util.ToolBarManager
@@ -45,7 +48,7 @@ import java.io.File
  * 个人信息界面
  */
 class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
-    UploadAvatarContract.View, UpdateAvatarContract.View {
+    UploadAvatarContract.View, UpdateAvatarContract.View, UpdateUserInfoContract.View {
 
     private lateinit var avatarImage: CircleImageView
     private lateinit var changePicture: ImageView
@@ -53,10 +56,12 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private lateinit var phonenumber: EditText
     private lateinit var email: EditText
     private lateinit var role: TextView
+    private lateinit var updateTime: TextView
     private lateinit var createTime: TextView
     private lateinit var albums: TextView
     private lateinit var cancel: LinearLayout
     private lateinit var photograph: TextView
+    private lateinit var updateButton: Button
     private var popupWindow: PopupWindow? = null
     private val PERMISSION_REQUEST = 1
     private val TAKE_PHOTO_REQUEST = 1
@@ -67,9 +72,11 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private lateinit var currentUser: UserBean
     private lateinit var token: String
     private var newAvatar: String? = null
+    private var newUsername: String? = null
     private var hasAllPermission: Boolean = true
     private val uploadAvatarPresenter = UploadAvatarPresenterImpl(this)
-    private val updataAvatarPresenter = UpdateAvatarPresenterImpl(this)
+    private val updateAvatarPresenter = UpdateAvatarPresenterImpl(this)
+    private val updateUserInfoPresenter = UpdateUserInfoPresenterImpl(this)
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -95,7 +102,9 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         phonenumber = findViewById(R.id.phonenumber)
         email = findViewById(R.id.email)
         role = findViewById(R.id.role)
+        updateTime = findViewById(R.id.updateTime)
         createTime = findViewById(R.id.createTime)
+        updateButton = findViewById(R.id.update)
         val userSerialized = intent.getSerializableExtra("user")
         if (userSerialized != null) {
             currentUser = userSerialized as UserBean
@@ -103,6 +112,7 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
             phonenumber.text = Editable.Factory.getInstance().newEditable(currentUser.phonenumber)
             email.text = Editable.Factory.getInstance().newEditable(currentUser.email)
             role.text = currentUser.roles
+            updateTime.text = currentUser.updateTime?.let { DateUtil.formatDateToString(it) }
             createTime.text = currentUser.createTime?.let { DateUtil.formatDateToString(it) }
             Glide.with(this)
                 .load(
@@ -122,6 +132,7 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     override fun initListener() {
         avatarImage.setOnClickListener(this)
         changePicture.setOnClickListener(this)
+        updateButton.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -150,6 +161,18 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
 
             R.id.cancel -> {
                 popupWindow?.dismiss()
+            }
+
+            R.id.update -> {
+                if (token.isNotEmpty()) {
+                    currentUser.username = username.text.trim().toString()
+                    currentUser.phonenumber = phonenumber.text.trim().toString()
+                    currentUser.email = email.text.trim().toString()
+                    currentUser.updateTime = null
+                    currentUser.createTime = null
+                    // 更新用户信息
+                    updateUserInfoPresenter.updateUserInfo(token, currentUser)
+                }
             }
         }
     }
@@ -311,7 +334,7 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         )
         newAvatar = result.data?.title.toString()
         // 发送更新头像请求
-        updataAvatarPresenter.updateAvatar(token, user)
+        updateAvatarPresenter.updateAvatar(token, user)
     }
 
     override fun onUploadAvatarFailed() {
@@ -335,6 +358,35 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         myToast(getString(R.string.update_avatar_failed))
     }
 
+    override fun onUserNameError() {
+        myToast(getString(R.string.user_name_error))
+        username.error = getString(R.string.user_name_error)
+    }
+
+    override fun onUserNameExistError() {
+        myToast(getString(R.string.user_name_exist_error))
+        username.error = getString(R.string.user_name_exist_error)
+    }
+
+    override fun onPhoneNumberError() {
+        myToast(getString(R.string.phone_number_error))
+        phonenumber.error = getString(R.string.phone_number_error)
+    }
+
+    override fun onEmailError() {
+        myToast(getString(R.string.email_error))
+        email.error = getString(R.string.email_error)
+    }
+
+    override fun onUpdateSuccess() {
+        myToast(getString(R.string.update_user_info_success))
+        newUsername = username.text.trim().toString()
+    }
+
+    override fun onUpdateFailed() {
+        myToast(getString(R.string.update_user_info_failed))
+    }
+
     override fun onNetworkError() {
         myToast(getString(R.string.network_error))
     }
@@ -342,6 +394,7 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     override fun onBackPressed() {
         val intent = Intent()
         intent.putExtra("newAvatar", newAvatar)
+        intent.putExtra("newUsername", newUsername)
         setResult(RESULT_OK, intent)
         finish()
         super.onBackPressed()

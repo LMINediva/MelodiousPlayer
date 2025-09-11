@@ -9,7 +9,7 @@ import android.util.Log
 object URLProviderUtils {
 
     const val protocol = "http://"
-    var serverAddress = "192.168.124.2:8082"
+    var serverAddress = "192.168.124.3:8082"
     const val imagePath = "/image/musicPicture/"
     const val musicPath = "/audio/music/"
     const val lyricPath = "/audio/lyric/"
@@ -140,139 +140,10 @@ object URLProviderUtils {
     }
 
     /**
-     *
-     * 获取音乐节目列表
-     *
-     * @param artistIds
-     * @param offset
-     * @param size
-     * @return
+     * 更新用户信息
      */
-    fun getYinYueProgramList(artistIds: String, offset: Int, size: Int): String {
-        val url = ("http://mapi.yinyuetai.com/playlist/show.json?deviceinfo="
-                + "{\"aid\":\"10201036\",\"os\":\"Android\","
-                + "\"ov\":" + "\"" + getSystemVersion() + "\"" + ","
-                + "\"rn\":\"480*800\","
-                + "\"dn\":" + "\"" + getPhoneModel() + "\"" + ","
-                + "\"cr\":\"46000\","
-                + "\"as\":"
-                + "\"WIFI\","
-                + "\"uid\":"
-                + "\"dbcaa6c4482bc05ecb0bf39dabf207d2\","
-                + "\"clid\":110025000}"
-                + "&offset=" + offset
-                + "&size=" + size
-                + "&artistIds=" + artistIds)
-        return url
-    }
-
-    /**
-     * 获取V榜地址
-     *
-     * @return
-     */
-    fun getVChartAreasUrl(): String {
-        val url = ("http://mapi.yinyuetai.com/vchart/get_vchart_areas.json?deviceinfo="
-                + "{\"aid\":\"10201036\",\"os\":\"Android\","
-                + "\"ov\":" + "\"" + getSystemVersion() + "\"" + ","
-                + "\"rn\":\"480*800\","
-                + "\"dn\":" + "\"" + getPhoneModel() + "\"" + ","
-                + "\"cr\":\"46000\","
-                + "\"as\":"
-                + "\"WIFI\","
-                + "\"uid\":"
-                + "\"dbcaa6c4482bc05ecb0bf39dabf207d2\","
-                + "\"clid\":110025000}")
-        return url
-    }
-
-    /**
-     * 获取V榜的周期
-     *
-     * @return
-     */
-    fun getVChartPeriodUrl(area: String): String {
-        val url = ("http://mapi.yinyuetai.com/vchart/period.json?deviceinfo="
-                + "{\"aid\":\"10201036\",\"os\":\"Android\","
-                + "\"ov\":" + "\"" + getSystemVersion() + "\"" + ","
-                + "\"rn\":\"480*800\","
-                + "\"dn\":" + "\"" + getPhoneModel() + "\"" + ","
-                + "\"cr\":\"46000\","
-                + "\"as\":"
-                + "\"WIFI\","
-                + "\"uid\":"
-                + "\"dbcaa6c4482bc05ecb0bf39dabf207d2\","
-                + "\"clid\":110025000}"
-                + "&area=" + area)
-        return url
-    }
-
-    /**
-     * 获取V榜列表
-     *
-     * @param area
-     * @param dateCode
-     * @return
-     */
-    fun getVChartListUrl(area: String, dateCode: Int): String {
-        val url = ("http://mapi.yinyuetai.com/vchart/show.json?deviceinfo="
-                + "{\"aid\":\"10201036\",\"os\":\"Android\","
-                + "\"ov\":" + "\"" + getSystemVersion() + "\"" + ","
-                + "\"rn\":\"480*800\","
-                + "\"dn\":" + "\"" + getPhoneModel() + "\"" + ","
-                + "\"cr\":\"46000\","
-                + "\"as\":"
-                + "\"WIFI\","
-                + "\"uid\":"
-                + "\"dbcaa6c4482bc05ecb0bf39dabf207d2\","
-                + "\"clid\":110025000}"
-                + "&area=" + area
-                + "&datecode=" + dateCode)
-        return url
-    }
-
-    /**
-     * 获取相关MV
-     *
-     * @param id
-     * @return
-     */
-    fun getRelativeVideoListUrl(id: Int): String {
-        val url = ("http://mapi.yinyuetai.com/video/show.json?deviceinfo="
-                + "{\"aid\":\"10201036\",\"os\":\"Android\","
-                + "\"ov\":" + "\"" + getSystemVersion() + "\"" + ","
-                + "\"rn\":\"480*800\","
-                + "\"dn\":" + "\"" + getPhoneModel() + "\"" + ","
-                + "\"cr\":\"46000\","
-                + "\"as\":"
-                + "\"WIFI\","
-                + "\"uid\":"
-                + "\"dbcaa6c4482bc05ecb0bf39dabf207d2\","
-                + "\"clid\":110025000}"
-                + "&relatedVideos=true"
-                + "&id=" + id)
-        return url
-    }
-
-    /**
-     * 通过id 获取某人的悦单
-     *
-     * @param id
-     * @return
-     */
-    fun getPeopleYueDanList(id: Int): String {
-        val url = ("http://mapi.yinyuetai.com/playlist/show.json?deviceinfo="
-                + "{\"aid\":\"10201036\",\"os\":\"Android\","
-                + "\"ov\":" + "\"" + getSystemVersion() + "\"" + ","
-                + "\"rn\":\"480*800\","
-                + "\"dn\":" + "\"" + getPhoneModel() + "\"" + ","
-                + "\"cr\":\"46000\","
-                + "\"as\":"
-                + "\"WIFI\","
-                + "\"uid\":"
-                + "\"dbcaa6c4482bc05ecb0bf39dabf207d2\","
-                + "\"clid\":110025000}"
-                + "&id=" + id)
+    fun postUpdateUserInfo(): String {
+        val url = protocol + serverAddress + "/sys/user/save"
         return url
     }
 
