@@ -147,6 +147,14 @@ object URLProviderUtils {
         return url
     }
 
+    /**
+     * 修改用户登录密码
+     */
+    fun postChangePassword(): String {
+        val url = protocol + serverAddress + "/sys/user/updateUserPwd"
+        return url
+    }
+
     fun getSystemVersion(): String {
         return Build.VERSION.RELEASE
     }

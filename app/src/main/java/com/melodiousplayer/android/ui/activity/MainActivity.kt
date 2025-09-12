@@ -153,7 +153,10 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
             }
 
             R.id.navChangePassword -> {
-
+                // 进入修改用户登录密码界面，传递用户信息
+                val intent = Intent(this, ChangePasswordActivity::class.java)
+                intent.putExtra("user", currentUser)
+                startActivity(intent)
             }
 
             R.id.navMyWorks -> {
@@ -255,7 +258,8 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
         currentUser = UserBean(
             null, null, null,
             null, null, null, null,
-            null, null, null, null, null
+            null, null, null, null, null,
+            null, null
         )
         userSerialized = null
         // 在SharedPreferences文件中删除token的值

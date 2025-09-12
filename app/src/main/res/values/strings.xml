@@ -18,5 +18,7 @@
     <string name="email_error">邮箱格式不正确</string>
     <string name="update_user_info_success">更新用户信息成功</string>
     <string name="update_user_info_failed">更新用户信息失败</string>
+    <string name="two_passwords_not_match">两次输入的密码不一致</string>
+    <string name="change_password_success">密码修改成功，下一次登录生效</string>
     <string name="network_error">网络错误</string>
 </resources>

@@ -15,5 +15,7 @@ data class UserBean(
     var createTime: Date?,
     var updateTime: Date?,
     var remark: String?,
-    var roles: String?
+    var roles: String?,
+    var oldPassword: String?,
+    var newPassword: String?
 ) : Serializable

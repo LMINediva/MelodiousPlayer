@@ -34,4 +34,12 @@ interface ToolBarManager {
         toolbarTitle.text = "个人信息"
     }
 
+    /**
+     * 初始化修改用户登录密码界面中的toolbar
+     */
+    fun initChangePasswordToolBar() {
+        // 设置标题
+        toolbarTitle.text = "修改密码"
+    }
+
 }

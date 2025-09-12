@@ -330,7 +330,8 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         val user = UserBean(
             currentUser.id, null, null,
             result.data?.title, null, null, null,
-            null, null, null, null, null
+            null, null, null, null, null,
+            null, null
         )
         newAvatar = result.data?.title.toString()
         // 发送更新头像请求
