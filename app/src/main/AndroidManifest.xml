@@ -55,6 +55,7 @@
         <activity android:name=".ui.activity.RegisterActivity" />
         <activity android:name=".ui.activity.UserInfoActivity" />
         <activity android:name=".ui.activity.ChangePasswordActivity" />
+        <activity android:name=".ui.activity.AddWorkActivity" />
         <activity android:name=".ui.activity.TextureVideoPlayerActivity" />
         <activity
             android:name=".ui.activity.JiaoZiVideoPlayerActivity"

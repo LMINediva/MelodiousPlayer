@@ -159,6 +159,10 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
                 startActivity(intent)
             }
 
+            R.id.navAddWork -> {
+
+            }
+
             R.id.navMyWorks -> {
 
             }

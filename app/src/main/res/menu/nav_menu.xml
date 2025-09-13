@@ -10,6 +10,10 @@
             android:icon="@drawable/nav_change_password"
             android:title="修改密码" />
         <item
+            android:id="@+id/navAddWork"
+            android:icon="@drawable/nav_add_work"
+            android:title="添加作品" />
+        <item
             android:id="@+id/navMyWorks"
             android:icon="@drawable/nav_my_works"
             android:title="我的作品" />
