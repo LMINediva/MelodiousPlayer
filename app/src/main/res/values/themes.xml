@@ -11,6 +11,8 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/colorPrimary</item>
+        <!-- 设置ToolBar返回按钮的颜色 -->
+        <item name="colorControlNormal">@color/white</item>
     </style>
 
     <!-- 继承自AppTheme，占满全屏 -->

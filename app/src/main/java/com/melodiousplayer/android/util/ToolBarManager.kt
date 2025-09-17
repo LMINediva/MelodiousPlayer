@@ -42,4 +42,20 @@ interface ToolBarManager {
         toolbarTitle.text = "修改密码"
     }
 
+    /**
+     * 初始化添加作品界面中的toolbar
+     */
+    fun initAddWorkToolBar() {
+        // 设置标题
+        toolbarTitle.text = "添加作品"
+    }
+
+    /**
+     * 初始化添加音乐界面中的toolbar
+     */
+    fun initAddMusicToolBar() {
+        // 设置标题
+        toolbarTitle.text = "添加音乐"
+    }
+
 }

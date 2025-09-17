@@ -160,7 +160,8 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
             }
 
             R.id.navAddWork -> {
-
+                // 进入添加作品界面
+                startActivity(Intent(this, AddWorkActivity::class.java))
             }
 
             R.id.navMyWorks -> {

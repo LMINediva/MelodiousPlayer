@@ -73,7 +73,6 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private lateinit var token: String
     private var newAvatar: String? = null
     private var newUsername: String? = null
-    private var hasAllPermission: Boolean = true
     private val uploadAvatarPresenter = UploadAvatarPresenterImpl(this)
     private val updateAvatarPresenter = UpdateAvatarPresenterImpl(this)
     private val updateUserInfoPresenter = UpdateUserInfoPresenterImpl(this)
@@ -208,7 +207,6 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                         this, permissions,
                         PERMISSION_REQUEST
                     )
-                    hasAllPermission = false
                 }
             }
         } else {
@@ -229,6 +227,7 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
             PERMISSION_REQUEST -> {
                 for (result in grantResults) {
                     if (result != PackageManager.PERMISSION_GRANTED) {
+                        myToast("你拒绝了权限！")
                         break
                     }
                 }

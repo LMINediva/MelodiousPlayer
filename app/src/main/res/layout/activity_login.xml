@@ -82,7 +82,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:background="@drawable/btn_login"
+        android:background="@drawable/btn_primary"
         android:gravity="center"
         android:text="登录"
         android:textColor="@color/white"
