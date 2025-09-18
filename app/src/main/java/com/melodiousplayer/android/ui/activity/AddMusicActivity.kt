@@ -4,13 +4,20 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.MediaPlayer
+import android.net.Uri
 import android.provider.MediaStore
+import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.SeekBar
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -19,10 +26,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.util.ToolBarManager
-import com.melodiousplayer.android.util.URLProviderUtils
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
-import java.io.File
 
 /**
  * 添加音乐界面
@@ -35,15 +40,26 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
     private lateinit var posterPicture: ImageView
     private lateinit var thumbnailPicture: ImageView
     private lateinit var lyric: ImageView
+    private lateinit var lyricName: TextView
     private lateinit var music: ImageView
+    private lateinit var musicName: TextView
     private lateinit var addMusic: Button
+    private lateinit var progress: TextView
+    private lateinit var progressSeekBar: SeekBar
+    private lateinit var state: ImageView
     private lateinit var token: String
+    private lateinit var lyricUri: Uri
+    private lateinit var lyricFileName: String
+    private lateinit var musicUri: Uri
+    private lateinit var musicFileName: String
+    private val mediaPlayer = MediaPlayer()
     private val PERMISSION_REQUEST = 1
     private val ALBUM_POSTER_REQUEST = 1
     private val CROP_POSTER_REQUEST = 2
     private val ALBUM_THUMBNAIL_REQUEST = 3
     private val CROP_THUMBNAIL_REQUEST = 4
     private val LYRIC_FILE_REQUEST = 5
+    private val MUSIC_FILE_REQUEST = 6
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -69,7 +85,9 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
         posterPicture = findViewById(R.id.posterPicture)
         thumbnailPicture = findViewById(R.id.thumbnailPicture)
         lyric = findViewById(R.id.lyric)
+        lyricName = findViewById(R.id.lyricName)
         music = findViewById(R.id.music)
+        musicName = findViewById(R.id.musicName)
         addMusic = findViewById(R.id.addMusic)
         // 从SharedPreferences文件中读取token的值
         token = getSharedPreferences("data", Context.MODE_PRIVATE)
@@ -83,6 +101,8 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
         lyric.setOnClickListener(this)
         music.setOnClickListener(this)
         addMusic.setOnClickListener(this)
+        lyricName.setOnClickListener(this)
+        musicName.setOnClickListener(this)
     }
 
     /**
@@ -117,12 +137,30 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
             }
 
             R.id.lyric -> {
-                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).setType("text/plain")
+                val intent = Intent(Intent.ACTION_GET_CONTENT)
+                // 过滤出文本文件，包括LRC文件
+                intent.type = "text/*"
                 startActivityForResult(intent, LYRIC_FILE_REQUEST)
             }
 
-            R.id.music -> {
+            R.id.lyricName -> {
+                showScrollingDialog(this)
+            }
 
+            R.id.music -> {
+                val intent = Intent(Intent.ACTION_GET_CONTENT)
+                // 过滤出音频文件
+                intent.type = "audio/*"
+                startActivityForResult(intent, MUSIC_FILE_REQUEST)
+            }
+
+            R.id.musicName -> {
+                showPlayMusicDialog(this)
+            }
+
+            R.id.state -> {
+                mediaPlayer.start()
+                updatePlayState()
             }
 
             R.id.addMusic -> {
@@ -190,6 +228,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
                     val resultUri = CropImage.getActivityResult(data).uri
                     // 将裁剪好的照片显示出来
                     if (resultUri != null) {
+                        println("poster uri = " + resultUri)
                         Glide.with(this)
                             .load(resultUri)
                             .skipMemoryCache(true)
@@ -217,6 +256,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
                     val resultUri = CropImage.getActivityResult(data).uri
                     // 将裁剪好的照片显示出来
                     if (resultUri != null) {
+                        println("thumbnail uri = " + resultUri)
                         Glide.with(this)
                             .load(resultUri)
                             .skipMemoryCache(true)
@@ -225,12 +265,151 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
                     }
                 }
             }
+
+            LYRIC_FILE_REQUEST -> {
+                if (resultCode == RESULT_OK) {
+                    val resultUri = data?.data
+                    if (resultUri != null) {
+                        lyricUri = resultUri
+                        val cursor = contentResolver.query(
+                            resultUri, null, null,
+                            null, null
+                        )
+                        cursor?.use {
+                            if (it.moveToFirst()) {
+                                val nameIndex =
+                                    it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
+                                lyricFileName = it.getString(nameIndex)
+                                lyric.visibility = View.GONE
+                                lyricName.visibility = View.VISIBLE
+                                lyricName.text = lyricFileName
+                            }
+                        }
+                    }
+                }
+            }
+
+            MUSIC_FILE_REQUEST -> {
+                if (resultCode == RESULT_OK) {
+                    val resultUri = data?.data
+                    if (resultUri != null) {
+                        musicUri = resultUri
+                        val cursor = contentResolver.query(
+                            resultUri, null, null,
+                            null, null
+                        )
+                        cursor?.use {
+                            if (it.moveToFirst()) {
+                                val nameIndex =
+                                    it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
+                                musicFileName = it.getString(nameIndex)
+                                music.visibility = View.GONE
+                                musicName.visibility = View.VISIBLE
+                                musicName.text = musicFileName
+                                initMediaPlayer(resultUri)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 读取LRC文件内容
+     */
+    private fun readLrcFileContent(uri: Uri): String? {
+        return try {
+            contentResolver.openInputStream(uri)?.bufferedReader().use { it?.readText() }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    /**
+     * 弹窗显示歌词
+     */
+    private fun showScrollingDialog(context: Context) {
+        val dialog = AlertDialog.Builder(context)
+            .setTitle(lyricFileName)
+            .setMessage(readLrcFileContent(lyricUri))
+            .setCancelable(false)
+            .setPositiveButton("确定") { dialog, which ->
+            }
+            .create()
+        dialog.window?.setLayout(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        dialog.show()
+    }
+
+    /**
+     * 弹窗显示音乐播放控件
+     */
+    private fun showPlayMusicDialog(context: Context) {
+        val dialog = AlertDialog.Builder(context)
+            .setView(R.layout.popup_music_player)
+            .setCancelable(false)
+            .setPositiveButton("确定") { dialog, which ->
+            }
+            .create()
+        dialog.window?.setLayout(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window?.setGravity(Gravity.CENTER)
+        dialog.show()
+        progress = dialog.findViewById(R.id.progress)!!
+        progressSeekBar = dialog.findViewById(R.id.progress_sk)!!
+        state = dialog.findViewById(R.id.state)!!
+        // 播放状态切换
+        state.setOnClickListener(this)
+    }
+
+    /**
+     * 初始化MediaPlayer
+     */
+    private fun initMediaPlayer(uri: Uri) {
+        try {
+            mediaPlayer.setDataSource(this, uri)
+            mediaPlayer.prepare()
+        } catch (e: Exception) {
+            // 处理异常，例如文件不存在或格式不支持等
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * 更新播放状态
+     */
+    private fun updatePlayState() {
+        // 获取当前播放状态
+        val isPlaying = mediaPlayer.isPlaying
+        // 根据状态更新图标和播放状态
+        if (isPlaying) {
+            // 显示暂停图标
+            state.setImageResource(R.drawable.selector_btn_audio_play)
+            // 暂停播放
+            mediaPlayer.pause()
+        } else {
+            // 显示播放图标
+            state.setImageResource(R.drawable.selector_btn_audio_pause)
+            // 开始播放
+            mediaPlayer.start()
         }
     }
 
     override fun onBackPressed() {
         finish()
         super.onBackPressed()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.stop()
+        mediaPlayer.release()
     }
 
 }

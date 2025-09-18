@@ -46,7 +46,6 @@ class LocalMusicFragment : BaseFragment() {
         var notificationON = false
         context?.let {
             notificationON = isNotificationEnabled(it)
-            println("isNotificationEnabled = $notificationON")
             if (!notificationON) {
                 // 引导用户打开通知权限
                 gotoSetNotification(it)
