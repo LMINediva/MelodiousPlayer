@@ -46,7 +46,9 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
     private lateinit var addMusic: Button
     private lateinit var progress: TextView
     private lateinit var progressSeekBar: SeekBar
-    private lateinit var state: ImageView
+    private lateinit var start: ImageView
+    private lateinit var pause: ImageView
+    private lateinit var reset: ImageView
     private lateinit var token: String
     private lateinit var lyricUri: Uri
     private lateinit var lyricFileName: String
@@ -158,9 +160,21 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
                 showPlayMusicDialog(this)
             }
 
-            R.id.state -> {
-                mediaPlayer.start()
-                updatePlayState()
+            R.id.start -> {
+                if (!mediaPlayer.isPlaying) {
+                    mediaPlayer.start()
+                }
+            }
+
+            R.id.pause -> {
+                if (mediaPlayer.isPlaying) {
+                    mediaPlayer.pause()
+                }
+            }
+
+            R.id.reset -> {
+                mediaPlayer.reset()
+                initMediaPlayer(musicUri)
             }
 
             R.id.addMusic -> {
@@ -363,9 +377,13 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
         dialog.show()
         progress = dialog.findViewById(R.id.progress)!!
         progressSeekBar = dialog.findViewById(R.id.progress_sk)!!
-        state = dialog.findViewById(R.id.state)!!
+        start = dialog.findViewById(R.id.start)!!
+        pause = dialog.findViewById(R.id.pause)!!
+        reset = dialog.findViewById(R.id.reset)!!
         // 播放状态切换
-        state.setOnClickListener(this)
+        start.setOnClickListener(this)
+        pause.setOnClickListener(this)
+        reset.setOnClickListener(this)
     }
 
     /**
@@ -378,26 +396,6 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
         } catch (e: Exception) {
             // 处理异常，例如文件不存在或格式不支持等
             e.printStackTrace()
-        }
-    }
-
-    /**
-     * 更新播放状态
-     */
-    private fun updatePlayState() {
-        // 获取当前播放状态
-        val isPlaying = mediaPlayer.isPlaying
-        // 根据状态更新图标和播放状态
-        if (isPlaying) {
-            // 显示暂停图标
-            state.setImageResource(R.drawable.selector_btn_audio_play)
-            // 暂停播放
-            mediaPlayer.pause()
-        } else {
-            // 显示播放图标
-            state.setImageResource(R.drawable.selector_btn_audio_pause)
-            // 开始播放
-            mediaPlayer.start()
         }
     }
 
