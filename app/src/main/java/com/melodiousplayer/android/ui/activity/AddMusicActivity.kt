@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Handler
+import android.os.Message
 import android.provider.MediaStore
 import android.view.Gravity
 import android.view.MenuItem
@@ -25,6 +27,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
+import com.melodiousplayer.android.util.StringUtil
 import com.melodiousplayer.android.util.ToolBarManager
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
@@ -32,7 +35,8 @@ import com.theartofdev.edmodo.cropper.CropImageView
 /**
  * 添加音乐界面
  */
-class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
+class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
+    SeekBar.OnSeekBarChangeListener {
 
     private lateinit var title: EditText
     private lateinit var artistName: EditText
@@ -46,8 +50,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
     private lateinit var addMusic: Button
     private lateinit var progress: TextView
     private lateinit var progressSeekBar: SeekBar
-    private lateinit var start: ImageView
-    private lateinit var pause: ImageView
+    private lateinit var state: ImageView
     private lateinit var reset: ImageView
     private lateinit var token: String
     private lateinit var lyricUri: Uri
@@ -62,6 +65,15 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
     private val CROP_THUMBNAIL_REQUEST = 4
     private val LYRIC_FILE_REQUEST = 5
     private val MUSIC_FILE_REQUEST = 6
+    private var duration: Int = 0
+    private val MSG_PROGRESS = 0
+    private val handler = object : Handler() {
+        override fun handleMessage(msg: Message) {
+            when (msg.what) {
+                MSG_PROGRESS -> startUpdateProgress()
+            }
+        }
+    }
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -160,20 +172,17 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
                 showPlayMusicDialog(this)
             }
 
-            R.id.start -> {
-                if (!mediaPlayer.isPlaying) {
-                    mediaPlayer.start()
-                }
-            }
-
-            R.id.pause -> {
-                if (mediaPlayer.isPlaying) {
-                    mediaPlayer.pause()
-                }
+            R.id.state -> {
+                updatePlayState()
             }
 
             R.id.reset -> {
                 mediaPlayer.reset()
+                // 停止更新进度
+                handler.removeMessages(MSG_PROGRESS)
+                // 重置进度数据
+                updateProgress(0)
+                state.setImageResource(R.drawable.selector_btn_audio_pause)
                 initMediaPlayer(musicUri)
             }
 
@@ -364,6 +373,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
      */
     private fun showPlayMusicDialog(context: Context) {
         val dialog = AlertDialog.Builder(context)
+            .setTitle(musicFileName)
             .setView(R.layout.popup_music_player)
             .setCancelable(false)
             .setPositiveButton("确定") { dialog, which ->
@@ -377,13 +387,16 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
         dialog.show()
         progress = dialog.findViewById(R.id.progress)!!
         progressSeekBar = dialog.findViewById(R.id.progress_sk)!!
-        start = dialog.findViewById(R.id.start)!!
-        pause = dialog.findViewById(R.id.pause)!!
+        state = dialog.findViewById(R.id.state)!!
         reset = dialog.findViewById(R.id.reset)!!
         // 播放状态切换
-        start.setOnClickListener(this)
-        pause.setOnClickListener(this)
+        state.setOnClickListener(this)
         reset.setOnClickListener(this)
+        duration = mediaPlayer.duration
+        // 进度条设置最大值
+        progressSeekBar.max = duration
+        // 进度条变化监听
+        progressSeekBar.setOnSeekBarChangeListener(this)
     }
 
     /**
@@ -399,6 +412,73 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
         }
     }
 
+    /**
+     * 更新播放状态
+     */
+    private fun updatePlayState() {
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.pause()
+            state.setImageResource(R.drawable.selector_btn_audio_pause)
+            // 停止更新进度
+            handler.removeMessages(MSG_PROGRESS)
+        } else {
+            mediaPlayer.start()
+            state.setImageResource(R.drawable.selector_btn_audio_play)
+            // 更新播放进度
+            startUpdateProgress()
+        }
+    }
+
+    /**
+     * 开始更新进度
+     */
+    private fun startUpdateProgress() {
+        // 获取当前进度
+        val progress: Int = mediaPlayer.currentPosition
+        // 更新进度数据
+        updateProgress(progress)
+        // 定时获取进度
+        handler.sendEmptyMessage(MSG_PROGRESS)
+    }
+
+    /**
+     * 根据当前进度数据更新界面
+     */
+    private fun updateProgress(pro: Int) {
+        // 更新进度数值
+        progress.text = StringUtil.parseDuration(pro) + "/" + StringUtil.parseDuration(duration)
+        // 更新进度条
+        progressSeekBar.setProgress(pro)
+    }
+
+    /**
+     * 进度改变回调
+     * progress：改变之后的进度
+     * fromUser：true代表通过用户手指拖动改变进度，false代表通过代码方式改变进度
+     */
+    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+        // 判断是否是用户操作
+        if (!fromUser) return
+        // 更新播放进度
+        mediaPlayer.seekTo(progress)
+        // 更新界面进度显示
+        updateProgress(progress)
+    }
+
+    /**
+     * 手指触摸SeekBar回调
+     */
+    override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+    }
+
+    /**
+     * 手指离开SeekBar回调
+     */
+    override fun onStopTrackingTouch(seekBar: SeekBar?) {
+
+    }
+
     override fun onBackPressed() {
         finish()
         super.onBackPressed()
@@ -408,6 +488,8 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
         super.onDestroy()
         mediaPlayer.stop()
         mediaPlayer.release()
+        // 清空handler发送的所有消息
+        handler.removeCallbacksAndMessages(null)
     }
 
 }

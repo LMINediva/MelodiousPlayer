@@ -37,6 +37,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     var audioBean: AudioBean? = null
     var drawable: AnimationDrawable? = null
     var duration: Int = 0
+    val MSG_PROGRESS = 0
     val handler = object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
@@ -44,7 +45,6 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
             }
         }
     }
-    val MSG_PROGRESS = 0
     private lateinit var state: ImageView
     private lateinit var audioTitle: TextView
     private lateinit var artist: TextView

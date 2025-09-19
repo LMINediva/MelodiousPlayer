@@ -35,18 +35,11 @@
         android:paddingBottom="20dp">
 
         <ImageView
-            android:id="@+id/start"
+            android:id="@+id/state"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:src="@drawable/selector_btn_audio_pause" />
-
-        <ImageView
-            android:id="@+id/pause"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/selector_btn_audio_play" />
 
         <ImageView
             android:id="@+id/reset"
