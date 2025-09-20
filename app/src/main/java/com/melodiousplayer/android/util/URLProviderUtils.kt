@@ -155,6 +155,22 @@ object URLProviderUtils {
         return url
     }
 
+    /**
+     * 上传音乐相关图片
+     */
+    fun postUploadMusicPicture(): String {
+        val url = protocol + serverAddress + "/data/music/uploadImage"
+        return url
+    }
+
+    /**
+     * 上传歌词文件
+     */
+    fun postUploadLyric(): String {
+        val url = protocol + serverAddress + "/data/music/uploadLyric"
+        return url
+    }
+
     fun getSystemVersion(): String {
         return Build.VERSION.RELEASE
     }

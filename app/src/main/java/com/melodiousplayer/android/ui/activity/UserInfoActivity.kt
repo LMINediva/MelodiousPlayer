@@ -31,7 +31,7 @@ import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.contract.UpdateAvatarContract
 import com.melodiousplayer.android.contract.UpdateUserInfoContract
 import com.melodiousplayer.android.contract.UploadAvatarContract
-import com.melodiousplayer.android.model.UploadImageResultBean
+import com.melodiousplayer.android.model.UploadFileResultBean
 import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.presenter.impl.UpdateAvatarPresenterImpl
 import com.melodiousplayer.android.presenter.impl.UpdateUserInfoPresenterImpl
@@ -325,7 +325,7 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         startActivityForResult(intent, TAKE_PHOTO_REQUEST)
     }
 
-    override fun onUploadAvatarSuccess(result: UploadImageResultBean) {
+    override fun onUploadAvatarSuccess(result: UploadFileResultBean) {
         val user = UserBean(
             currentUser.id, null, null,
             result.data?.title, null, null, null,

@@ -1,19 +1,19 @@
 package com.melodiousplayer.android.presenter.impl
 
 import com.melodiousplayer.android.contract.UploadAvatarContract
-import com.melodiousplayer.android.model.UploadImageResultBean
+import com.melodiousplayer.android.model.UploadFileResultBean
 import com.melodiousplayer.android.net.ResponseHandler
 import com.melodiousplayer.android.net.UploadAvatarRequest
 import java.io.File
 
 class UploadAvatarPresenterImpl(val view: UploadAvatarContract.View) :
-    UploadAvatarContract.Presenter, ResponseHandler<UploadImageResultBean> {
+    UploadAvatarContract.Presenter, ResponseHandler<UploadFileResultBean> {
 
     override fun uploadAvatar(token: String, file: File) {
         UploadAvatarRequest(this).executePostUploadImage(token, file)
     }
 
-    override fun onSuccess(type: Int, result: UploadImageResultBean) {
+    override fun onSuccess(type: Int, result: UploadFileResultBean) {
         if (result.code == 0) {
             view.onUploadAvatarSuccess(result)
         } else {

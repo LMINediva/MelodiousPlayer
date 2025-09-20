@@ -27,24 +27,38 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
+import com.melodiousplayer.android.contract.UploadLyricContract
+import com.melodiousplayer.android.contract.UploadPosterContract
+import com.melodiousplayer.android.contract.UploadThumbnailContract
+import com.melodiousplayer.android.model.UploadFileResultBean
+import com.melodiousplayer.android.presenter.impl.UploadLyricPresenterImpl
+import com.melodiousplayer.android.presenter.impl.UploadMusicPosterPresenterImpl
+import com.melodiousplayer.android.presenter.impl.UploadMusicThumbnailPresenterImpl
 import com.melodiousplayer.android.util.StringUtil
 import com.melodiousplayer.android.util.ToolBarManager
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.InputStream
 
 /**
  * 添加音乐界面
  */
 class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
-    SeekBar.OnSeekBarChangeListener {
+    SeekBar.OnSeekBarChangeListener, UploadPosterContract.View, UploadThumbnailContract.View,
+    UploadLyricContract.View {
 
     private lateinit var title: EditText
     private lateinit var artistName: EditText
     private lateinit var description: EditText
     private lateinit var posterPicture: ImageView
+    private lateinit var posterPictureError: TextView
+    private lateinit var thumbnailPictureError: TextView
     private lateinit var thumbnailPicture: ImageView
     private lateinit var lyric: ImageView
     private lateinit var lyricName: TextView
+    private lateinit var lyricError: TextView
     private lateinit var music: ImageView
     private lateinit var musicName: TextView
     private lateinit var addMusic: Button
@@ -53,6 +67,8 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private lateinit var state: ImageView
     private lateinit var reset: ImageView
     private lateinit var token: String
+    private lateinit var musicThumbnailUri: Uri
+    private lateinit var musicPosterUri: Uri
     private lateinit var lyricUri: Uri
     private lateinit var lyricFileName: String
     private lateinit var musicUri: Uri
@@ -65,8 +81,10 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private val CROP_THUMBNAIL_REQUEST = 4
     private val LYRIC_FILE_REQUEST = 5
     private val MUSIC_FILE_REQUEST = 6
-    private var duration: Int = 0
     private val MSG_PROGRESS = 0
+    private val uploadMusicPosterPresenter = UploadMusicPosterPresenterImpl(this)
+    private val uploadMusicThumbnailPresenter = UploadMusicThumbnailPresenterImpl(this)
+    private val uploadLyricPresenter = UploadLyricPresenterImpl(this)
     private val handler = object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
@@ -74,6 +92,11 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
             }
         }
     }
+    private var duration: Int = 0
+    private var newMusicPoster: String? = null
+    private var newMusicThumbnail: String? = null
+    private var newLyric: String? = null
+    private var allFilesUploadSuccess = true
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -97,9 +120,12 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         artistName = findViewById(R.id.artistName)
         description = findViewById(R.id.description)
         posterPicture = findViewById(R.id.posterPicture)
+        posterPictureError = findViewById(R.id.posterPictureError)
         thumbnailPicture = findViewById(R.id.thumbnailPicture)
+        thumbnailPictureError = findViewById(R.id.thumbnailPictureError)
         lyric = findViewById(R.id.lyric)
         lyricName = findViewById(R.id.lyricName)
+        lyricError = findViewById(R.id.lyricError)
         music = findViewById(R.id.music)
         musicName = findViewById(R.id.musicName)
         addMusic = findViewById(R.id.addMusic)
@@ -187,7 +213,15 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
             }
 
             R.id.addMusic -> {
-
+                val title = title.text.trim().toString()
+                val artistName = artistName.text.trim().toString()
+                val description = description.text.trim().toString()
+                musicPosterUri.path?.let { File(it) }
+                    ?.let { uploadMusicPosterPresenter.uploadPoster(token, it) }
+                musicThumbnailUri.path?.let { File(it) }
+                    ?.let { uploadMusicThumbnailPresenter.uploadThumbnail(token, it) }
+                lyricUri.path?.let { File(it) }
+                    ?.let { uploadLyricPresenter.uploadLyric(token, it) }
             }
         }
     }
@@ -236,12 +270,14 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
             ALBUM_POSTER_REQUEST -> {
                 if (resultCode == RESULT_OK && data != null) {
                     data.data?.let { uri ->
-                        // 在截图界面显示选择好的照片
-                        val intent = CropImage.activity(uri)
-                            .setGuidelines(CropImageView.Guidelines.ON)
-                            .setAspectRatio(1, 1)
-                            .getIntent(this)
-                        startActivityForResult(intent, CROP_POSTER_REQUEST)
+                        if (checkPicture(uri, posterPictureError)) {
+                            // 在截图界面显示选择好的照片
+                            val intent = CropImage.activity(uri)
+                                .setGuidelines(CropImageView.Guidelines.ON)
+                                .setAspectRatio(1, 1)
+                                .getIntent(this)
+                            startActivityForResult(intent, CROP_POSTER_REQUEST)
+                        }
                     }
                 }
             }
@@ -251,7 +287,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                     val resultUri = CropImage.getActivityResult(data).uri
                     // 将裁剪好的照片显示出来
                     if (resultUri != null) {
-                        println("poster uri = " + resultUri)
+                        musicPosterUri = resultUri
                         Glide.with(this)
                             .load(resultUri)
                             .skipMemoryCache(true)
@@ -264,12 +300,14 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
             ALBUM_THUMBNAIL_REQUEST -> {
                 if (resultCode == RESULT_OK && data != null) {
                     data.data?.let { uri ->
-                        // 在截图界面显示选择好的照片
-                        val intent = CropImage.activity(uri)
-                            .setGuidelines(CropImageView.Guidelines.ON)
-                            .setAspectRatio(1, 1)
-                            .getIntent(this)
-                        startActivityForResult(intent, CROP_THUMBNAIL_REQUEST)
+                        if (checkPicture(uri, thumbnailPictureError)) {
+                            // 在截图界面显示选择好的照片
+                            val intent = CropImage.activity(uri)
+                                .setGuidelines(CropImageView.Guidelines.ON)
+                                .setAspectRatio(1, 1)
+                                .getIntent(this)
+                            startActivityForResult(intent, CROP_THUMBNAIL_REQUEST)
+                        }
                     }
                 }
             }
@@ -279,7 +317,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                     val resultUri = CropImage.getActivityResult(data).uri
                     // 将裁剪好的照片显示出来
                     if (resultUri != null) {
-                        println("thumbnail uri = " + resultUri)
+                        musicThumbnailUri = resultUri
                         Glide.with(this)
                             .load(resultUri)
                             .skipMemoryCache(true)
@@ -293,19 +331,21 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                 if (resultCode == RESULT_OK) {
                     val resultUri = data?.data
                     if (resultUri != null) {
-                        lyricUri = resultUri
-                        val cursor = contentResolver.query(
-                            resultUri, null, null,
-                            null, null
-                        )
-                        cursor?.use {
-                            if (it.moveToFirst()) {
-                                val nameIndex =
-                                    it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
-                                lyricFileName = it.getString(nameIndex)
-                                lyric.visibility = View.GONE
-                                lyricName.visibility = View.VISIBLE
-                                lyricName.text = lyricFileName
+                        if (checkLyricFile(resultUri)) {
+                            lyricUri = resultUri
+                            val cursor = contentResolver.query(
+                                resultUri, null, null,
+                                null, null
+                            )
+                            cursor?.use {
+                                if (it.moveToFirst()) {
+                                    val nameIndex =
+                                        it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
+                                    lyricFileName = it.getString(nameIndex)
+                                    lyric.visibility = View.GONE
+                                    lyricName.visibility = View.VISIBLE
+                                    lyricName.text = lyricFileName
+                                }
                             }
                         }
                     }
@@ -336,6 +376,84 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                 }
             }
         }
+    }
+
+    /**
+     * 检查图片文件是否符合要求
+     */
+    private fun checkPicture(uri: Uri, textView: TextView): Boolean {
+        // 获取照片的MIME类型
+        val type = contentResolver.getType(uri)
+        if (type == null) {
+            // 无法获取MIME类型，可能文件路径不正确或文件不存在
+            textView.text = "图片文件路径不正确或文件不存在！"
+            textView.visibility = View.VISIBLE
+            return false
+        }
+        // 检查是否是JPEG、JPG或PNG格式
+        val isSupportedFormat = type == "image/jpeg" || type == "image/jpg" || type == "image/png"
+        if (!isSupportedFormat) {
+            // 不是支持格式
+            textView.text = "图片只能是jpeg、jpg和png格式！"
+            textView.visibility = View.VISIBLE
+            return false
+        }
+        // 检查图片文件大小是否超过2MB（2 * 1024 * 1024字节）
+        var fileSize: Long = 0
+        try {
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                // 获取文件大小（字节）
+                fileSize = inputStream.available().toLong()
+            }
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+            textView.text = "图片文件路径不正确或文件不存在！"
+            textView.visibility = View.VISIBLE
+            return false
+        }
+        val isLessThan2M = fileSize <= 2 * 1024 * 1024
+        if (!isLessThan2M) {
+            textView.text = "图片大小不能超过2MB！"
+            textView.visibility = View.VISIBLE
+            return false
+        }
+        return true
+    }
+
+    /**
+     * 检查歌词文件是否符合要求
+     */
+    private fun checkLyricFile(uri: Uri): Boolean {
+        // 获取文件扩展名
+        val fileName = uri.lastPathSegment
+        val fileExtension = fileName?.substringAfterLast(".")?.lowercase()
+        // 检查是否为.lrc文件
+        if (fileExtension != "lrc") {
+            // 不是.lrc文件
+            lyricError.text = "歌词文件只能是lrc格式！"
+            lyricError.visibility = View.VISIBLE
+            return false
+        }
+        // 检查歌词文件大小是否超过2MB（2 * 1024 * 1024字节）
+        var fileSize: Long = 0
+        try {
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                // 获取文件大小（字节）
+                fileSize = inputStream.available().toLong()
+            }
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+            lyricError.text = "歌词文件路径不正确或文件不存在！"
+            lyricError.visibility = View.VISIBLE
+            return false
+        }
+        val isLessThan2M = fileSize <= 2 * 1024 * 1024
+        if (!isLessThan2M) {
+            lyricError.text = "歌词文件大小不能超过2MB！"
+            lyricError.visibility = View.VISIBLE
+            return false
+        }
+        return true
     }
 
     /**
@@ -477,6 +595,40 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
      */
     override fun onStopTrackingTouch(seekBar: SeekBar?) {
 
+    }
+
+    override fun onUploadPosterSuccess(result: UploadFileResultBean) {
+        newMusicPoster = result.data?.title.toString()
+    }
+
+    override fun onUploadPosterFailed() {
+        allFilesUploadSuccess = false
+        posterPictureError.text = "海报图片上传失败！"
+        posterPictureError.visibility = View.VISIBLE
+    }
+
+    override fun onUploadThumbnailSuccess(result: UploadFileResultBean) {
+        newMusicThumbnail = result.data?.title.toString()
+    }
+
+    override fun onUploadThumbnailFailed() {
+        allFilesUploadSuccess = false
+        thumbnailPictureError.text = "海报缩略图上传失败！"
+        thumbnailPictureError.visibility = View.VISIBLE
+    }
+
+    override fun onUploadLyricSuccess(result: UploadFileResultBean) {
+        newLyric = result.data?.title.toString()
+    }
+
+    override fun onUploadLyricFailed() {
+        allFilesUploadSuccess = false
+        lyricError.text = "歌词文件上传失败！"
+        lyricError.visibility = View.VISIBLE
+    }
+
+    override fun onNetworkError() {
+        myToast(getString(R.string.network_error))
     }
 
     override fun onBackPressed() {

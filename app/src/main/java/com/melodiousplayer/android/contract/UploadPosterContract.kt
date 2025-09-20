@@ -3,15 +3,15 @@ package com.melodiousplayer.android.contract
 import com.melodiousplayer.android.model.UploadFileResultBean
 import java.io.File
 
-interface UploadAvatarContract {
+interface UploadPosterContract {
 
     interface Presenter : BasePresenter {
-        fun uploadAvatar(token: String, file: File)
+        fun uploadPoster(token: String, file: File)
     }
 
     interface View {
-        fun onUploadAvatarSuccess(result: UploadFileResultBean)
-        fun onUploadAvatarFailed()
+        fun onUploadPosterSuccess(result: UploadFileResultBean)
+        fun onUploadPosterFailed()
         fun onNetworkError()
     }
 

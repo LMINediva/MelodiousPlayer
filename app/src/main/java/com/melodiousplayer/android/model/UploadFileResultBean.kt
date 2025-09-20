@@ -1,7 +1,7 @@
 package com.melodiousplayer.android.model
 
-data class UploadImageResultBean(
+data class UploadFileResultBean(
     var msg: String?,
     var code: Int?,
-    var data: UploadImageDataBean?
+    var data: UploadFileDataBean?
 )
