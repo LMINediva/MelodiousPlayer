@@ -26,7 +26,7 @@ import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.model.UserResultBean
 import com.melodiousplayer.android.presenter.impl.LogoutPresenterImpl
 import com.melodiousplayer.android.presenter.impl.TokenLoginPresenterImpl
-import com.melodiousplayer.android.ui.fragment.HomeFragment
+import com.melodiousplayer.android.ui.fragment.MusicFragment
 import com.melodiousplayer.android.ui.fragment.InputDialogFragment
 import com.melodiousplayer.android.util.FragmentUtil
 import com.melodiousplayer.android.util.ToolBarManager
@@ -160,8 +160,10 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
             }
 
             R.id.navAddWork -> {
-                // 进入添加作品界面
-                startActivity(Intent(this, AddWorkActivity::class.java))
+                // 进入添加作品界面，传递用户信息
+                val intent = Intent(this, AddWorkActivity::class.java)
+                intent.putExtra("user", currentUser)
+                startActivity(intent)
             }
 
             R.id.navMyWorks -> {
@@ -226,7 +228,7 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
     }
 
     override fun onDataChanged() {
-        val fragment = FragmentUtil.fragmentUtil.getFragment(R.id.tab_home) as HomeFragment
+        val fragment = FragmentUtil.fragmentUtil.getFragment(R.id.tab_home) as MusicFragment
         fragment.onDataChanged()
     }
 

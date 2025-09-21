@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
+import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.util.ToolBarManager
 
 /**
@@ -18,6 +19,7 @@ class AddWorkActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
     private lateinit var addMusic: Button
     private lateinit var addMV: Button
     private lateinit var addList: Button
+    private lateinit var currentUser: UserBean
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -40,6 +42,10 @@ class AddWorkActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
         addMusic = findViewById(R.id.addMusic)
         addMV = findViewById(R.id.addMV)
         addList = findViewById(R.id.addList)
+        val userSerialized = intent.getSerializableExtra("user")
+        if (userSerialized != null) {
+            currentUser = userSerialized as UserBean
+        }
     }
 
     override fun initListener() {
@@ -64,8 +70,10 @@ class AddWorkActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.addMusic -> {
-                // 进入添加音乐界面
-                startActivity(Intent(this, AddMusicActivity::class.java))
+                // 进入添加音乐界面，传递用户信息
+                val intent = Intent(this, AddMusicActivity::class.java)
+                intent.putExtra("user", currentUser)
+                startActivity(intent)
             }
 
             R.id.addMV -> {

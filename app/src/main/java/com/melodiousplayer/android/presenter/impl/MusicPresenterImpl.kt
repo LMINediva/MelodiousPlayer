@@ -2,20 +2,20 @@ package com.melodiousplayer.android.presenter.impl
 
 import com.melodiousplayer.android.base.BaseListPresenter
 import com.melodiousplayer.android.base.BaseView
-import com.melodiousplayer.android.model.HomeItemBean
-import com.melodiousplayer.android.net.HomeRequest
+import com.melodiousplayer.android.model.MusicBean
+import com.melodiousplayer.android.net.MusicRequest
 import com.melodiousplayer.android.net.ResponseHandler
-import com.melodiousplayer.android.presenter.interf.HomePresenter
+import com.melodiousplayer.android.presenter.interf.MusicPresenter
 
-class HomePresenterImpl(var homeView: BaseView<List<HomeItemBean>>?) : HomePresenter,
-    ResponseHandler<List<HomeItemBean>> {
+class MusicPresenterImpl(var musicView: BaseView<List<MusicBean>>?) : MusicPresenter,
+    ResponseHandler<List<MusicBean>> {
 
     /**
      * 解绑view和presenter
      */
     override fun destroyView() {
-        if (homeView != null) {
-            homeView = null
+        if (musicView != null) {
+            musicView = null
         }
     }
 
@@ -23,17 +23,17 @@ class HomePresenterImpl(var homeView: BaseView<List<HomeItemBean>>?) : HomePrese
      * 加载数据失败
      */
     override fun onError(type: Int, msg: String?) {
-        homeView?.onError(msg)
+        musicView?.onError(msg)
     }
 
     /**
      * 加载数据成功
      */
-    override fun onSuccess(type: Int, result: List<HomeItemBean>) {
+    override fun onSuccess(type: Int, result: List<MusicBean>) {
         // 区分是初始化数据还是加载更多数据
         when (type) {
-            BaseListPresenter.TYPE_INIT_OR_REFRESH -> homeView?.loadSuccess(result)
-            BaseListPresenter.TYPE_LOAD_MORE -> homeView?.loadMore(result)
+            BaseListPresenter.TYPE_INIT_OR_REFRESH -> musicView?.loadSuccess(result)
+            BaseListPresenter.TYPE_LOAD_MORE -> musicView?.loadMore(result)
         }
     }
 
@@ -42,7 +42,7 @@ class HomePresenterImpl(var homeView: BaseView<List<HomeItemBean>>?) : HomePrese
      */
     override fun loadDatas() {
         // 定义request并发送request
-        HomeRequest(BaseListPresenter.TYPE_INIT_OR_REFRESH, 0, this).execute()
+        MusicRequest(BaseListPresenter.TYPE_INIT_OR_REFRESH, 0, this).execute()
     }
 
     /**
@@ -50,7 +50,7 @@ class HomePresenterImpl(var homeView: BaseView<List<HomeItemBean>>?) : HomePrese
      */
     override fun loadMore(offset: Int) {
         // 定义request并发送request
-        HomeRequest(BaseListPresenter.TYPE_LOAD_MORE, offset, this).execute()
+        MusicRequest(BaseListPresenter.TYPE_LOAD_MORE, offset, this).execute()
     }
 
 }

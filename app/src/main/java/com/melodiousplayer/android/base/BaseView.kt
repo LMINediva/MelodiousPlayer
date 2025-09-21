@@ -1,7 +1,5 @@
 package com.melodiousplayer.android.base
 
-import com.melodiousplayer.android.model.HomeItemBean
-
 /**
  * 所有下拉刷新和上拉加载更多列表界面的view的基类
  */

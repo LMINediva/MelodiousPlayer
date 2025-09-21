@@ -20,36 +20,48 @@
             android:background="@mipmap/default_splash_bg"
             android:scaleType="centerCrop" />
 
-        <!--左下角图片-->
+        <!--悦单创建者头像-->
         <ImageView
-            android:id="@+id/image"
+            android:id="@+id/author_image"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="10dp" />
+
+        <!--MV列表数量-->
+        <TextView
+            android:id="@+id/count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_margin="10dp"
-            android:src="@mipmap/home_page_fanart" />
+            android:layout_toRightOf="@+id/author_image"
+            android:maxLines="1"
+            android:text="MV列表数量"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
 
-        <!--歌曲名称-->
+        <!--悦单创建者用户名-->
+        <TextView
+            android:id="@+id/author_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/count"
+            android:layout_toRightOf="@+id/author_image"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="歌手名称"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+
+        <!--MV列表名称-->
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@+id/image"
+            android:layout_above="@+id/author_name"
+            android:layout_toRightOf="@+id/author_image"
             android:maxLines="1"
-            android:text="歌单"
-            android:textColor="#00FF00"
-            android:textSize="25sp" />
-
-        <!--简介-->
-        <TextView
-            android:id="@+id/description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/title"
-            android:layout_toRightOf="@+id/image"
-            android:maxLines="1"
-            android:text="简介"
+            android:text="MV列表名称"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
     </RelativeLayout>

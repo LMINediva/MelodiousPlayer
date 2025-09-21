@@ -41,11 +41,8 @@ class UpdateUserInfoPresenterImpl(val view: UpdateUserInfoContract.View) :
         if (result.code == 200) {
             // 更新成功
             view.onUpdateSuccess()
-        } else if (result.code == 501) {
-            // 用户名已经存在
-            view.onUserNameExistError()
         } else {
-            // 注册失败
+            // 更新失败
             view.onUpdateFailed()
         }
     }

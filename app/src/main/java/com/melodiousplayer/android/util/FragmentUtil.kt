@@ -2,7 +2,7 @@ package com.melodiousplayer.android.util
 
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseFragment
-import com.melodiousplayer.android.ui.fragment.HomeFragment
+import com.melodiousplayer.android.ui.fragment.MusicFragment
 import com.melodiousplayer.android.ui.fragment.MVFragment
 import com.melodiousplayer.android.ui.fragment.MusicListFragment
 import com.melodiousplayer.android.ui.fragment.LocalMusicFragment
@@ -13,7 +13,7 @@ import com.melodiousplayer.android.ui.fragment.LocalMusicFragment
 class FragmentUtil private constructor() { // 私有化构造函数
 
     // 首页
-    val homeFragment by lazy { HomeFragment() }
+    val musicFragment by lazy { MusicFragment() }
 
     // MV
     val mvFragment by lazy { MVFragment() }
@@ -33,7 +33,7 @@ class FragmentUtil private constructor() { // 私有化构造函数
      */
     fun getFragment(tabId: Int): BaseFragment? {
         when (tabId) {
-            R.id.tab_home -> return homeFragment
+            R.id.tab_home -> return musicFragment
             R.id.tab_mv -> return mvFragment
             R.id.tab_local_music_list -> return localMusicFragment
             R.id.tab_music_list -> return musicListFragment

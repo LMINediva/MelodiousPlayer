@@ -10,7 +10,7 @@ object URLProviderUtils {
 
     const val protocol = "http://"
     var serverAddress = "192.168.124.3:8082"
-    const val imagePath = "/image/musicPicture/"
+    const val musicImagePath = "/image/musicPicture/"
     const val musicPath = "/audio/music/"
     const val lyricPath = "/audio/lyric/"
     const val mvImagePath = "/image/mvPicture/"
@@ -168,6 +168,38 @@ object URLProviderUtils {
      */
     fun postUploadLyric(): String {
         val url = protocol + serverAddress + "/data/music/uploadLyric"
+        return url
+    }
+
+    /**
+     * 上传音乐文件
+     */
+    fun postUploadMusic(): String {
+        val url = protocol + serverAddress + "/data/music/uploadAudio"
+        return url
+    }
+
+    /**
+     * 检查在线音乐名是否存在
+     */
+    fun postCheckMusicTitle(): String {
+        val url = protocol + serverAddress + "/data/music/checkTitle"
+        return url
+    }
+
+    /**
+     * 添加音乐
+     */
+    fun postAddMusic(): String {
+        val url = protocol + serverAddress + "/data/music/save"
+        return url
+    }
+
+    /**
+     * 获取歌词文本
+     */
+    fun getLyricText(lyricFileName: String): String {
+        val url = protocol + serverAddress + lyricPath + lyricFileName
         return url
     }
 

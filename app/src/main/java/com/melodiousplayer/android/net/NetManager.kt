@@ -12,6 +12,7 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.Response
+import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 
@@ -55,6 +56,46 @@ class NetManager private constructor() {
             override fun onResponse(call: Call, response: Response) {
                 val result = response.body?.string()
                 val parseResult = req.parseResult(result)
+                ThreadUtil.runOnMainThread(object : Runnable {
+                    override fun run() {
+                        req.handler.onSuccess(req.type, parseResult)
+                    }
+                })
+            }
+        })
+    }
+
+    /**
+     * 发送GET网络请求，，获取并返回文件内容
+     */
+    fun <RESPONSE> sendGetTextRequest(req: MRequest<RESPONSE>, token: String) {
+        val request = Request.Builder()
+            .url(req.url)
+            .get()
+            .addHeader("token", token)
+            .build()
+        client.newCall(request).enqueue(object : Callback {
+            /**
+             * 子线程中调用
+             */
+            override fun onFailure(call: Call, e: IOException) {
+                ThreadUtil.runOnMainThread(object : Runnable {
+                    override fun run() {
+                        // 回调到view层处理
+                        req.handler.onError(req.type, e.message)
+                    }
+                })
+            }
+
+            /**
+             * 子线程中调用
+             */
+            override fun onResponse(call: Call, response: Response) {
+                val responseText = response.body?.string()
+                val jsonObject = JSONObject()
+                jsonObject.put("code", 200)
+                jsonObject.put("msg", responseText)
+                val parseResult = req.parseResult(jsonObject.toString())
                 ThreadUtil.runOnMainThread(object : Runnable {
                     override fun run() {
                         req.handler.onSuccess(req.type, parseResult)

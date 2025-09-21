@@ -13,7 +13,6 @@ interface UpdateUserInfoContract {
 
     interface View {
         fun onUserNameError()
-        fun onUserNameExistError()
         fun onPhoneNumberError()
         fun onEmailError()
         fun onUpdateSuccess()

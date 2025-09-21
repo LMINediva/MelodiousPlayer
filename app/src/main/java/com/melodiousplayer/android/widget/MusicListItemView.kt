@@ -28,7 +28,7 @@ class MusicListItemView : RelativeLayout {
     )
 
     init {
-        View.inflate(context, R.layout.item_music, this)
+        View.inflate(context, R.layout.item_mv_subitem, this)
     }
 
     /**

@@ -8,13 +8,13 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.melodiousplayer.android.R
-import com.melodiousplayer.android.model.HomeItemBean
+import com.melodiousplayer.android.model.MusicBean
 import com.melodiousplayer.android.util.URLProviderUtils
 
 /**
  * 首页子项布局
  */
-class HomeItemView : RelativeLayout {
+class MusicView : RelativeLayout {
 
     constructor(context: Context?) : super(context)
 
@@ -30,13 +30,13 @@ class HomeItemView : RelativeLayout {
      * 初始化方法
      */
     init {
-        View.inflate(context, R.layout.item_home, this)
+        View.inflate(context, R.layout.item_music, this)
     }
 
     /**
      * 刷新条目view数据
      */
-    fun setData(data: HomeItemBean) {
+    fun setData(data: MusicBean) {
         val title: TextView = findViewById(R.id.title)
         val description: TextView = findViewById(R.id.description)
         val bg: ImageView = findViewById(R.id.bg)
@@ -47,7 +47,7 @@ class HomeItemView : RelativeLayout {
         // 背景图片
         Glide.with(context).load(
             URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                    + URLProviderUtils.imagePath + data.posterPic
+                    + URLProviderUtils.musicImagePath + data.posterPic
         ).into(bg)
     }
 

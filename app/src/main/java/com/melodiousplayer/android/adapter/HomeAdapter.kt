@@ -2,17 +2,17 @@ package com.melodiousplayer.android.adapter
 
 import android.content.Context
 import com.melodiousplayer.android.base.BaseListAdapter
-import com.melodiousplayer.android.model.HomeItemBean
-import com.melodiousplayer.android.widget.HomeItemView
+import com.melodiousplayer.android.model.MusicBean
+import com.melodiousplayer.android.widget.MusicView
 
-class HomeAdapter : BaseListAdapter<HomeItemBean, HomeItemView>() {
+class HomeAdapter : BaseListAdapter<MusicBean, MusicView>() {
 
-    override fun refreshItemView(itemView: HomeItemView, data: HomeItemBean) {
+    override fun refreshItemView(itemView: MusicView, data: MusicBean) {
         itemView.setData(data)
     }
 
-    override fun getItemView(context: Context?): HomeItemView {
-        return HomeItemView(context)
+    override fun getItemView(context: Context?): MusicView {
+        return MusicView(context)
     }
 
 }

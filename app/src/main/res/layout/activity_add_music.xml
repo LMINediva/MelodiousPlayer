@@ -237,6 +237,17 @@
                     android:textSize="20sp"
                     android:visibility="gone" />
 
+                <TextView
+                    android:id="@+id/musicError"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:textColor="@color/qq_red"
+                    android:textSize="15sp"
+                    android:visibility="gone" />
+
             </LinearLayout>
 
             <Button

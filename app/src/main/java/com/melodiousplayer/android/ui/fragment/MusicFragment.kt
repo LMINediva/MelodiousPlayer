@@ -6,30 +6,30 @@ import com.melodiousplayer.android.base.BaseListAdapter
 import com.melodiousplayer.android.base.BaseListFragment
 import com.melodiousplayer.android.base.BaseListPresenter
 import com.melodiousplayer.android.model.AudioBean
-import com.melodiousplayer.android.model.HomeItemBean
-import com.melodiousplayer.android.presenter.impl.HomePresenterImpl
+import com.melodiousplayer.android.model.MusicBean
+import com.melodiousplayer.android.presenter.impl.MusicPresenterImpl
 import com.melodiousplayer.android.ui.activity.AudioPlayerActivity
 import com.melodiousplayer.android.util.URLProviderUtils
-import com.melodiousplayer.android.widget.HomeItemView
+import com.melodiousplayer.android.widget.MusicView
 
 /**
  * 首页在线音乐界面
  */
-class HomeFragment : BaseListFragment<List<HomeItemBean>, HomeItemBean, HomeItemView>() {
+class MusicFragment : BaseListFragment<List<MusicBean>, MusicBean, MusicView>() {
 
     override fun onDataChanged() {
         super.onDataChanged()
     }
 
-    override fun getSpecialAdapter(): BaseListAdapter<HomeItemBean, HomeItemView> {
+    override fun getSpecialAdapter(): BaseListAdapter<MusicBean, MusicView> {
         return HomeAdapter()
     }
 
     override fun getSpecialPresenter(): BaseListPresenter {
-        return HomePresenterImpl(this)
+        return MusicPresenterImpl(this)
     }
 
-    override fun getList(response: List<HomeItemBean>?): List<HomeItemBean>? {
+    override fun getList(response: List<MusicBean>?): List<MusicBean>? {
         return response
     }
 
@@ -38,19 +38,19 @@ class HomeFragment : BaseListFragment<List<HomeItemBean>, HomeItemBean, HomeItem
         // 设置条目点击事件监听函数
         adapter.setMyListener {
             // 获取已经加载加载的音乐列表
-            val homeItemBeans: List<HomeItemBean> = adapter.list
+            val musicBeans: List<MusicBean> = adapter.list
             val list: ArrayList<AudioBean> = ArrayList()
-            homeItemBeans.let {
-                it.forEach { homeItem ->
+            musicBeans.let {
+                it.forEach { music ->
                     list.add(
                         AudioBean(
                             URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                                    + URLProviderUtils.musicPath + homeItem.url,
-                            homeItem.musicSize.toLong(),
-                            homeItem.title,
-                            homeItem.artistName,
+                                    + URLProviderUtils.musicPath + music.url,
+                            music.musicSize.toLong(),
+                            music.title,
+                            music.artistName,
                             URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                                    + URLProviderUtils.lyricPath + homeItem.lyric,
+                                    + URLProviderUtils.lyricPath + music.lyric,
                             true
                         )
                     )

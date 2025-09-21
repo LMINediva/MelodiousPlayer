@@ -33,6 +33,13 @@ open class MRequest<RESPONSE>(
      * 发送GET网络请求
      */
     fun execute(token: String = "") {
+        NetManager.manager.sendGetTextRequest(this, token)
+    }
+
+    /**
+     * 发送GET网络请求，获取并返回文件内容
+     */
+    fun executeGetText(token: String = "") {
         NetManager.manager.sendRequest(this, token)
     }
 

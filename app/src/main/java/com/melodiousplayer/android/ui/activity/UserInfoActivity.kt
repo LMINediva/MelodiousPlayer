@@ -363,11 +363,6 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         username.error = getString(R.string.user_name_error)
     }
 
-    override fun onUserNameExistError() {
-        myToast(getString(R.string.user_name_exist_error))
-        username.error = getString(R.string.user_name_exist_error)
-    }
-
     override fun onPhoneNumberError() {
         myToast(getString(R.string.phone_number_error))
         phonenumber.error = getString(R.string.phone_number_error)
