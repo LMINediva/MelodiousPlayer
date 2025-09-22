@@ -203,6 +203,14 @@ object URLProviderUtils {
         return url
     }
 
+    /**
+     * 删除上传到服务器的音乐相关文件缓存
+     */
+    fun postDeleteUploadMusicFileCache(): String {
+        val url = protocol + serverAddress + "/data/music/deleteUploadFileCache"
+        return url
+    }
+
     fun getSystemVersion(): String {
         return Build.VERSION.RELEASE
     }

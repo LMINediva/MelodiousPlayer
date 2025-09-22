@@ -10,7 +10,7 @@ class UploadLyricPresenterImpl(val view: UploadLyricContract.View) :
     UploadLyricContract.Presenter, ResponseHandler<UploadFileResultBean> {
 
     override fun uploadLyric(token: String, file: File) {
-        UploadLyricRequest(this).executePostUploadImage(token, file)
+        UploadLyricRequest(this).executePostUploadFile(token, "text/plain", file)
     }
 
     override fun onSuccess(type: Int, result: UploadFileResultBean) {

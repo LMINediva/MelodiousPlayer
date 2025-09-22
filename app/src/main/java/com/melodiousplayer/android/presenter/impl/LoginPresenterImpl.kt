@@ -8,6 +8,7 @@ import com.melodiousplayer.android.model.UserResultBean
 import com.melodiousplayer.android.model.VerificationCodeResultBean
 import com.melodiousplayer.android.net.LoginRequest
 import com.melodiousplayer.android.net.ResponseHandler
+import com.melodiousplayer.android.util.ThreadUtil
 import com.melodiousplayer.android.util.URLProviderUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -73,7 +74,11 @@ class LoginPresenterImpl(val view: LoginContract.View) : LoginContract.Presenter
                     isValidVerificationCode = true
                 } else {
                     isValidVerificationCode = false
-                    view.onVerificationCodeError(verificationCodeResult.msg)
+                    ThreadUtil.runOnMainThread(object : Runnable {
+                        override fun run() {
+                            view.onVerificationCodeError(verificationCodeResult.msg)
+                        }
+                    })
                 }
             }
 
@@ -83,7 +88,11 @@ class LoginPresenterImpl(val view: LoginContract.View) : LoginContract.Presenter
             override fun onFailure(call: Call, e: IOException) {
                 isValidVerificationCode = false
                 // 回调到view层处理
-                view.onNetworkError()
+                ThreadUtil.runOnMainThread(object : Runnable {
+                    override fun run() {
+                        view.onNetworkError()
+                    }
+                })
             }
         })
         // 延时500ms，确保isValidVerificationCode变量更新成功

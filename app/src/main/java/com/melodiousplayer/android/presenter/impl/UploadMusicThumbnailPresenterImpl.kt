@@ -10,7 +10,7 @@ class UploadMusicThumbnailPresenterImpl(val view: UploadThumbnailContract.View) 
     UploadThumbnailContract.Presenter, ResponseHandler<UploadFileResultBean> {
 
     override fun uploadThumbnail(token: String, file: File) {
-        UploadMusicThumbnailRequest(this).executePostUploadImage(token, file)
+        UploadMusicThumbnailRequest(this).executePostUploadFile(token, "image/jpeg", file)
     }
 
     override fun onSuccess(type: Int, result: UploadFileResultBean) {

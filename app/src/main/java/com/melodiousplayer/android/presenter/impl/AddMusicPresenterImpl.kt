@@ -6,6 +6,7 @@ import com.melodiousplayer.android.model.MusicBean
 import com.melodiousplayer.android.model.ResultBean
 import com.melodiousplayer.android.net.AddMusicRequest
 import com.melodiousplayer.android.net.ResponseHandler
+import com.melodiousplayer.android.util.ThreadUtil
 import com.melodiousplayer.android.util.URLProviderUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -24,15 +25,30 @@ class AddMusicPresenterImpl(val view: AddMusicContract.View) :
     private val client by lazy { OkHttpClient() }
 
     override fun addMusic(token: String, music: MusicBean) {
-        if (music.title.isNullOrEmpty()) {
+        if (!music.title.isNullOrEmpty()) {
             // 音乐名不为空，检查音乐名是否存在
             if (checkMusicTitleRequest(token, music.title)) {
                 // 音乐名不存在，继续校验歌手姓名
-                if (music.artistName.isNullOrEmpty()) {
+                if (!music.artistName.isNullOrEmpty()) {
                     // 歌手姓名不为空，继续校验音乐描述
-                    if (music.description.isNullOrEmpty()) {
-                        // 音乐描述不为空，开始添加音乐
-                        addMusicRequest(token, music)
+                    if (!music.description.isNullOrEmpty()) {
+                        // 音乐描述不为空，继续校验音乐海报图片
+                        if (!music.posterPic.isNullOrEmpty()) {
+                            // 音乐海报图片不为空，继续校验音乐缩略图
+                            if (!music.thumbnailPic.isNullOrEmpty()) {
+                                // 音乐缩略图不为空，继续校验音乐文件
+                                if (!music.url.isNullOrEmpty()) {
+                                    // 音乐文件不为空，开始添加音乐
+                                    addMusicRequest(token, music)
+                                } else {
+                                    view.onMusicFileError()
+                                }
+                            } else {
+                                view.onMusicThumbnailError()
+                            }
+                        } else {
+                            view.onMusicPosterError()
+                        }
                     } else {
                         view.onDescriptionError()
                     }
@@ -77,7 +93,11 @@ class AddMusicPresenterImpl(val view: AddMusicContract.View) :
                     isValidMusicTitle = true
                 } else {
                     isValidMusicTitle = false
-                    view.onMusicTitleExistError()
+                    ThreadUtil.runOnMainThread(object : Runnable {
+                        override fun run() {
+                            view.onMusicTitleExistError()
+                        }
+                    })
                 }
             }
 
@@ -87,13 +107,18 @@ class AddMusicPresenterImpl(val view: AddMusicContract.View) :
             override fun onFailure(call: Call, e: IOException) {
                 isValidMusicTitle = false
                 // 回调到view层处理
-                view.onNetworkError()
+                ThreadUtil.runOnMainThread(object : Runnable {
+                    override fun run() {
+                        view.onNetworkError()
+                    }
+                })
             }
         })
         // 延时500ms，确保isValidMusicTitle变量更新成功
         runBlocking {
             delay(500)
         }
+        println("isValidMusicTitle: $isValidMusicTitle")
         return isValidMusicTitle
     }
 

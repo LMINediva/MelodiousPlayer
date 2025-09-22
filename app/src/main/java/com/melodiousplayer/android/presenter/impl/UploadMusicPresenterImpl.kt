@@ -10,7 +10,7 @@ class UploadMusicPresenterImpl(val view: UploadMusicContract.View) :
     UploadMusicContract.Presenter, ResponseHandler<UploadFileResultBean> {
 
     override fun uploadMusic(token: String, file: File) {
-        UploadMusicRequest(this).executePostUploadImage(token, file)
+        UploadMusicRequest(this).executePostUploadFile(token, "audio/mpeg", file)
     }
 
     override fun onSuccess(type: Int, result: UploadFileResultBean) {

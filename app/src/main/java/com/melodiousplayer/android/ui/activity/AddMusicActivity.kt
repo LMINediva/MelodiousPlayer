@@ -4,11 +4,13 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.os.Message
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
@@ -28,14 +30,19 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.contract.AddMusicContract
+import com.melodiousplayer.android.contract.DeleteUploadMusicFileCacheContract
+import com.melodiousplayer.android.contract.GetLyricTextContract
 import com.melodiousplayer.android.contract.UploadLyricContract
 import com.melodiousplayer.android.contract.UploadMusicContract
 import com.melodiousplayer.android.contract.UploadPosterContract
 import com.melodiousplayer.android.contract.UploadThumbnailContract
 import com.melodiousplayer.android.model.MusicBean
+import com.melodiousplayer.android.model.ResultBean
 import com.melodiousplayer.android.model.UploadFileResultBean
 import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.presenter.impl.AddMusicPresenterImpl
+import com.melodiousplayer.android.presenter.impl.DeleteUploadMusicFileCachePresenterImpl
+import com.melodiousplayer.android.presenter.impl.GetLyricTextPresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadLyricPresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadMusicPosterPresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadMusicPresenterImpl
@@ -47,6 +54,8 @@ import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import java.io.File
 import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.InputStream
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -55,7 +64,8 @@ import java.math.RoundingMode
  */
 class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     SeekBar.OnSeekBarChangeListener, UploadPosterContract.View, UploadThumbnailContract.View,
-    UploadLyricContract.View, UploadMusicContract.View, AddMusicContract.View {
+    UploadLyricContract.View, UploadMusicContract.View, AddMusicContract.View,
+    GetLyricTextContract.View, DeleteUploadMusicFileCacheContract.View {
 
     private lateinit var title: EditText
     private lateinit var artistName: EditText
@@ -76,11 +86,10 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private lateinit var state: ImageView
     private lateinit var reset: ImageView
     private lateinit var token: String
-    private lateinit var lyricUri: Uri
-    private lateinit var lyricFileName: String
-    private lateinit var musicUri: Uri
     private lateinit var musicFileName: String
     private lateinit var currentUser: UserBean
+    private lateinit var lyricResult: ResultBean
+    private lateinit var musicPath: String
     private val mediaPlayer = MediaPlayer()
     private val PERMISSION_REQUEST = 1
     private val ALBUM_POSTER_REQUEST = 1
@@ -95,6 +104,8 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private val uploadLyricPresenter = UploadLyricPresenterImpl(this)
     private val uploadMusicPresenter = UploadMusicPresenterImpl(this)
     private val addMusicPresenter = AddMusicPresenterImpl(this)
+    private val getLyricTextPresenter = GetLyricTextPresenterImpl(this)
+    private val deleteUploadMusicFileCachePresenter = DeleteUploadMusicFileCachePresenterImpl(this)
     private val handler = object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
@@ -111,7 +122,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private var musicSize: Float = 0F
     private var hdMusicSize: Float = 0F
     private var uhdMusicSize: Float = 0F
-    private var allFilesUploadSuccess = true
+    private var isAddMusicSuccess: Boolean = false
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -152,6 +163,8 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         // 从SharedPreferences文件中读取token的值
         token = getSharedPreferences("data", Context.MODE_PRIVATE)
             .getString("token", "").toString()
+        musicPath =
+            URLProviderUtils.protocol + URLProviderUtils.serverAddress + URLProviderUtils.musicPath
         requestPermissions()
     }
 
@@ -171,6 +184,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
+                deleteUploadMusicFileCache()
                 finish()
                 return true
             }
@@ -229,18 +243,14 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                 // 重置进度数据
                 updateProgress(0)
                 state.setImageResource(R.drawable.selector_btn_audio_pause)
-                initMediaPlayer(musicUri)
+                initMediaPlayer(musicPath + newMusic)
             }
 
             R.id.addMusic -> {
-                val title = title.text.trim().toString()
-                val artistName = artistName.text.trim().toString()
-                val description = description.text.trim().toString()
-                lyricUri.path?.let { File(it) }
-                    ?.let { uploadLyricPresenter.uploadLyric(token, it) }
-                musicUri.path?.let { File(it) }
-                    ?.let { uploadMusicPresenter.uploadMusic(token, it) }
-                if (allFilesUploadSuccess) {
+                if (token.isNotEmpty()) {
+                    val title = title.text.trim().toString()
+                    val artistName = artistName.text.trim().toString()
+                    val description = description.text.trim().toString()
                     val music = MusicBean(
                         null, musicType, title, artistName, description,
                         newMusicPoster, newMusicThumbnail, newLyric, newMusic, newMusic,
@@ -355,19 +365,13 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                     val resultUri = data?.data
                     if (resultUri != null) {
                         if (checkLyricFile(resultUri)) {
-                            lyricUri = resultUri
-                            val cursor = contentResolver.query(
-                                resultUri, null, null,
-                                null, null
-                            )
-                            cursor?.use {
-                                if (it.moveToFirst()) {
-                                    val nameIndex =
-                                        it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
-                                    lyricFileName = it.getString(nameIndex)
-                                    lyric.visibility = View.GONE
-                                    lyricName.visibility = View.VISIBLE
-                                    lyricName.text = lyricFileName
+                            if (token.isNotEmpty()) {
+                                val file = getFileFromUri(resultUri)
+                                if (file != null) {
+                                    uploadLyricPresenter.uploadLyric(token, file)
+                                } else {
+                                    lyricError.text = "歌词文件路径不正确或文件已损坏！"
+                                    lyricError.visibility = View.VISIBLE
                                 }
                             }
                         }
@@ -380,20 +384,13 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                     val resultUri = data?.data
                     if (resultUri != null) {
                         if (checkMusic(resultUri)) {
-                            musicUri = resultUri
-                            val cursor = contentResolver.query(
-                                resultUri, null, null,
-                                null, null
-                            )
-                            cursor?.use {
-                                if (it.moveToFirst()) {
-                                    val nameIndex =
-                                        it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
-                                    musicFileName = it.getString(nameIndex)
-                                    music.visibility = View.GONE
-                                    musicName.visibility = View.VISIBLE
-                                    musicName.text = musicFileName
-                                    initMediaPlayer(resultUri)
+                            if (token.isNotEmpty()) {
+                                val file = getFileFromUri(resultUri)
+                                if (file != null) {
+                                    uploadMusicPresenter.uploadMusic(token, file)
+                                } else {
+                                    musicError.text = "音乐文件路径不正确或文件已损坏！"
+                                    musicError.visibility = View.VISIBLE
                                 }
                             }
                         }
@@ -401,6 +398,37 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                 }
             }
         }
+    }
+
+    /**
+     * 从Uri中获取File
+     */
+    fun getFileFromUri(uri: Uri): File? {
+        try {
+            val returnCursor: Cursor? =
+                contentResolver.query(uri, null, null, null, null)
+            val nameIndex: Int = returnCursor!!.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            returnCursor.moveToFirst()
+            val name: String = returnCursor.getString(nameIndex)
+            val file = File(filesDir, name)
+            val inputStream: InputStream? = contentResolver.openInputStream(uri)
+            val outputStream = FileOutputStream(file)
+            var read = 0
+            val maxBufferSize = 1 * 1024 * 1024
+            val bytesAvailable: Int = inputStream!!.available()
+            val bufferSize = Math.min(bytesAvailable, maxBufferSize)
+            val buffers = ByteArray(bufferSize)
+            while (inputStream!!.read(buffers).also { read = it } != -1) {
+                outputStream.write(buffers, 0, read)
+            }
+            returnCursor.close()
+            inputStream.close()
+            outputStream.close()
+            return File(file.path)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
     }
 
     /**
@@ -482,18 +510,6 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     }
 
     /**
-     * 读取LRC文件内容
-     */
-    private fun readLrcFileContent(uri: Uri): String? {
-        return try {
-            contentResolver.openInputStream(uri)?.bufferedReader().use { it?.readText() }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-
-    /**
      * 检查音乐文件是否符合要求
      */
     private fun checkMusic(uri: Uri): Boolean {
@@ -547,8 +563,8 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
      */
     private fun showScrollingDialog(context: Context) {
         val dialog = AlertDialog.Builder(context)
-            .setTitle(lyricFileName)
-            .setMessage(readLrcFileContent(lyricUri))
+            .setTitle(newLyric)
+            .setMessage(lyricResult.msg)
             .setCancelable(false)
             .setPositiveButton("确定") { dialog, which ->
             }
@@ -594,10 +610,10 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     /**
      * 初始化MediaPlayer
      */
-    private fun initMediaPlayer(uri: Uri) {
+    private fun initMediaPlayer(url: String) {
         try {
-            mediaPlayer.setDataSource(this, uri)
-            mediaPlayer.prepare()
+            mediaPlayer.setDataSource(url)
+            mediaPlayer.prepareAsync()
         } catch (e: Exception) {
             // 处理异常，例如文件不存在或格式不支持等
             e.printStackTrace()
@@ -643,6 +659,24 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         progressSeekBar.setProgress(pro)
     }
 
+    private fun deleteUploadMusicFileCache() {
+        if (!isAddMusicSuccess) {
+            if (!newMusicPoster.isNullOrEmpty() || !newMusicThumbnail.isNullOrEmpty()
+                || !newLyric.isNullOrEmpty() || !newMusic.isNullOrEmpty()
+            ) {
+                if (token.isNotEmpty()) {
+                    val music = MusicBean(
+                        null, musicType, null, null, null,
+                        newMusicPoster, newMusicThumbnail, newLyric, newMusic, newMusic,
+                        newMusic, musicSize, null, null,
+                        null, currentUser
+                    )
+                    deleteUploadMusicFileCachePresenter.deleteUploadMusicFileCache(token, music)
+                }
+            }
+        }
+    }
+
     /**
      * 进度改变回调
      * progress：改变之后的进度
@@ -671,64 +705,6 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
 
     }
 
-    override fun onUploadPosterSuccess(result: UploadFileResultBean) {
-        newMusicPoster = result.data?.title.toString()
-        // 将上传成功的音乐海报图片显示出来
-        Glide.with(this)
-            .load(
-                URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                        + URLProviderUtils.musicImagePath + newMusicPoster
-            )
-            .skipMemoryCache(true)
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .into(posterPicture)
-    }
-
-    override fun onUploadPosterFailed() {
-        allFilesUploadSuccess = false
-        posterPictureError.text = "海报图片上传失败！"
-        posterPictureError.visibility = View.VISIBLE
-    }
-
-    override fun onUploadThumbnailSuccess(result: UploadFileResultBean) {
-        newMusicThumbnail = result.data?.title.toString()
-        // 将上传成功的音乐缩略图图片显示出来
-        Glide.with(this)
-            .load(
-                URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                        + URLProviderUtils.musicImagePath + newMusicThumbnail
-            )
-            .skipMemoryCache(true)
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .into(thumbnailPicture)
-    }
-
-    override fun onUploadThumbnailFailed() {
-        allFilesUploadSuccess = false
-        thumbnailPictureError.text = "海报缩略图上传失败！"
-        thumbnailPictureError.visibility = View.VISIBLE
-    }
-
-    override fun onUploadLyricSuccess(result: UploadFileResultBean) {
-        newLyric = result.data?.title.toString()
-    }
-
-    override fun onUploadLyricFailed() {
-        allFilesUploadSuccess = false
-        lyricError.text = "歌词文件上传失败！"
-        lyricError.visibility = View.VISIBLE
-    }
-
-    override fun onUploadMusicSuccess(result: UploadFileResultBean) {
-        newMusic = result.data?.title.toString()
-    }
-
-    override fun onUploadMusicFailed() {
-        allFilesUploadSuccess = false
-        musicError.text = "音乐文件上传失败！"
-        musicError.visibility = View.VISIBLE
-    }
-
     override fun onMusicTitleError() {
         myToast(getString(R.string.music_title_error))
         title.error = getString(R.string.music_title_error)
@@ -749,7 +725,100 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         description.error = getString(R.string.description_error)
     }
 
+    override fun onUploadPosterSuccess(result: UploadFileResultBean) {
+        posterPictureError.visibility = View.GONE
+        newMusicPoster = result.data?.title.toString()
+        // 将上传成功的音乐海报图片显示出来
+        Glide.with(this)
+            .load(
+                URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                        + URLProviderUtils.musicImagePath + newMusicPoster
+            )
+            .skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .into(posterPicture)
+    }
+
+    override fun onUploadPosterFailed() {
+        posterPictureError.text = "海报图片上传失败！"
+        posterPictureError.visibility = View.VISIBLE
+    }
+
+    override fun onUploadThumbnailSuccess(result: UploadFileResultBean) {
+        thumbnailPictureError.visibility = View.GONE
+        newMusicThumbnail = result.data?.title.toString()
+        // 将上传成功的音乐缩略图图片显示出来
+        Glide.with(this)
+            .load(
+                URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                        + URLProviderUtils.musicImagePath + newMusicThumbnail
+            )
+            .skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .into(thumbnailPicture)
+    }
+
+    override fun onUploadThumbnailFailed() {
+        thumbnailPictureError.text = "海报缩略图上传失败！"
+        thumbnailPictureError.visibility = View.VISIBLE
+    }
+
+    override fun onUploadLyricSuccess(result: UploadFileResultBean) {
+        lyricError.visibility = View.GONE
+        newLyric = result.data?.title.toString()
+        lyric.visibility = View.GONE
+        lyricName.visibility = View.VISIBLE
+        lyricName.text = newLyric
+        getLyricTextPresenter.getLyricText(newLyric!!)
+    }
+
+    override fun onUploadLyricFailed() {
+        lyricError.text = "歌词文件上传失败！"
+        lyricError.visibility = View.VISIBLE
+    }
+
+    override fun onGetLyricTextSuccess(result: ResultBean) {
+        lyricResult = result
+    }
+
+    override fun onGetLyricTextFailed() {
+        myToast(getString(R.string.get_lyric_text_error))
+    }
+
+    override fun onUploadMusicSuccess(result: UploadFileResultBean) {
+        musicError.visibility = View.GONE
+        newMusic = result.data?.title.toString()
+        music.visibility = View.GONE
+        musicName.visibility = View.VISIBLE
+        musicName.text = newMusic
+        initMediaPlayer(musicPath + newMusic)
+    }
+
+    override fun onUploadMusicFailed() {
+        musicError.text = "音乐文件上传失败！"
+        musicError.visibility = View.VISIBLE
+    }
+
+    override fun onMusicPosterError() {
+        myToast(getString(R.string.music_poster_error))
+        posterPictureError.text = getString(R.string.music_poster_error)
+        posterPictureError.visibility = View.VISIBLE
+    }
+
+    override fun onMusicThumbnailError() {
+        myToast(getString(R.string.music_thumbnail_error))
+        thumbnailPictureError.text = getString(R.string.music_thumbnail_error)
+        thumbnailPictureError.visibility = View.VISIBLE
+    }
+
+    override fun onMusicFileError() {
+        myToast(getString(R.string.music_file_error))
+        musicError.text = getString(R.string.music_file_error)
+        musicError.visibility = View.VISIBLE
+    }
+
     override fun onAddMusicSuccess() {
+        isAddMusicSuccess = true
         myToast(getString(R.string.add_music_success))
     }
 
@@ -757,18 +826,29 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         myToast(getString(R.string.add_music_failed))
     }
 
+    override fun onDeleteUploadMusicFileCacheSuccess(result: ResultBean) {
+        myToast(getString(R.string.delete_upload_music_file_cache_success))
+    }
+
+    override fun onDeleteUploadMusicFileCacheFailed(result: ResultBean) {
+        myToast(getString(R.string.delete_upload_music_file_cache_failed))
+    }
+
     override fun onNetworkError() {
         myToast(getString(R.string.network_error))
     }
 
     override fun onBackPressed() {
+        deleteUploadMusicFileCache()
         finish()
         super.onBackPressed()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.stop()
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.stop()
+        }
         mediaPlayer.release()
         // 清空handler发送的所有消息
         handler.removeCallbacksAndMessages(null)

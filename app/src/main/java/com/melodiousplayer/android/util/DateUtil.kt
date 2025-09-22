@@ -17,4 +17,12 @@ object DateUtil {
         return simpleDateFormat.format(date)
     }
 
+    /**
+     * 将字符串日期转换为Date类型
+     */
+    fun formatStringToDate(dateString: String): Date? {
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        return simpleDateFormat.parse(dateString)
+    }
+
 }

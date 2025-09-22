@@ -46,8 +46,8 @@ class MusicFragment : BaseListFragment<List<MusicBean>, MusicBean, MusicView>() 
                         AudioBean(
                             URLProviderUtils.protocol + URLProviderUtils.serverAddress
                                     + URLProviderUtils.musicPath + music.url,
-                            music.musicSize.toLong(),
-                            music.title,
+                            music.musicSize!!.toLong(),
+                            music.title!!,
                             music.artistName,
                             URLProviderUtils.protocol + URLProviderUtils.serverAddress
                                     + URLProviderUtils.lyricPath + music.lyric,

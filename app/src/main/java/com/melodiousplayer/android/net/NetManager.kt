@@ -182,12 +182,13 @@ class NetManager private constructor() {
     /**
      * 发送POST上传图片的网络请求
      */
-    fun <RESPONSE> sendPostUploadImageRequest(
+    fun <RESPONSE> sendPostUploadFileRequest(
         req: MRequest<RESPONSE>,
         token: String,
+        type: String,
         file: File
     ) {
-        val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+        val requestFile = file.asRequestBody(type.toMediaTypeOrNull())
         val requestBody =
             MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
