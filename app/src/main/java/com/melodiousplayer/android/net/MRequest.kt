@@ -60,8 +60,11 @@ open class MRequest<RESPONSE>(
     /**
      * 发送POST上传图片的网络请求
      */
-    fun executePostUploadFile(token: String = "", type: String, file: File) {
-        NetManager.manager.sendPostUploadFileRequest(this, token, type, file)
+    fun executePostUploadFile(
+        token: String = "", type: String, file: File,
+        progressCallback: (progress: Int, total: Long, current: Long, done: Boolean) -> Unit
+    ) {
+        NetManager.manager.sendPostUploadFileRequest(this, token, type, file, progressCallback)
     }
 
 }

@@ -186,13 +186,31 @@ class NetManager private constructor() {
         req: MRequest<RESPONSE>,
         token: String,
         type: String,
-        file: File
+        file: File,
+        progressCallback: (progress: Int, total: Long, current: Long, done: Boolean) -> Unit
     ) {
         val requestFile = file.asRequestBody(type.toMediaTypeOrNull())
         val requestBody =
             MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("file", file.name, requestFile)
+                .addFormDataPart(
+                    "file",
+                    file.name,
+                    ProgressRequestBody(requestFile,
+                        object : ProgressListener {
+                            override fun onProgress(
+                                bytesWritten: Long,
+                                contentLength: Long,
+                                done: Boolean
+                            ) {
+                                ThreadUtil.runOnMainThread { // 回调到view层处理
+                                    val progress = (bytesWritten * 100 / contentLength).toInt()
+                                    progressCallback(progress, contentLength, bytesWritten, done)
+                                }
+                            }
+                        }
+                    )
+                )
                 .build()
         val request = Request.Builder()
             .url(req.url)

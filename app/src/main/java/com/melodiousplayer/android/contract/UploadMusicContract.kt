@@ -13,6 +13,7 @@ interface UploadMusicContract {
         fun onUploadMusicSuccess(result: UploadFileResultBean)
         fun onUploadMusicFailed()
         fun onNetworkError()
+        fun onUploadMusicProgress(progress: Int, total: Long, current: Long, done: Boolean)
     }
 
 }

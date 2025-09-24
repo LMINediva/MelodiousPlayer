@@ -19,6 +19,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -50,6 +51,7 @@ import com.melodiousplayer.android.presenter.impl.UploadMusicThumbnailPresenterI
 import com.melodiousplayer.android.util.StringUtil
 import com.melodiousplayer.android.util.ToolBarManager
 import com.melodiousplayer.android.util.URLProviderUtils
+import com.melodiousplayer.android.util.UnitUtil
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import java.io.File
@@ -85,8 +87,14 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private lateinit var progressSeekBar: SeekBar
     private lateinit var state: ImageView
     private lateinit var reset: ImageView
+    private lateinit var progressInfo: LinearLayout
+    private lateinit var uploadCompletedText: TextView
+    private lateinit var progressText: TextView
+    private lateinit var currentText: TextView
+    private lateinit var totalText: TextView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var hintInfo: TextView
     private lateinit var token: String
-    private lateinit var musicFileName: String
     private lateinit var currentUser: UserBean
     private lateinit var lyricResult: ResultBean
     private lateinit var musicPath: String
@@ -244,6 +252,11 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                 updateProgress(0)
                 state.setImageResource(R.drawable.selector_btn_audio_pause)
                 initMediaPlayer(musicPath + newMusic)
+                mediaPlayer.setOnPreparedListener {
+                    duration = mediaPlayer.duration
+                    // 进度条设置最大值
+                    progressSeekBar.max = duration
+                }
             }
 
             R.id.addMusic -> {
@@ -325,6 +338,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                     // 将裁剪好的音乐海报图片上传到服务器
                     if (resultUri != null) {
                         if (token.isNotEmpty()) {
+                            showUploadFileDialog(this)
                             resultUri.path?.let { File(it) }
                                 ?.let { uploadMusicPosterPresenter.uploadPoster(token, it) }
                         }
@@ -353,6 +367,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                     // 将裁剪好的音乐缩略图图片上传到服务器
                     if (resultUri != null) {
                         if (token.isNotEmpty()) {
+                            showUploadFileDialog(this)
                             resultUri.path?.let { File(it) }
                                 ?.let { uploadMusicThumbnailPresenter.uploadThumbnail(token, it) }
                         }
@@ -368,6 +383,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                             if (token.isNotEmpty()) {
                                 val file = getFileFromUri(resultUri)
                                 if (file != null) {
+                                    showUploadFileDialog(this)
                                     uploadLyricPresenter.uploadLyric(token, file)
                                 } else {
                                     lyricError.text = "歌词文件路径不正确或文件已损坏！"
@@ -387,6 +403,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                             if (token.isNotEmpty()) {
                                 val file = getFileFromUri(resultUri)
                                 if (file != null) {
+                                    showUploadFileDialog(this)
                                     uploadMusicPresenter.uploadMusic(token, file)
                                 } else {
                                     musicError.text = "音乐文件路径不正确或文件已损坏！"
@@ -550,7 +567,6 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         }
         val bigDecimal = BigDecimal(fileSize / (1024 * 1024))
         val fileSizeMB = bigDecimal.setScale(1, RoundingMode.HALF_UP).toFloat()
-        println("fileSizeMB: $fileSizeMB")
         musicSize = fileSizeMB
         hdMusicSize = fileSizeMB
         uhdMusicSize = fileSizeMB
@@ -580,8 +596,9 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
      * 弹窗显示音乐播放控件
      */
     private fun showPlayMusicDialog(context: Context) {
+        initMediaPlayer(musicPath + newMusic)
         val dialog = AlertDialog.Builder(context)
-            .setTitle(musicFileName)
+            .setTitle(newMusic)
             .setView(R.layout.popup_music_player)
             .setCancelable(false)
             .setPositiveButton("确定") { dialog, which ->
@@ -597,14 +614,16 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         progressSeekBar = dialog.findViewById(R.id.progress_sk)!!
         state = dialog.findViewById(R.id.state)!!
         reset = dialog.findViewById(R.id.reset)!!
-        // 播放状态切换
-        state.setOnClickListener(this)
-        reset.setOnClickListener(this)
-        duration = mediaPlayer.duration
-        // 进度条设置最大值
-        progressSeekBar.max = duration
-        // 进度条变化监听
-        progressSeekBar.setOnSeekBarChangeListener(this)
+        mediaPlayer.setOnPreparedListener {
+            // 播放状态切换
+            state.setOnClickListener(this)
+            reset.setOnClickListener(this)
+            duration = mediaPlayer.duration
+            // 进度条设置最大值
+            progressSeekBar.max = duration
+            // 进度条变化监听
+            progressSeekBar.setOnSeekBarChangeListener(this)
+        }
     }
 
     /**
@@ -659,6 +678,9 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         progressSeekBar.setProgress(pro)
     }
 
+    /**
+     * 发送删除上传音乐相关文件缓存的请求
+     */
     private fun deleteUploadMusicFileCache() {
         if (!isAddMusicSuccess) {
             if (!newMusicPoster.isNullOrEmpty() || !newMusicThumbnail.isNullOrEmpty()
@@ -675,6 +697,31 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                 }
             }
         }
+    }
+
+    /**
+     * 弹窗显示音乐相关文件上传进度
+     */
+    private fun showUploadFileDialog(context: Context) {
+        val dialog = AlertDialog.Builder(context)
+            .setView(R.layout.popup_upload_progress)
+            .setCancelable(false)
+            .setPositiveButton("确定") { dialog, which ->
+            }
+            .create()
+        dialog.window?.setLayout(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window?.setGravity(Gravity.CENTER)
+        dialog.show()
+        progressInfo = dialog.findViewById(R.id.progress_info)!!
+        progressText = dialog.findViewById(R.id.progress_text)!!
+        currentText = dialog.findViewById(R.id.current_text)!!
+        totalText = dialog.findViewById(R.id.total_text)!!
+        uploadCompletedText = dialog.findViewById(R.id.upload_completed)!!
+        progressBar = dialog.findViewById(R.id.progress_bar)!!
+        hintInfo = dialog.findViewById(R.id.hint_info)!!
     }
 
     /**
@@ -725,6 +772,24 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         description.error = getString(R.string.description_error)
     }
 
+    override fun onUploadPosterProgress(progress: Int, total: Long, current: Long, done: Boolean) {
+        if (done) {
+            progressInfo.visibility = View.GONE
+            uploadCompletedText.text =
+                "上传完成 (${UnitUtil.bytesToSize(total)})"
+            uploadCompletedText.visibility = View.VISIBLE
+            hintInfo.visibility = View.GONE
+        } else {
+            uploadCompletedText.visibility = View.GONE
+            progressInfo.visibility = View.VISIBLE
+            hintInfo.visibility = View.VISIBLE
+            progressText.text = progress.toString()
+            currentText.text = UnitUtil.bytesToSize(current)
+            totalText.text = UnitUtil.bytesToSize(total)
+            progressBar.progress = progress
+        }
+    }
+
     override fun onUploadPosterSuccess(result: UploadFileResultBean) {
         posterPictureError.visibility = View.GONE
         newMusicPoster = result.data?.title.toString()
@@ -742,6 +807,29 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     override fun onUploadPosterFailed() {
         posterPictureError.text = "海报图片上传失败！"
         posterPictureError.visibility = View.VISIBLE
+    }
+
+    override fun onUploadThumbnailProgress(
+        progress: Int,
+        total: Long,
+        current: Long,
+        done: Boolean
+    ) {
+        if (done) {
+            progressInfo.visibility = View.GONE
+            uploadCompletedText.text =
+                "上传完成 (${UnitUtil.bytesToSize(total)})"
+            uploadCompletedText.visibility = View.VISIBLE
+            hintInfo.visibility = View.GONE
+        } else {
+            uploadCompletedText.visibility = View.GONE
+            progressInfo.visibility = View.VISIBLE
+            hintInfo.visibility = View.VISIBLE
+            progressText.text = progress.toString()
+            currentText.text = UnitUtil.bytesToSize(current)
+            totalText.text = UnitUtil.bytesToSize(total)
+            progressBar.progress = progress
+        }
     }
 
     override fun onUploadThumbnailSuccess(result: UploadFileResultBean) {
@@ -763,12 +851,31 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         thumbnailPictureError.visibility = View.VISIBLE
     }
 
+    override fun onUploadLyricProgress(progress: Int, total: Long, current: Long, done: Boolean) {
+        if (done) {
+            progressInfo.visibility = View.GONE
+            uploadCompletedText.text =
+                "上传完成 (${UnitUtil.bytesToSize(total)})"
+            uploadCompletedText.visibility = View.VISIBLE
+            hintInfo.visibility = View.GONE
+        } else {
+            uploadCompletedText.visibility = View.GONE
+            progressInfo.visibility = View.VISIBLE
+            hintInfo.visibility = View.VISIBLE
+            progressText.text = progress.toString()
+            currentText.text = UnitUtil.bytesToSize(current)
+            totalText.text = UnitUtil.bytesToSize(total)
+            progressBar.progress = progress
+        }
+    }
+
     override fun onUploadLyricSuccess(result: UploadFileResultBean) {
         lyricError.visibility = View.GONE
         newLyric = result.data?.title.toString()
         lyric.visibility = View.GONE
         lyricName.visibility = View.VISIBLE
         lyricName.text = newLyric
+        progressBar.progress = 100
         getLyricTextPresenter.getLyricText(newLyric!!)
     }
 
@@ -785,13 +892,30 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         myToast(getString(R.string.get_lyric_text_error))
     }
 
+    override fun onUploadMusicProgress(progress: Int, total: Long, current: Long, done: Boolean) {
+        if (done) {
+            progressInfo.visibility = View.GONE
+            uploadCompletedText.text =
+                "上传完成 (${UnitUtil.bytesToSize(total)})"
+            uploadCompletedText.visibility = View.VISIBLE
+            hintInfo.visibility = View.GONE
+        } else {
+            uploadCompletedText.visibility = View.GONE
+            progressInfo.visibility = View.VISIBLE
+            hintInfo.visibility = View.VISIBLE
+            progressText.text = progress.toString()
+            currentText.text = UnitUtil.bytesToSize(current)
+            totalText.text = UnitUtil.bytesToSize(total)
+            progressBar.progress = progress
+        }
+    }
+
     override fun onUploadMusicSuccess(result: UploadFileResultBean) {
         musicError.visibility = View.GONE
         newMusic = result.data?.title.toString()
         music.visibility = View.GONE
         musicName.visibility = View.VISIBLE
         musicName.text = newMusic
-        initMediaPlayer(musicPath + newMusic)
     }
 
     override fun onUploadMusicFailed() {

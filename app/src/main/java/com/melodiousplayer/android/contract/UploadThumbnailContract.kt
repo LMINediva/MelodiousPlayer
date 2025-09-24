@@ -10,6 +10,7 @@ interface UploadThumbnailContract {
     }
 
     interface View {
+        fun onUploadThumbnailProgress(progress: Int, total: Long, current: Long, done: Boolean)
         fun onUploadThumbnailSuccess(result: UploadFileResultBean)
         fun onUploadThumbnailFailed()
         fun onNetworkError()

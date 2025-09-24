@@ -10,7 +10,10 @@ class UploadAvatarPresenterImpl(val view: UploadAvatarContract.View) :
     UploadAvatarContract.Presenter, ResponseHandler<UploadFileResultBean> {
 
     override fun uploadAvatar(token: String, file: File) {
-        UploadAvatarRequest(this).executePostUploadFile(token, "image/jpeg", file)
+        UploadAvatarRequest(this).executePostUploadFile(token, "image/jpeg", file,
+            progressCallback = { progress, total, current, done ->
+                view.onUploadAvatarProgress(progress, total, current, done)
+            })
     }
 
     override fun onSuccess(type: Int, result: UploadFileResultBean) {

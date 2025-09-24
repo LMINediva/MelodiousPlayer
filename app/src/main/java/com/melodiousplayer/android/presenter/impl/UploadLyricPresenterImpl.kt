@@ -10,7 +10,10 @@ class UploadLyricPresenterImpl(val view: UploadLyricContract.View) :
     UploadLyricContract.Presenter, ResponseHandler<UploadFileResultBean> {
 
     override fun uploadLyric(token: String, file: File) {
-        UploadLyricRequest(this).executePostUploadFile(token, "text/plain", file)
+        UploadLyricRequest(this).executePostUploadFile(token, "text/plain", file,
+            progressCallback = { progress, total, current, done ->
+                view.onUploadLyricProgress(progress, total, current, done)
+            })
     }
 
     override fun onSuccess(type: Int, result: UploadFileResultBean) {

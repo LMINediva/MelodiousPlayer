@@ -10,6 +10,7 @@ interface UploadLyricContract {
     }
 
     interface View {
+        fun onUploadLyricProgress(progress: Int, total: Long, current: Long, done: Boolean)
         fun onUploadLyricSuccess(result: UploadFileResultBean)
         fun onUploadLyricFailed()
         fun onNetworkError()

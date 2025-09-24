@@ -10,6 +10,7 @@ interface UploadPosterContract {
     }
 
     interface View {
+        fun onUploadPosterProgress(progress: Int, total: Long, current: Long, done: Boolean)
         fun onUploadPosterSuccess(result: UploadFileResultBean)
         fun onUploadPosterFailed()
         fun onNetworkError()

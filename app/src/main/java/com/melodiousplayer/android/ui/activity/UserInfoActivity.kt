@@ -19,7 +19,9 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -39,6 +41,7 @@ import com.melodiousplayer.android.presenter.impl.UploadAvatarPresenterImpl
 import com.melodiousplayer.android.util.DateUtil
 import com.melodiousplayer.android.util.ToolBarManager
 import com.melodiousplayer.android.util.URLProviderUtils
+import com.melodiousplayer.android.util.UnitUtil
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import de.hdodenhof.circleimageview.CircleImageView
@@ -62,6 +65,13 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private lateinit var cancel: LinearLayout
     private lateinit var photograph: TextView
     private lateinit var updateButton: Button
+    private lateinit var progressInfo: LinearLayout
+    private lateinit var uploadCompletedText: TextView
+    private lateinit var progressText: TextView
+    private lateinit var currentText: TextView
+    private lateinit var totalText: TextView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var hintInfo: TextView
     private var popupWindow: PopupWindow? = null
     private val PERMISSION_REQUEST = 1
     private val TAKE_PHOTO_REQUEST = 1
@@ -279,6 +289,7 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                     // 将拍摄并裁剪好的照片上传到服务器
                     if (resultUri != null) {
                         if (token.isNotEmpty()) {
+                            showUploadFileDialog(this)
                             resultUri.path?.let { File(it) }
                                 ?.let { uploadAvatarPresenter.uploadAvatar(token, it) }
                         }
@@ -323,6 +334,49 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         val intent = Intent("android.media.action.IMAGE_CAPTURE")
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
         startActivityForResult(intent, TAKE_PHOTO_REQUEST)
+    }
+
+    /**
+     * 弹窗显示头像图片上传进度
+     */
+    private fun showUploadFileDialog(context: Context) {
+        val dialog = AlertDialog.Builder(context)
+            .setView(R.layout.popup_upload_progress)
+            .setCancelable(false)
+            .setPositiveButton("确定") { dialog, which ->
+            }
+            .create()
+        dialog.window?.setLayout(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window?.setGravity(Gravity.CENTER)
+        dialog.show()
+        progressInfo = dialog.findViewById(R.id.progress_info)!!
+        progressText = dialog.findViewById(R.id.progress_text)!!
+        currentText = dialog.findViewById(R.id.current_text)!!
+        totalText = dialog.findViewById(R.id.total_text)!!
+        uploadCompletedText = dialog.findViewById(R.id.upload_completed)!!
+        progressBar = dialog.findViewById(R.id.progress_bar)!!
+        hintInfo = dialog.findViewById(R.id.hint_info)!!
+    }
+
+    override fun onUploadAvatarProgress(progress: Int, total: Long, current: Long, done: Boolean) {
+        if (done) {
+            progressInfo.visibility = View.GONE
+            uploadCompletedText.text =
+                "上传完成 (${UnitUtil.bytesToSize(total)})"
+            uploadCompletedText.visibility = View.VISIBLE
+            hintInfo.visibility = View.GONE
+        } else {
+            uploadCompletedText.visibility = View.GONE
+            progressInfo.visibility = View.VISIBLE
+            hintInfo.visibility = View.VISIBLE
+            progressText.text = progress.toString()
+            currentText.text = UnitUtil.bytesToSize(current)
+            totalText.text = UnitUtil.bytesToSize(total)
+            progressBar.progress = progress
+        }
     }
 
     override fun onUploadAvatarSuccess(result: UploadFileResultBean) {

@@ -10,7 +10,10 @@ class UploadMusicPosterPresenterImpl(val view: UploadPosterContract.View) :
     UploadPosterContract.Presenter, ResponseHandler<UploadFileResultBean> {
 
     override fun uploadPoster(token: String, file: File) {
-        UploadMusicPosterRequest(this).executePostUploadFile(token, "image/jpeg", file)
+        UploadMusicPosterRequest(this).executePostUploadFile(token, "image/jpeg", file,
+            progressCallback = { progress, total, current, done ->
+                view.onUploadPosterProgress(progress, total, current, done)
+            })
     }
 
     override fun onSuccess(type: Int, result: UploadFileResultBean) {

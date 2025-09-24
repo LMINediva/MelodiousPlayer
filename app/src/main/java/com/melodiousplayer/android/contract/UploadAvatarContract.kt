@@ -10,6 +10,7 @@ interface UploadAvatarContract {
     }
 
     interface View {
+        fun onUploadAvatarProgress(progress: Int, total: Long, current: Long, done: Boolean)
         fun onUploadAvatarSuccess(result: UploadFileResultBean)
         fun onUploadAvatarFailed()
         fun onNetworkError()
