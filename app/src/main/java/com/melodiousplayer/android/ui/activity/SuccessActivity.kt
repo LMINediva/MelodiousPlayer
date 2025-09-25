@@ -1,6 +1,5 @@
 package com.melodiousplayer.android.ui.activity
 
-import android.content.Intent
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
@@ -8,28 +7,24 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
-import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.util.ToolBarManager
 
 /**
- * 添加作品界面
+ * 操作成功界面
  */
-class AddWorkActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
+class SuccessActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
 
-    private lateinit var addMusic: Button
-    private lateinit var addMV: Button
-    private lateinit var addList: Button
-    private lateinit var currentUser: UserBean
+    private lateinit var backButton: Button
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
 
     override fun getLayoutId(): Int {
-        return R.layout.activity_add_work
+        return R.layout.activity_success
     }
 
     override fun initData() {
-        initAddWorkToolBar()
+        initSuccessToolBar()
         setSupportActionBar(toolbar)
         supportActionBar?.let {
             // 启用Toolbar的返回按钮
@@ -39,19 +34,11 @@ class AddWorkActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
             // 隐藏默认标题
             it.setDisplayShowTitleEnabled(false)
         }
-        addMusic = findViewById(R.id.addMusic)
-        addMV = findViewById(R.id.addMV)
-        addList = findViewById(R.id.addList)
-        val userSerialized = intent.getSerializableExtra("user")
-        if (userSerialized != null) {
-            currentUser = userSerialized as UserBean
-        }
+        backButton = findViewById(R.id.backButton)
     }
 
     override fun initListener() {
-        addMusic.setOnClickListener(this)
-        addMV.setOnClickListener(this)
-        addList.setOnClickListener(this)
+        backButton.setOnClickListener(this)
     }
 
     /**
@@ -60,7 +47,8 @@ class AddWorkActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                finish()
+                // 跳转到添加作品界面
+                startActivityAndFinish<AddWorkActivity>()
                 return true
             }
         }
@@ -69,26 +57,16 @@ class AddWorkActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.addMusic -> {
-                // 进入添加音乐界面，传递用户信息
-                val intent = Intent(this, AddMusicActivity::class.java)
-                intent.putExtra("user", currentUser)
-                startActivity(intent)
-                finish()
-            }
-
-            R.id.addMV -> {
-                myToast("添加MV")
-            }
-
-            R.id.addList -> {
-                myToast("添加悦单")
+            R.id.backButton -> {
+                // 跳转到添加作品界面
+                startActivityAndFinish<AddWorkActivity>()
             }
         }
     }
 
     override fun onBackPressed() {
-        finish()
+        // 跳转到添加作品界面
+        startActivityAndFinish<AddWorkActivity>()
         super.onBackPressed()
     }
 

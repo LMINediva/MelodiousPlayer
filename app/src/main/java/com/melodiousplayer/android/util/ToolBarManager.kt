@@ -58,4 +58,12 @@ interface ToolBarManager {
         toolbarTitle.text = "添加音乐"
     }
 
+    /**
+     * 初始化成功界面中的toolbar
+     */
+    fun initSuccessToolBar() {
+        // 设置标题
+        toolbarTitle.text = "操作结果"
+    }
+
 }

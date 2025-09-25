@@ -1,6 +1,8 @@
 package com.melodiousplayer.android.presenter.impl
 
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.melodiousplayer.android.adapter.DateTypeAdapter
 import com.melodiousplayer.android.contract.AddMusicContract
 import com.melodiousplayer.android.model.MusicBean
 import com.melodiousplayer.android.model.ResultBean
@@ -18,6 +20,7 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
 import java.io.IOException
+import java.util.Date
 
 class AddMusicPresenterImpl(val view: AddMusicContract.View) :
     AddMusicContract.Presenter, ResponseHandler<ResultBean> {
@@ -118,12 +121,14 @@ class AddMusicPresenterImpl(val view: AddMusicContract.View) :
         runBlocking {
             delay(500)
         }
-        println("isValidMusicTitle: $isValidMusicTitle")
         return isValidMusicTitle
     }
 
     private fun addMusicRequest(token: String, music: MusicBean) {
-        val json = Gson().toJson(music)
+        val gson = GsonBuilder()
+            .registerTypeAdapter(Date::class.java, DateTypeAdapter())
+            .create()
+        val json = gson.toJson(music)
         AddMusicRequest(this).executePostWithJSON(token = token, json = json)
     }
 

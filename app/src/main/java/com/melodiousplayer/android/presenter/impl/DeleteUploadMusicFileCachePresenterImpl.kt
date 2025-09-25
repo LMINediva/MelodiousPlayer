@@ -17,7 +17,6 @@ class DeleteUploadMusicFileCachePresenterImpl(val view: DeleteUploadMusicFileCac
             .registerTypeAdapter(Date::class.java, DateTypeAdapter())
             .create()
         val json = gson.toJson(music)
-        println("json = $json")
         DeleteUploadMusicFileCacheRequest(this).executePostWithJSON(token, json)
     }
 

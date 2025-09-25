@@ -267,8 +267,8 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                     val music = MusicBean(
                         null, musicType, title, artistName, description,
                         newMusicPoster, newMusicThumbnail, newLyric, newMusic, newMusic,
-                        newMusic, musicSize, null, null,
-                        null, currentUser
+                        newMusic, musicSize, musicSize, musicSize,
+                        0, currentUser
                     )
                     addMusicPresenter.addMusic(token, music)
                 }
@@ -324,7 +324,6 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                             // 在截图界面显示选择好的照片
                             val intent = CropImage.activity(uri)
                                 .setGuidelines(CropImageView.Guidelines.ON)
-                                .setAspectRatio(1, 1)
                                 .getIntent(this)
                             startActivityForResult(intent, CROP_POSTER_REQUEST)
                         }
@@ -353,7 +352,6 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                             // 在截图界面显示选择好的照片
                             val intent = CropImage.activity(uri)
                                 .setGuidelines(CropImageView.Guidelines.ON)
-                                .setAspectRatio(1, 1)
                                 .getIntent(this)
                             startActivityForResult(intent, CROP_THUMBNAIL_REQUEST)
                         }
@@ -944,6 +942,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     override fun onAddMusicSuccess() {
         isAddMusicSuccess = true
         myToast(getString(R.string.add_music_success))
+        startActivityAndFinish<SuccessActivity>()
     }
 
     override fun onAddMusicFailed() {
