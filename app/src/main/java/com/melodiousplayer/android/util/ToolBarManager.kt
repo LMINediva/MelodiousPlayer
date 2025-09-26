@@ -59,6 +59,14 @@ interface ToolBarManager {
     }
 
     /**
+     * 初始化添加MV界面中的toolbar
+     */
+    fun initAddMVToolBar() {
+        // 设置标题
+        toolbarTitle.text = "添加MV"
+    }
+
+    /**
      * 初始化成功界面中的toolbar
      */
     fun initSuccessToolBar() {

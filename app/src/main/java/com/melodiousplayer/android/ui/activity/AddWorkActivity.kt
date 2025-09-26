@@ -74,11 +74,13 @@ class AddWorkActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
                 val intent = Intent(this, AddMusicActivity::class.java)
                 intent.putExtra("user", currentUser)
                 startActivity(intent)
-                finish()
             }
 
             R.id.addMV -> {
-                myToast("添加MV")
+                // 进入添加MV界面，传递用户信息
+                val intent = Intent(this, AddMVActivity::class.java)
+                intent.putExtra("user", currentUser)
+                startActivity(intent)
             }
 
             R.id.addList -> {
