@@ -12,12 +12,16 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
+import com.melodiousplayer.android.contract.MVAreasContract
+import com.melodiousplayer.android.model.MVAreaBean
+import com.melodiousplayer.android.presenter.impl.MVAreasPresenterImpl
 import com.melodiousplayer.android.util.ToolBarManager
 
 /**
  * 添加MV界面
  */
-class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelectedListener {
+class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelectedListener,
+    MVAreasContract.View {
 
     private lateinit var title: EditText
     private lateinit var artistName: EditText
@@ -31,6 +35,9 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     private lateinit var mvName: TextView
     private lateinit var mvError: TextView
     private lateinit var addMV: Button
+    private lateinit var adapter: ArrayAdapter<String>
+    private val items = mutableListOf<String>()
+    private val mvAreasPresenterImpl = MVAreasPresenterImpl(this)
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -62,9 +69,9 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
         mvName = findViewById(R.id.mvName)
         mvError = findViewById(R.id.mvError)
         addMV = findViewById(R.id.addMV)
-        val items = arrayOf("内地篇", "韩国篇", "港台篇", "日本篇", "欧美篇")
+        mvAreasPresenterImpl.getMVAreas()
         // 创建一个ArrayAdapter使用simple_spinner_item布局文件作为下拉列表的样式
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
+        adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
         // 设置下拉列表的样式
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         // 将ArrayAdapter设置给Spinner
@@ -106,6 +113,22 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     override fun onBackPressed() {
         finish()
         super.onBackPressed()
+    }
+
+    override fun onGetMVAreasSuccess(result: List<MVAreaBean>) {
+        adapter.clear()
+        for (mvAreaBean in result) {
+            items.add(mvAreaBean.name)
+        }
+        adapter.notifyDataSetChanged()
+    }
+
+    override fun onGetMVAreasFailed() {
+        myToast(getString(R.string.get_mv_areas_failed))
+    }
+
+    override fun onNetworkError() {
+        myToast(getString(R.string.network_error))
     }
 
 

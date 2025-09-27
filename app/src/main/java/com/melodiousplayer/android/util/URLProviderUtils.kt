@@ -211,6 +211,14 @@ object URLProviderUtils {
         return url
     }
 
+    /**
+     * MV区域请求
+     */
+    fun getMVAreas(): String {
+        val url = protocol + serverAddress + "/mv_areas"
+        return url
+    }
+
     fun getSystemVersion(): String {
         return Build.VERSION.RELEASE
     }
