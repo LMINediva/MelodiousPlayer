@@ -9,7 +9,6 @@ import android.media.ThumbnailUtils
 import android.net.Uri
 import android.provider.MediaStore
 import android.widget.RadioGroup
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
@@ -34,7 +33,7 @@ import java.io.IOException
 
 class JiaoZiVideoPlayerActivity : BaseActivity() {
 
-    private lateinit var videoplayer: JzvdStd
+    private lateinit var videoPlayer: JzvdStd
     private lateinit var viewPager: ViewPager
     private lateinit var rg: RadioGroup
     private var data: Uri? = null
@@ -51,7 +50,7 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
     }
 
     override fun initData() {
-        videoplayer = findViewById(R.id.jz_video)
+        videoPlayer = findViewById(R.id.jz_video)
         viewPager = findViewById(R.id.viewPager)
         rg = findViewById(R.id.rg)
         data = intent.data
@@ -59,7 +58,7 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
             // 获取传递的数据
             videoPlayBean = intent.getParcelableExtra("item")
             // 从应用内响应视频播放
-            videoplayer.setUp(
+            videoPlayer.setUp(
                 URLProviderUtils.protocol + URLProviderUtils.serverAddress
                         + URLProviderUtils.mvPath + videoPlayBean?.url,
                 videoPlayBean?.title,
@@ -71,19 +70,19 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
                     URLProviderUtils.protocol + URLProviderUtils.serverAddress
                             + URLProviderUtils.mvImagePath + videoPlayBean?.thumbnailPic
                 )
-                .into(videoplayer.posterImageView)
+                .into(videoPlayer.posterImageView)
         } else {
             if (data.toString().startsWith("http")) {
                 // 应用外的网络视频请求
                 // 应用外响应
                 val fileName: String = FileUtil.getFileNameFromUrl(data.toString())
-                videoplayer.setUp(data?.toString(), fileName, JzvdStd.SCREEN_NORMAL)
+                videoPlayer.setUp(data?.toString(), fileName, JzvdStd.SCREEN_NORMAL)
                 // 使用视频第一帧作为缩略图
                 GlobalScope.launch(Dispatchers.IO) {
                     val thumbnail: Bitmap? = downloadVideoAndGetFrame(data.toString(), fileName)
                     withContext(Dispatchers.Main) {
                         thumbnail?.let {
-                            videoplayer.posterImageView.setImageBitmap(thumbnail)
+                            videoPlayer.posterImageView.setImageBitmap(thumbnail)
                         }
                     }
                 }
@@ -96,10 +95,10 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
                 } else {
                     // 应用外响应
                     val filePath = FileUtil.getFileFromUri(data, this)?.absolutePath
-                    videoplayer.setUp(filePath, filePath.toString(), JzvdStd.SCREEN_NORMAL)
+                    videoPlayer.setUp(filePath, filePath.toString(), JzvdStd.SCREEN_NORMAL)
                     // 设置视频缩略图
                     filePath?.let {
-                        videoplayer.posterImageView.setImageBitmap(
+                        videoPlayer.posterImageView.setImageBitmap(
                             ThumbnailUtils.createVideoThumbnail(
                                 filePath,
                                 MediaStore.Video.Thumbnails.FULL_SCREEN_KIND
@@ -177,10 +176,10 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
                 if (allPermissionsGranted) {
                     // 应用外响应
                     val filePath = FileUtil.getFileFromUri(data, this)?.absolutePath
-                    videoplayer.setUp(filePath, filePath.toString(), JzvdStd.SCREEN_NORMAL)
+                    videoPlayer.setUp(filePath, filePath.toString(), JzvdStd.SCREEN_NORMAL)
                     // 设置视频缩略图
                     filePath?.let {
-                        videoplayer.posterImageView.setImageBitmap(
+                        videoPlayer.posterImageView.setImageBitmap(
                             ThumbnailUtils.createVideoThumbnail(
                                 filePath,
                                 MediaStore.Video.Thumbnails.FULL_SCREEN_KIND

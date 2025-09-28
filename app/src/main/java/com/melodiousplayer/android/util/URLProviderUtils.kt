@@ -219,6 +219,22 @@ object URLProviderUtils {
         return url
     }
 
+    /**
+     * 上传MV相关图片
+     */
+    fun postUploadMVPicture(): String {
+        val url = protocol + serverAddress + "/data/mv/uploadImage"
+        return url
+    }
+
+    /**
+     * 上传MV文件
+     */
+    fun postUploadMV(): String {
+        val url = protocol + serverAddress + "/data/mv/uploadVideo"
+        return url
+    }
+
     fun getSystemVersion(): String {
         return Build.VERSION.RELEASE
     }

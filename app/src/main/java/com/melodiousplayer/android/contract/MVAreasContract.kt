@@ -8,7 +8,7 @@ import com.melodiousplayer.android.model.MVAreaBean
 interface MVAreasContract {
 
     interface Presenter : BasePresenter {
-        fun getMVAreas()
+        fun getMVAreas(token: String)
     }
 
     interface View {

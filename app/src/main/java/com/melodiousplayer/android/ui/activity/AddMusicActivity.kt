@@ -276,6 +276,9 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         }
     }
 
+    /**
+     * 请求权限
+     */
     private fun requestPermissions() {
         val permissions = arrayOf(
             Manifest.permission.READ_EXTERNAL_STORAGE,
