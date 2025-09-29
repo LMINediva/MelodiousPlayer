@@ -42,7 +42,7 @@ class MVPagerFragment : BaseListFragment<MVPagerBean, VideosBean, MVItemView>(),
         adapter.setMyListener {
             val videoPlayBean =
                 VideoPlayBean(
-                    it.id, it.title, it.url, it.thumbnailPic, it.description
+                    it.id!!, it.title!!, it.url!!, it.thumbnailPic!!, it.description!!
                 )
             // 跳转到视频播放界面
             val intent = Intent(activity, JiaoZiVideoPlayerActivity::class.java)

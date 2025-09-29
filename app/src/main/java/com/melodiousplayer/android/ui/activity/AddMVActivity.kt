@@ -25,17 +25,24 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
+import com.melodiousplayer.android.contract.DeleteUploadMVFileCacheContract
 import com.melodiousplayer.android.contract.MVAreasContract
 import com.melodiousplayer.android.contract.UploadMVContract
 import com.melodiousplayer.android.contract.UploadPosterContract
 import com.melodiousplayer.android.contract.UploadThumbnailContract
 import com.melodiousplayer.android.model.MVAreaBean
+import com.melodiousplayer.android.model.MusicBean
+import com.melodiousplayer.android.model.ResultBean
 import com.melodiousplayer.android.model.UploadFileResultBean
+import com.melodiousplayer.android.model.UserBean
+import com.melodiousplayer.android.model.VideosBean
+import com.melodiousplayer.android.presenter.impl.DeleteUploadMVFileCachePresenterImpl
 import com.melodiousplayer.android.presenter.impl.MVAreasPresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadMVPosterPresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadMVPresenterImpl
@@ -57,7 +64,7 @@ import java.math.RoundingMode
  */
 class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelectedListener,
     MVAreasContract.View, View.OnClickListener, UploadPosterContract.View,
-    UploadThumbnailContract.View, UploadMVContract.View {
+    UploadThumbnailContract.View, UploadMVContract.View, DeleteUploadMVFileCacheContract.View {
 
     private lateinit var title: EditText
     private lateinit var artistName: EditText
@@ -80,6 +87,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     private lateinit var hintInfo: TextView
     private lateinit var videoPlayer: JzvdStd
     private lateinit var adapter: ArrayAdapter<String>
+    private lateinit var currentUser: UserBean
     private lateinit var token: String
     private val PERMISSION_REQUEST = 1
     private val ALBUM_POSTER_REQUEST = 1
@@ -92,6 +100,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     private val uploadMVPosterPresenter = UploadMVPosterPresenterImpl(this)
     private val uploadMVThumbnailPresenter = UploadMVThumbnailPresenterImpl(this)
     private val uploadMVPresenter = UploadMVPresenterImpl(this)
+    private val deleteUploadMVFileCachePresenter = DeleteUploadMVFileCachePresenterImpl(this)
     private var newMVPoster: String? = null
     private var newMVThumbnail: String? = null
     private var newMV: String? = null
@@ -99,6 +108,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     private var mvSize: Float = 0F
     private var hdMVSize: Float = 0F
     private var uhdMVSize: Float = 0F
+    private var isAddMusicSuccess: Boolean = false
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -130,6 +140,10 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
         mvName = findViewById(R.id.mvName)
         mvError = findViewById(R.id.mvError)
         addMV = findViewById(R.id.addMV)
+        val userSerialized = intent.getSerializableExtra("user")
+        if (userSerialized != null) {
+            currentUser = userSerialized as UserBean
+        }
         // 从SharedPreferences文件中读取token的值
         token = getSharedPreferences("data", Context.MODE_PRIVATE)
             .getString("token", "").toString()
@@ -148,6 +162,8 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
         areaSpinner.onItemSelectedListener = this
         posterPicture.setOnClickListener(this)
         thumbnailPicture.setOnClickListener(this)
+        mv.setOnClickListener(this)
+        mvName.setOnClickListener(this)
     }
 
     /**
@@ -156,6 +172,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
+                deleteUploadMusicFileCache()
                 finish()
                 return true
             }
@@ -198,6 +215,10 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
             R.id.mv -> {
                 val intent = Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
                 startActivityForResult(intent, MV_FILE_REQUEST)
+            }
+
+            R.id.mvName -> {
+                showPlayMusicDialog(this)
             }
         }
     }
@@ -472,7 +493,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     }
 
     /**
-     * 弹窗显示音乐播放控件
+     * 弹窗显示MV播放控件
      */
     private fun showPlayMusicDialog(context: Context) {
         val dialog = AlertDialog.Builder(context)
@@ -480,6 +501,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
             .setView(R.layout.popup_mv_player)
             .setCancelable(false)
             .setPositiveButton("确定") { dialog, which ->
+                Jzvd.releaseAllVideos()
             }
             .create()
         dialog.window?.setLayout(
@@ -500,6 +522,27 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
         Glide.with(this)
             .load(R.mipmap.default_poster)
             .into(videoPlayer.posterImageView)
+    }
+
+    /**
+     * 发送删除上传音乐相关文件缓存的请求
+     */
+    private fun deleteUploadMusicFileCache() {
+        if (!isAddMusicSuccess) {
+            if (!newMVPoster.isNullOrEmpty() || !newMVThumbnail.isNullOrEmpty()
+                || !newMV.isNullOrEmpty()
+            ) {
+                if (token.isNotEmpty()) {
+                    val mv = VideosBean(
+                        null, newMV, null, null, newMVPoster,
+                        newMVThumbnail, null, mvType, null, null,
+                        null, null, newMV, newMV, newMV,
+                        mvSize, hdMVSize, uhdMVSize, null, null, currentUser
+                    )
+                    deleteUploadMVFileCachePresenter.deleteUploadMVFileCache(token, mv)
+                }
+            }
+        }
     }
 
     override fun onGetMVAreasSuccess(result: List<MVAreaBean>) {
@@ -624,11 +667,20 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
         mvError.visibility = View.VISIBLE
     }
 
+    override fun onDeleteUploadMVFileCacheSuccess(result: ResultBean) {
+        myToast(getString(R.string.delete_upload_mv_file_cache_success))
+    }
+
+    override fun onDeleteUploadMVFileCacheFailed(result: ResultBean) {
+        myToast(getString(R.string.delete_upload_mv_file_cache_failed))
+    }
+
     override fun onNetworkError() {
         myToast(getString(R.string.network_error))
     }
 
     override fun onBackPressed() {
+        deleteUploadMusicFileCache()
         finish()
         super.onBackPressed()
     }
