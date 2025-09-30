@@ -31,17 +31,18 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
+import com.melodiousplayer.android.contract.AddMVContract
 import com.melodiousplayer.android.contract.DeleteUploadMVFileCacheContract
 import com.melodiousplayer.android.contract.MVAreasContract
 import com.melodiousplayer.android.contract.UploadMVContract
 import com.melodiousplayer.android.contract.UploadPosterContract
 import com.melodiousplayer.android.contract.UploadThumbnailContract
 import com.melodiousplayer.android.model.MVAreaBean
-import com.melodiousplayer.android.model.MusicBean
 import com.melodiousplayer.android.model.ResultBean
 import com.melodiousplayer.android.model.UploadFileResultBean
 import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.model.VideosBean
+import com.melodiousplayer.android.presenter.impl.AddMVPresenterImpl
 import com.melodiousplayer.android.presenter.impl.DeleteUploadMVFileCachePresenterImpl
 import com.melodiousplayer.android.presenter.impl.MVAreasPresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadMVPosterPresenterImpl
@@ -64,7 +65,8 @@ import java.math.RoundingMode
  */
 class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelectedListener,
     MVAreasContract.View, View.OnClickListener, UploadPosterContract.View,
-    UploadThumbnailContract.View, UploadMVContract.View, DeleteUploadMVFileCacheContract.View {
+    UploadThumbnailContract.View, UploadMVContract.View, DeleteUploadMVFileCacheContract.View,
+    AddMVContract.View {
 
     private lateinit var title: EditText
     private lateinit var artistName: EditText
@@ -89,6 +91,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     private lateinit var adapter: ArrayAdapter<String>
     private lateinit var currentUser: UserBean
     private lateinit var token: String
+    private lateinit var mvAreas: List<MVAreaBean>
     private val PERMISSION_REQUEST = 1
     private val ALBUM_POSTER_REQUEST = 1
     private val CROP_POSTER_REQUEST = 2
@@ -101,6 +104,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     private val uploadMVThumbnailPresenter = UploadMVThumbnailPresenterImpl(this)
     private val uploadMVPresenter = UploadMVPresenterImpl(this)
     private val deleteUploadMVFileCachePresenter = DeleteUploadMVFileCachePresenterImpl(this)
+    private val addMVPresenter = AddMVPresenterImpl(this)
     private var newMVPoster: String? = null
     private var newMVThumbnail: String? = null
     private var newMV: String? = null
@@ -108,7 +112,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     private var mvSize: Float = 0F
     private var hdMVSize: Float = 0F
     private var uhdMVSize: Float = 0F
-    private var isAddMusicSuccess: Boolean = false
+    private var isAddMVSuccess: Boolean = false
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -164,6 +168,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
         thumbnailPicture.setOnClickListener(this)
         mv.setOnClickListener(this)
         mvName.setOnClickListener(this)
+        addMV.setOnClickListener(this)
     }
 
     /**
@@ -172,7 +177,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                deleteUploadMusicFileCache()
+                deleteUploadMVFileCache()
                 finish()
                 return true
             }
@@ -185,6 +190,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
      */
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         println("选中的项：${parent?.getItemAtPosition(position)}")
+        println("position：$position")
     }
 
     /**
@@ -218,7 +224,15 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
             }
 
             R.id.mvName -> {
-                showPlayMusicDialog(this)
+                showPlayMVDialog(this)
+            }
+
+            R.id.addMV -> {
+                if (token.isNotEmpty()) {
+                    val title = title.text.trim().toString()
+                    val artistName = artistName.text.trim().toString()
+                    val description = description.text.trim().toString()
+                }
             }
         }
     }
@@ -284,7 +298,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
             CROP_POSTER_REQUEST -> {
                 if (resultCode == RESULT_OK) {
                     val resultUri = CropImage.getActivityResult(data).uri
-                    // 将裁剪好的音乐海报图片上传到服务器
+                    // 将裁剪好的MV海报图片上传到服务器
                     if (resultUri != null) {
                         if (token.isNotEmpty()) {
                             showUploadFileDialog(this)
@@ -312,7 +326,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
             CROP_THUMBNAIL_REQUEST -> {
                 if (resultCode == RESULT_OK) {
                     val resultUri = CropImage.getActivityResult(data).uri
-                    // 将裁剪好的音乐缩略图图片上传到服务器
+                    // 将裁剪好的MV缩略图图片上传到服务器
                     if (resultUri != null) {
                         if (token.isNotEmpty()) {
                             showUploadFileDialog(this)
@@ -392,7 +406,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
      * 检查MV文件是否符合要求
      */
     private fun checkMV(uri: Uri): Boolean {
-        // 获取音乐文件的MIME类型
+        // 获取MV文件的MIME类型
         val type = contentResolver.getType(uri)
         if (type == null) {
             // 无法获取MIME类型，可能文件路径不正确或文件不存在
@@ -495,7 +509,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     /**
      * 弹窗显示MV播放控件
      */
-    private fun showPlayMusicDialog(context: Context) {
+    private fun showPlayMVDialog(context: Context) {
         val dialog = AlertDialog.Builder(context)
             .setTitle(newMV)
             .setView(R.layout.popup_mv_player)
@@ -525,16 +539,16 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     }
 
     /**
-     * 发送删除上传音乐相关文件缓存的请求
+     * 发送删除上传MV相关文件缓存的请求
      */
-    private fun deleteUploadMusicFileCache() {
-        if (!isAddMusicSuccess) {
+    private fun deleteUploadMVFileCache() {
+        if (!isAddMVSuccess) {
             if (!newMVPoster.isNullOrEmpty() || !newMVThumbnail.isNullOrEmpty()
                 || !newMV.isNullOrEmpty()
             ) {
                 if (token.isNotEmpty()) {
                     val mv = VideosBean(
-                        null, newMV, null, null, newMVPoster,
+                        null, newMV, null, null, null, newMVPoster,
                         newMVThumbnail, null, mvType, null, null,
                         null, null, newMV, newMV, newMV,
                         mvSize, hdMVSize, uhdMVSize, null, null, currentUser
@@ -547,6 +561,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
 
     override fun onGetMVAreasSuccess(result: List<MVAreaBean>) {
         adapter.clear()
+        mvAreas = result
         for (mvAreaBean in result) {
             items.add(mvAreaBean.name)
         }
@@ -578,11 +593,11 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     override fun onUploadPosterSuccess(result: UploadFileResultBean) {
         posterPictureError.visibility = View.GONE
         newMVPoster = result.data?.title.toString()
-        // 将上传成功的音乐海报图片显示出来
+        // 将上传成功的MV海报图片显示出来
         Glide.with(this)
             .load(
                 URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                        + URLProviderUtils.musicImagePath + newMVPoster
+                        + URLProviderUtils.mvImagePath + newMVPoster
             )
             .skipMemoryCache(true)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -620,11 +635,11 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     override fun onUploadThumbnailSuccess(result: UploadFileResultBean) {
         thumbnailPictureError.visibility = View.GONE
         newMVThumbnail = result.data?.title.toString()
-        // 将上传成功的音乐缩略图图片显示出来
+        // 将上传成功的MV缩略图图片显示出来
         Glide.with(this)
             .load(
                 URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                        + URLProviderUtils.musicImagePath + newMVThumbnail
+                        + URLProviderUtils.mvImagePath + newMVThumbnail
             )
             .skipMemoryCache(true)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -675,12 +690,60 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
         myToast(getString(R.string.delete_upload_mv_file_cache_failed))
     }
 
+    override fun onMVTitleError() {
+        myToast(getString(R.string.mv_title_error))
+        title.error = getString(R.string.mv_title_error)
+    }
+
+    override fun onMVTitleExistError() {
+        myToast(getString(R.string.mv_title_exist_error))
+        title.error = getString(R.string.mv_title_exist_error)
+    }
+
+    override fun onArtistNameError() {
+        myToast(getString(R.string.artist_name_error))
+        artistName.error = getString(R.string.artist_name_error)
+    }
+
+    override fun onDescriptionError() {
+        myToast(getString(R.string.description_error))
+        description.error = getString(R.string.description_error)
+    }
+
+    override fun onMVPosterError() {
+        myToast(getString(R.string.mv_poster_error))
+        posterPictureError.text = getString(R.string.mv_poster_error)
+        posterPictureError.visibility = View.VISIBLE
+    }
+
+    override fun onMVThumbnailError() {
+        myToast(getString(R.string.mv_thumbnail_error))
+        thumbnailPictureError.text = getString(R.string.mv_thumbnail_error)
+        thumbnailPictureError.visibility = View.VISIBLE
+    }
+
+    override fun onMVFileError() {
+        myToast(getString(R.string.mv_file_error))
+        mvError.text = getString(R.string.mv_file_error)
+        mvError.visibility = View.VISIBLE
+    }
+
+    override fun onAddMVSuccess() {
+        isAddMVSuccess = true
+        myToast(getString(R.string.add_mv_success))
+        startActivityAndFinish<SuccessActivity>()
+    }
+
+    override fun onAddMVFailed() {
+        myToast(getString(R.string.add_mv_failed))
+    }
+
     override fun onNetworkError() {
         myToast(getString(R.string.network_error))
     }
 
     override fun onBackPressed() {
-        deleteUploadMusicFileCache()
+        deleteUploadMVFileCache()
         finish()
         super.onBackPressed()
     }

@@ -753,26 +753,6 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
 
     }
 
-    override fun onMusicTitleError() {
-        myToast(getString(R.string.music_title_error))
-        title.error = getString(R.string.music_title_error)
-    }
-
-    override fun onMusicTitleExistError() {
-        myToast(getString(R.string.music_title_exist_error))
-        title.error = getString(R.string.music_title_exist_error)
-    }
-
-    override fun onArtistNameError() {
-        myToast(getString(R.string.artist_name_error))
-        artistName.error = getString(R.string.artist_name_error)
-    }
-
-    override fun onDescriptionError() {
-        myToast(getString(R.string.description_error))
-        description.error = getString(R.string.description_error)
-    }
-
     override fun onUploadPosterProgress(progress: Int, total: Long, current: Long, done: Boolean) {
         if (done) {
             progressInfo.visibility = View.GONE
@@ -922,6 +902,26 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     override fun onUploadMusicFailed() {
         musicError.text = "音乐文件上传失败！"
         musicError.visibility = View.VISIBLE
+    }
+
+    override fun onMusicTitleError() {
+        myToast(getString(R.string.music_title_error))
+        title.error = getString(R.string.music_title_error)
+    }
+
+    override fun onMusicTitleExistError() {
+        myToast(getString(R.string.music_title_exist_error))
+        title.error = getString(R.string.music_title_exist_error)
+    }
+
+    override fun onArtistNameError() {
+        myToast(getString(R.string.artist_name_error))
+        artistName.error = getString(R.string.artist_name_error)
+    }
+
+    override fun onDescriptionError() {
+        myToast(getString(R.string.description_error))
+        description.error = getString(R.string.description_error)
     }
 
     override fun onMusicPosterError() {

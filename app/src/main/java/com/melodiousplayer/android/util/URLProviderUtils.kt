@@ -243,6 +243,22 @@ object URLProviderUtils {
         return url
     }
 
+    /**
+     * 检查在线MV名是否存在
+     */
+    fun postCheckMVTitle(): String {
+        val url = protocol + serverAddress + "/data/mv/checkTitle"
+        return url
+    }
+
+    /**
+     * 添加MV
+     */
+    fun postAddMV(): String {
+        val url = protocol + serverAddress + "/data/mv/save"
+        return url
+    }
+
     fun getSystemVersion(): String {
         return Build.VERSION.RELEASE
     }

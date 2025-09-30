@@ -6,6 +6,7 @@ data class VideosBean(
     var id: Int?,
     var title: String?,
     var description: String?,
+    var mvArea: MVAreaBean?,
     var artistName: String?,
     var posterPic: String?,
     var thumbnailPic: String?,

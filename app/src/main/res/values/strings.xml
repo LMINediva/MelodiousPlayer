@@ -30,11 +30,19 @@
     <string name="get_lyric_text_error">获取歌词文本错误</string>
     <string name="add_music_success">添加音乐成功</string>
     <string name="add_music_failed">添加音乐失败</string>
+
     <string name="delete_upload_music_file_cache_success">删除上传到服务器的音乐相关文件缓存成功</string>
     <string name="delete_upload_music_file_cache_failed">删除上传到服务器的音乐相关文件缓存失败</string>
     <string name="file_upload_reminder">如网络不佳，则需要较长时间</string>
     <string name="get_mv_areas_failed">获取MV区域失败</string>
     <string name="delete_upload_mv_file_cache_success">删除上传到服务器的MV相关文件缓存成功</string>
     <string name="delete_upload_mv_file_cache_failed">删除上传到服务器的MV相关文件缓存失败</string>
+    <string name="mv_title_error">MV名不能为空</string>
+    <string name="mv_title_exist_error">MV名已存在</string>
+    <string name="mv_poster_error">MV海报不能为空</string>
+    <string name="mv_thumbnail_error">MV缩略图不能为空</string>
+    <string name="mv_file_error">MV文件不能为空</string>
+    <string name="add_mv_success">添加MV成功</string>
+    <string name="add_mv_failed">添加MV失败</string>
     <string name="network_error">网络错误</string>
 </resources>
