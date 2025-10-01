@@ -1,8 +1,10 @@
 package com.melodiousplayer.android.util
 
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 /**
  * 日期工具类
@@ -23,6 +25,16 @@ object DateUtil {
     fun formatStringToDate(dateString: String): Date? {
         val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         return simpleDateFormat.parse(dateString)
+    }
+
+    /**
+     * 获取当前时间并转换为字符串
+     */
+    fun getCurrentTime(): String {
+        val calendar = Calendar.getInstance(TimeZone.getDefault())
+        val now = calendar.time
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        return formatter.format(now)
     }
 
 }

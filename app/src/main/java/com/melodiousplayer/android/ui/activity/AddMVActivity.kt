@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.OpenableColumns
@@ -48,6 +49,7 @@ import com.melodiousplayer.android.presenter.impl.MVAreasPresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadMVPosterPresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadMVPresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadMVThumbnailPresenterImpl
+import com.melodiousplayer.android.util.DateUtil
 import com.melodiousplayer.android.util.ToolBarManager
 import com.melodiousplayer.android.util.URLProviderUtils
 import com.melodiousplayer.android.util.UnitUtil
@@ -113,6 +115,8 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     private var hdMVSize: Float = 0F
     private var uhdMVSize: Float = 0F
     private var isAddMVSuccess: Boolean = false
+    private var mvAreasPosition: Int = 0
+    private var mvDuration: String? = null
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -189,8 +193,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
      * Spinner选中项变更事件
      */
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        println("选中的项：${parent?.getItemAtPosition(position)}")
-        println("position：$position")
+        mvAreasPosition = position
     }
 
     /**
@@ -232,6 +235,17 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
                     val title = title.text.trim().toString()
                     val artistName = artistName.text.trim().toString()
                     val description = description.text.trim().toString()
+                    val mvArea = mvAreas[mvAreasPosition]
+                    val registrationDate = DateUtil.getCurrentTime()
+                    val mv = VideosBean(
+                        null, title, description, mvArea,
+                        artistName, newMVPoster, newMVThumbnail, registrationDate,
+                        mvType, null, null, null,
+                        null, newMV, newMV, newMV,
+                        mvSize, hdMVSize, uhdMVSize, mvDuration,
+                        0, currentUser
+                    )
+                    addMVPresenter.addMV(token, mv)
                 }
             }
         }
@@ -347,6 +361,8 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
                                 if (file != null) {
                                     showUploadFileDialog(this)
                                     uploadMVPresenter.uploadMV(token, file)
+                                    val duration = getMVDuration(this, resultUri)
+                                    mvDuration = formatDuration(duration)
                                 } else {
                                     mvError.text = "MV文件路径不正确或文件已损坏！"
                                     mvError.visibility = View.VISIBLE
@@ -479,6 +495,32 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
             e.printStackTrace()
         }
         return null
+    }
+
+    /**
+     * 获取MV时长
+     */
+    private fun getMVDuration(context: Context, uri: Uri): Long {
+        val retriever = MediaMetadataRetriever()
+        return try {
+            retriever.setDataSource(context, uri)
+            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong() ?: 0
+        } catch (e: Exception) {
+            e.printStackTrace()
+            0
+        } finally {
+            retriever.release()
+        }
+    }
+
+    /**
+     * 格式化MV时长
+     */
+    private fun formatDuration(duration: Long): String {
+        val seconds = (duration / 1000) % 60
+        val minutes = (duration / (1000 * 60)) % 60
+        val hours = duration / (1000 * 60 * 60)
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
     /**
