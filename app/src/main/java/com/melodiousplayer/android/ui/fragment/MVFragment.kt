@@ -15,10 +15,10 @@ import com.melodiousplayer.android.view.MVView
  */
 class MVFragment : BaseFragment(), MVView {
 
-    val presenter by lazy { MVPresenterImpl(this) }
     private lateinit var view: View
     private lateinit var viewPager: ViewPager
     private lateinit var tabLayout: TabLayout
+    private val presenter by lazy { MVPresenterImpl(this) }
 
     override fun initView(): View? {
         if (!::view.isInitialized) {

@@ -58,6 +58,7 @@
         <activity android:name=".ui.activity.AddWorkActivity" />
         <activity android:name=".ui.activity.AddMusicActivity" />
         <activity android:name=".ui.activity.AddMVActivity" />
+        <activity android:name=".ui.activity.AddMusicListActivity" />
         <activity android:name=".ui.activity.SuccessActivity" />
         <activity android:name=".ui.activity.TextureVideoPlayerActivity" />
         <activity
