@@ -1,20 +1,24 @@
 package com.melodiousplayer.android.adapter
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.melodiousplayer.android.R
 import com.melodiousplayer.android.model.VideosBean
 
 class PagingAdapter(
     private val onItemSelected: (VideosBean, Boolean) -> Unit
 ) : ListAdapter<VideosBean, PagingAdapter.ViewHolder>(DiffCallback()) {
 
-    class ViewHolder(val itemView: View) : RecyclerView.ViewHolder(itemView)
+    inner class ViewHolder(val itemView: View) : RecyclerView.ViewHolder(itemView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        TODO("Not yet implemented")
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_mv_list, parent, false)
+        return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
