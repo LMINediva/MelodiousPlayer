@@ -45,4 +45,10 @@
     <string name="add_mv_success">添加MV成功</string>
     <string name="add_mv_failed">添加MV失败</string>
     <string name="network_error">网络错误</string>
+    <string-array name="page_sizes">
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+    </string-array>
 </resources>
