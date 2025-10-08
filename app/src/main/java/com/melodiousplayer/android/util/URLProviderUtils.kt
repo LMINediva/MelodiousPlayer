@@ -45,14 +45,14 @@ object URLProviderUtils {
     }
 
     /**
-     * 获取MV界面区域数据列表的url
+     * 获取相关区域的MV数据列表的url
      *
      * @param area   区域数据类型
      * @param offset 数据偏移量
      * @param size   返回数据的条目个数
      * @return url
      */
-    fun getMVAreaListUrl(area: String?, offset: Int, size: Int): String {
+    fun getMVUrl(area: String?, offset: Int, size: Int): String {
         val url = protocol + serverAddress + "/data/mv/get_mv_list" +
                 "?offset=" + offset + "&size=" + size + "&area=" + area
         return url
@@ -256,6 +256,14 @@ object URLProviderUtils {
      */
     fun postAddMV(): String {
         val url = protocol + serverAddress + "/data/mv/save"
+        return url
+    }
+
+    /**
+     * 分页获取MV数据列表的url
+     */
+    fun postPagingMVUrl(): String {
+        val url = protocol + serverAddress + "/data/mv/list"
         return url
     }
 

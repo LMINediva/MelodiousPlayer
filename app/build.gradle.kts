@@ -59,7 +59,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.circleimageview)
     implementation(libs.android.image.cropper)
-    implementation(libs.androidx.viewpager2)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

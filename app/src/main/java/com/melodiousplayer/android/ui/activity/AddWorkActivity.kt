@@ -84,7 +84,10 @@ class AddWorkActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
             }
 
             R.id.addList -> {
-                myToast("添加悦单")
+                // 进入添加悦单界面，传递用户信息
+                val intent = Intent(this, AddMusicListActivity::class.java)
+                intent.putExtra("user", currentUser)
+                startActivity(intent)
             }
         }
     }
