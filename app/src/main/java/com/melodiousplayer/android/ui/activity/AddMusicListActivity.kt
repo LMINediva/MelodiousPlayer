@@ -40,6 +40,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
     private var totalPages = 1
     private var pageSize = 5
     private var total = 0L
+    private var isUpdate = false
     private var dataList = mutableListOf<VideosBean>()
     private var selectedItems = mutableSetOf<VideosBean>()
     private var getMVListPresenter = GetMVListPresenterImpl(this)
@@ -74,10 +75,12 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
         // 设置RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = PagingAdapter(dataList, selectedItems) { item, isChecked ->
-            if (isChecked) {
-                selectedItems.add(item)
-            } else {
-                selectedItems.remove(item)
+            if (!isUpdate) {
+                if (isChecked) {
+                    selectedItems.add(item)
+                } else {
+                    selectedItems.remove(item)
+                }
             }
         }
         recyclerView.adapter = adapter
@@ -104,6 +107,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
             ) {
                 pageSize = resources.getStringArray(R.array.page_sizes)[position].toInt()
                 currentPage = 1
+                isUpdate = true
                 getMVList(currentPage, pageSize)
             }
 
@@ -111,6 +115,28 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
 
             }
         }
+        // RecyclerView监听滚动事件
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                when (newState) {
+                    RecyclerView.SCROLL_STATE_IDLE -> {
+                        // 滚动停止
+                        isUpdate = false
+                    }
+
+                    RecyclerView.SCROLL_STATE_DRAGGING -> {
+                        // 正在拖动滚动
+                        isUpdate = true
+                    }
+
+                    RecyclerView.SCROLL_STATE_SETTLING -> {
+                        // 滚动尚未停止，正在自动滑动到某个位置
+                        isUpdate = true
+                    }
+                }
+            }
+        })
         // 按钮点击事件
         btnPrevious.setOnClickListener(this)
         btnNext.setOnClickListener(this)
@@ -134,6 +160,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
             R.id.btnPrevious -> {
                 if (currentPage > 1) {
                     currentPage--
+                    isUpdate = true
                     getMVList(currentPage, pageSize)
                 }
             }
@@ -141,6 +168,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
             R.id.btnNext -> {
                 if (currentPage < totalPages) {
                     currentPage++
+                    isUpdate = true
                     getMVList(currentPage, pageSize)
                 }
             }
@@ -163,6 +191,10 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
         adapter.updateItems(dataList)
         updatePageInfo()
         updateButtonStates()
+        // RecyclerView的post方法在数据渲染完成后执行操作
+        recyclerView.post {
+            isUpdate = false
+        }
     }
 
     /**
