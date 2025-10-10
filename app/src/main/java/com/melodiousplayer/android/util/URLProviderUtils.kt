@@ -267,6 +267,30 @@ object URLProviderUtils {
         return url
     }
 
+    /**
+     * 上传悦单相关图片
+     */
+    fun postUploadMusicListPicture(): String {
+        val url = protocol + serverAddress + "/data/list/uploadImage"
+        return url
+    }
+
+    /**
+     * 检查在线悦单名是否存在
+     */
+    fun postCheckMusicListTitle(): String {
+        val url = protocol + serverAddress + "/data/list/checkTitle"
+        return url
+    }
+
+    /**
+     * 添加悦单
+     */
+    fun postAddMusicList(): String {
+        val url = protocol + serverAddress + "/data/list/save"
+        return url
+    }
+
     fun getSystemVersion(): String {
         return Build.VERSION.RELEASE
     }

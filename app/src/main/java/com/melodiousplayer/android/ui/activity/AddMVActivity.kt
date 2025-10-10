@@ -689,7 +689,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     }
 
     override fun onUploadThumbnailFailed() {
-        thumbnailPictureError.text = "海报缩略图上传失败！"
+        thumbnailPictureError.text = "缩略图上传失败！"
         thumbnailPictureError.visibility = View.VISIBLE
     }
 

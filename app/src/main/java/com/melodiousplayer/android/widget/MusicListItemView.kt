@@ -9,7 +9,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.melodiousplayer.android.R
-import com.melodiousplayer.android.model.MusicListBean
+import com.melodiousplayer.android.model.PlayListsBean
 import com.melodiousplayer.android.util.URLProviderUtils
 
 /**
@@ -34,7 +34,7 @@ class MusicListItemView : RelativeLayout {
     /**
      * 条目view的控件初始化
      */
-    fun setData(data: MusicListBean.PlayListsBean) {
+    fun setData(data: PlayListsBean) {
         val title: TextView = findViewById(R.id.title)
         val author_name: TextView = findViewById(R.id.author_name)
         val count: TextView = findViewById(R.id.count)

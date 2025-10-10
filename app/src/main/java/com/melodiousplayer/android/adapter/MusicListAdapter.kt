@@ -2,15 +2,15 @@ package com.melodiousplayer.android.adapter
 
 import android.content.Context
 import com.melodiousplayer.android.base.BaseListAdapter
-import com.melodiousplayer.android.model.MusicListBean
+import com.melodiousplayer.android.model.PlayListsBean
 import com.melodiousplayer.android.widget.MusicListItemView
 
 /**
  * 悦单界面适配器
  */
-class MusicListAdapter : BaseListAdapter<MusicListBean.PlayListsBean, MusicListItemView>() {
+class MusicListAdapter : BaseListAdapter<PlayListsBean, MusicListItemView>() {
 
-    override fun refreshItemView(itemView: MusicListItemView, data: MusicListBean.PlayListsBean) {
+    override fun refreshItemView(itemView: MusicListItemView, data: PlayListsBean) {
         itemView.setData(data)
     }
 

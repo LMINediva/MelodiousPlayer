@@ -1,27 +1,26 @@
 package com.melodiousplayer.android.model
 
-class MusicListBean {
+data class MusicListBean(
+    var totalCount: Int?,
+    var playLists: List<PlayListsBean>?
+)
 
-    var totalCount: Int = 0
-    var playLists: List<PlayListsBean>? = null
-
-    class PlayListsBean {
-        var id: Int = 0
-        var title: String? = null
-        var thumbnailPic: String? = null
-        var videoCount: Int = 0
-        var description: String? = null
-        var category: String? = null
-        var sysUser: UserBean? = null
-        var status: Int = 0
-        var totalViews: Int = 0
-        var totalFavorites: Int = 0
-        var updateTime: String? = null
-        var createdTime: String? = null
-        var integral: Int = 0
-        var weekIntegral: Int = 0
-        var totalUser: Int = 0
-        var rank: Int = 0
-    }
-
-}
+data class PlayListsBean(
+    var id: Int?,
+    var title: String?,
+    var thumbnailPic: String?,
+    var videoCount: Int?,
+    var mvList: MutableList<VideosBean>?,
+    var description: String?,
+    var category: String?,
+    var status: Int?,
+    var totalViews: Int?,
+    var totalFavorites: Int?,
+    var updateTime: String?,
+    var createdTime: String?,
+    var integral: Int?,
+    var weekIntegral: Int?,
+    var totalUser: Int?,
+    var rank: Int?,
+    var sysUser: UserBean?
+)

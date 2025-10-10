@@ -67,6 +67,14 @@ interface ToolBarManager {
     }
 
     /**
+     * 初始化音乐清单界面中的toolbar
+     */
+    fun initAddMusicListToolBar() {
+        // 设置标题
+        toolbarTitle.text = "添加悦单"
+    }
+
+    /**
      * 初始化成功界面中的toolbar
      */
     fun initSuccessToolBar() {
