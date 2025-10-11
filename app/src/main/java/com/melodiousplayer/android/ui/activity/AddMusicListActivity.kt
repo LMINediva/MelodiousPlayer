@@ -31,16 +31,21 @@ import com.melodiousplayer.android.R
 import com.melodiousplayer.android.adapter.PagingAdapter
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.contract.AddMusicListContract
+import com.melodiousplayer.android.contract.DeleteUploadMusicListFileCacheContract
 import com.melodiousplayer.android.contract.GetMVListContract
 import com.melodiousplayer.android.contract.UploadThumbnailContract
 import com.melodiousplayer.android.model.MVListResultBean
 import com.melodiousplayer.android.model.PageBean
+import com.melodiousplayer.android.model.PlayListsBean
+import com.melodiousplayer.android.model.ResultBean
 import com.melodiousplayer.android.model.UploadFileResultBean
 import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.model.VideosBean
 import com.melodiousplayer.android.presenter.impl.AddMusicListPresenterImpl
+import com.melodiousplayer.android.presenter.impl.DeleteUploadMusicListFileCachePresenterImpl
 import com.melodiousplayer.android.presenter.impl.GetMVListPresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadMusicListThumbnailPresenterImpl
+import com.melodiousplayer.android.util.DateUtil
 import com.melodiousplayer.android.util.ToolBarManager
 import com.melodiousplayer.android.util.URLProviderUtils
 import com.melodiousplayer.android.util.UnitUtil
@@ -54,10 +59,12 @@ import kotlin.math.ceil
  * 添加音乐清单界面
  */
 class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.View,
-    View.OnClickListener, UploadThumbnailContract.View, AddMusicListContract.View {
+    View.OnClickListener, UploadThumbnailContract.View, AddMusicListContract.View,
+    DeleteUploadMusicListFileCacheContract.View {
 
     private lateinit var title: EditText
     private lateinit var description: EditText
+    private lateinit var category: EditText
     private lateinit var thumbnailPicture: ImageView
     private lateinit var thumbnailPictureError: TextView
     private lateinit var mvListError: TextView
@@ -83,6 +90,8 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
     private val CROP_THUMBNAIL_REQUEST = 2
     private val getMVListPresenter = GetMVListPresenterImpl(this)
     private val uploadMusicListThumbnailPresenter = UploadMusicListThumbnailPresenterImpl(this)
+    private val deleteUploadMusicListFileCachePresenter =
+        DeleteUploadMusicListFileCachePresenterImpl(this)
     private val addMusicListPresenter = AddMusicListPresenterImpl(this)
     private var currentPage = 1
     private var totalPages = 1
@@ -92,6 +101,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
     private var dataList = mutableListOf<VideosBean>()
     private var selectedItems = mutableSetOf<VideosBean>()
     private var newMusicListThumbnail: String? = null
+    private var isAddMusicListSuccess: Boolean = false
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -113,6 +123,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
         }
         title = findViewById(R.id.title)
         description = findViewById(R.id.description)
+        category = findViewById(R.id.category)
         thumbnailPicture = findViewById(R.id.thumbnailPicture)
         thumbnailPictureError = findViewById(R.id.thumbnailPictureError)
         mvListError = findViewById(R.id.mvListError)
@@ -209,6 +220,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
+                deleteUploadMusicListFileCache()
                 finish()
                 return true
             }
@@ -243,7 +255,20 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
             }
 
             R.id.addMusicList -> {
-
+                if (token.isNotEmpty()) {
+                    val title = title.text.trim().toString()
+                    val description = description.text.trim().toString()
+                    val category = category.text.trim().toString()
+                    val videoCount = selectedItems.size
+                    val createTime = DateUtil.getCurrentTime()
+                    val play = PlayListsBean(
+                        null, title, newMusicListThumbnail, videoCount,
+                        selectedItems, description, category, 0,
+                        0, 0, null, createTime,
+                        0, 0, 0, 0, currentUser
+                    )
+                    addMusicListPresenter.addMusicList(token, play)
+                }
             }
         }
     }
@@ -435,6 +460,28 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
         btnNext.isEnabled = currentPage < totalPages
     }
 
+    /**
+     * 发送删除上传悦单相关文件缓存的请求
+     */
+    private fun deleteUploadMusicListFileCache() {
+        if (!isAddMusicListSuccess) {
+            if (!newMusicListThumbnail.isNullOrEmpty()) {
+                if (token.isNotEmpty()) {
+                    val play = PlayListsBean(
+                        null, null, newMusicListThumbnail, null,
+                        null, null, null, null,
+                        null, null, null, null,
+                        null, null, null, null, currentUser
+                    )
+                    deleteUploadMusicListFileCachePresenter.deleteUploadMusicListFileCache(
+                        token,
+                        play
+                    )
+                }
+            }
+        }
+    }
+
     override fun onGetMVListSuccess(result: MVListResultBean) {
         dataList = result.mvList!!
         total = result.total!!
@@ -502,16 +549,15 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
         description.error = getString(R.string.description_error)
     }
 
+    override fun onCategoryError() {
+        myToast(getString(R.string.music_list_category_error))
+        category.error = getString(R.string.music_list_category_error)
+    }
+
     override fun onMusicListThumbnailError() {
         myToast(getString(R.string.music_list_thumbnail_error))
         thumbnailPictureError.text = getString(R.string.music_list_thumbnail_error)
         thumbnailPictureError.visibility = View.VISIBLE
-    }
-
-    override fun onMusicListError() {
-        myToast(getString(R.string.music_list_mv_list_error))
-        mvListError.text = getString(R.string.music_list_mv_list_error)
-        mvListError.visibility = View.VISIBLE
     }
 
     override fun onMusicListMVQuantityError() {
@@ -521,11 +567,21 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
     }
 
     override fun onAddMusicListSuccess() {
-        TODO("Not yet implemented")
+        isAddMusicListSuccess = true
+        myToast(getString(R.string.add_music_list_success))
+        startActivityAndFinish<SuccessActivity>()
     }
 
     override fun onAddMusicListFailed() {
-        TODO("Not yet implemented")
+        myToast(getString(R.string.add_music_list_failed))
+    }
+
+    override fun onDeleteUploadMusicListFileCacheSuccess(result: ResultBean) {
+        myToast(getString(R.string.delete_upload_music_list_file_cache_success))
+    }
+
+    override fun onDeleteUploadMusicListFileCacheFailed(result: ResultBean) {
+        myToast(getString(R.string.delete_upload_music_list_file_cache_failed))
     }
 
     override fun onNetworkError() {
@@ -533,6 +589,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
     }
 
     override fun onBackPressed() {
+        deleteUploadMusicListFileCache()
         finish()
         super.onBackPressed()
     }

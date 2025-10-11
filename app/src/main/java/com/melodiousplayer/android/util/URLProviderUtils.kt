@@ -291,6 +291,14 @@ object URLProviderUtils {
         return url
     }
 
+    /**
+     * 删除上传到服务器的悦单相关文件缓存
+     */
+    fun postDeleteUploadMusicListFileCache(): String {
+        val url = protocol + serverAddress + "/data/list/deleteUploadFileCache"
+        return url
+    }
+
     fun getSystemVersion(): String {
         return Build.VERSION.RELEASE
     }

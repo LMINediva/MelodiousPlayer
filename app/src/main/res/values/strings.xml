@@ -30,7 +30,6 @@
     <string name="get_lyric_text_error">获取歌词文本错误</string>
     <string name="add_music_success">添加音乐成功</string>
     <string name="add_music_failed">添加音乐失败</string>
-
     <string name="delete_upload_music_file_cache_success">删除上传到服务器的音乐相关文件缓存成功</string>
     <string name="delete_upload_music_file_cache_failed">删除上传到服务器的音乐相关文件缓存失败</string>
     <string name="file_upload_reminder">如网络不佳，则需要较长时间</string>
@@ -47,9 +46,13 @@
     <string name="get_mv_list_failed">获取MV列表失败</string>
     <string name="music_list_title_error">悦单名不能为空</string>
     <string name="music_list_title_exist_error">悦单名已存在</string>
+    <string name="music_list_category_error">悦单类型长度在2到10个字符之间</string>
     <string name="music_list_thumbnail_error">悦单缩略图不能为空</string>
-    <string name="music_list_mv_list_error">MV数量不能为0部</string>
-    <string name="music_list_mv_list_size_error">MV数量至少选3部，至多选50部</string>
+    <string name="music_list_mv_list_size_error">MV数量最少选3部，最多选50部</string>
+    <string name="add_music_list_success">添加悦单成功</string>
+    <string name="add_music_list_failed">添加悦单失败</string>
+    <string name="delete_upload_music_list_file_cache_success">删除上传到服务器的悦单相关文件缓存成功</string>
+    <string name="delete_upload_music_list_file_cache_failed">删除上传到服务器的悦单相关文件缓存失败</string>
     <string name="network_error">网络错误</string>
     <string-array name="page_sizes">
         <item>5</item>

@@ -20,3 +20,8 @@ fun String.isValidPhoneNumber(): Boolean = this.matches(Regex("^1[3456789]\\d{9}
  */
 fun String.isValidEmail(): Boolean =
     this.matches(Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$"))
+
+/**
+ * 校验用户输入悦单类型是否有效
+ */
+fun String.isValidCategory(): Boolean = this.length in 2..10
