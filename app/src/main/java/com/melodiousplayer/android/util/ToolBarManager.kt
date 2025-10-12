@@ -82,4 +82,12 @@ interface ToolBarManager {
         toolbarTitle.text = "操作结果"
     }
 
+    /**
+     * 初始化我的作品界面中的toolbar
+     */
+    fun initMyWorkToolBar() {
+        // 设置标题
+        toolbarTitle.text = "我的作品"
+    }
+
 }

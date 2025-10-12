@@ -54,6 +54,9 @@
     <string name="delete_upload_music_list_file_cache_success">删除上传到服务器的悦单相关文件缓存成功</string>
     <string name="delete_upload_music_list_file_cache_failed">删除上传到服务器的悦单相关文件缓存失败</string>
     <string name="network_error">网络错误</string>
+    <string name="my_work_tab_text_1">音乐</string>
+    <string name="my_work_tab_text_2">MV</string>
+    <string name="my_work_tab_text_3">悦单</string>
     <string-array name="page_sizes">
         <item>5</item>
         <item>10</item>

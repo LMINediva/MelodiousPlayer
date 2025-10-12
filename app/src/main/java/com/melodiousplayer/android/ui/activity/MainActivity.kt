@@ -167,7 +167,10 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
             }
 
             R.id.navMyWorks -> {
-
+                // 进入我的作品界面，传递用户信息
+                val intent = Intent(this, MyWorkActivity::class.java)
+                intent.putExtra("user", currentUser)
+                startActivity(intent)
             }
 
             R.id.navLogout -> {
