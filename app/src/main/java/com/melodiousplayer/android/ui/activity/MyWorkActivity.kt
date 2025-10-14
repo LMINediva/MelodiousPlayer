@@ -1,5 +1,6 @@
 package com.melodiousplayer.android.ui.activity
 
+import android.content.Context
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
@@ -8,6 +9,7 @@ import com.google.android.material.tabs.TabLayout
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.adapter.MyWorkPagerAdapter
 import com.melodiousplayer.android.base.BaseActivity
+import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.util.ToolBarManager
 
 /**
@@ -17,6 +19,8 @@ class MyWorkActivity : BaseActivity(), ToolBarManager {
 
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager
+    private lateinit var currentUser: UserBean
+    private lateinit var token: String
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -38,13 +42,19 @@ class MyWorkActivity : BaseActivity(), ToolBarManager {
         }
         tabLayout = findViewById(R.id.tabLayout)
         viewPager = findViewById(R.id.viewPager)
-        val adapter = MyWorkPagerAdapter(this, supportFragmentManager)
+        val userSerialized = intent.getSerializableExtra("user")
+        if (userSerialized != null) {
+            currentUser = userSerialized as UserBean
+            currentUser.loginDate = null
+            currentUser.createTime = null
+            currentUser.updateTime = null
+        }
+        // 从SharedPreferences文件中读取token的值
+        token = getSharedPreferences("data", Context.MODE_PRIVATE)
+            .getString("token", "").toString()
+        val adapter = MyWorkPagerAdapter(this, supportFragmentManager, currentUser, token)
         viewPager.adapter = adapter
         tabLayout.setupWithViewPager(viewPager)
-    }
-
-    override fun initListener() {
-
     }
 
     /**

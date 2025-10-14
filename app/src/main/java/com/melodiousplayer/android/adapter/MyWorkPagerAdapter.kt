@@ -1,16 +1,29 @@
 package com.melodiousplayer.android.adapter
 
 import android.content.Context
+import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.melodiousplayer.android.R
+import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.ui.fragment.MyMVFragment
 import com.melodiousplayer.android.ui.fragment.MyMusicFragment
 import com.melodiousplayer.android.ui.fragment.MyMusicListFragment
 
-class MyWorkPagerAdapter(private val context: Context, fm: FragmentManager) :
-    FragmentPagerAdapter(fm) {
+class MyWorkPagerAdapter(
+    private val context: Context,
+    fm: FragmentManager,
+    currentUser: UserBean,
+    token: String
+) : FragmentPagerAdapter(fm) {
+
+    private val bundle = Bundle()
+
+    init {
+        bundle.putSerializable("user", currentUser)
+        bundle.putString("token", token)
+    }
 
     // 顶部TabLayout的标题
     private val TAB_TITLES = arrayOf(
@@ -22,18 +35,26 @@ class MyWorkPagerAdapter(private val context: Context, fm: FragmentManager) :
     override fun getItem(position: Int): Fragment {
         when (position) {
             0 -> {
-                return MyMusicFragment.newInstance()
+                val myMusicFragment = MyMusicFragment.newInstance()
+                myMusicFragment.arguments = bundle
+                return myMusicFragment
             }
 
             1 -> {
+                val myMVFragment = MyMVFragment.newInstance()
+                myMVFragment.arguments = bundle
                 return MyMVFragment.newInstance()
             }
 
             2 -> {
-                return MyMusicListFragment.newInstance()
+                val myMusicListFragment = MyMusicListFragment.newInstance()
+                myMusicListFragment.arguments = bundle
+                return myMusicListFragment
             }
         }
-        return MyMusicFragment.newInstance()
+        val myMusicFragment = MyMusicFragment.newInstance()
+        myMusicFragment.arguments = bundle
+        return myMusicFragment
     }
 
     override fun getPageTitle(position: Int): CharSequence? {

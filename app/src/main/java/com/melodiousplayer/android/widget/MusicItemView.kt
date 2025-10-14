@@ -14,7 +14,7 @@ import com.melodiousplayer.android.util.URLProviderUtils
 /**
  * 首页子项布局
  */
-class MusicView : RelativeLayout {
+class MusicItemView : RelativeLayout {
 
     constructor(context: Context?) : super(context)
 

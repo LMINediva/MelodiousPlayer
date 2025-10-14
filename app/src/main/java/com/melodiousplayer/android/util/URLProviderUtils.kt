@@ -299,6 +299,14 @@ object URLProviderUtils {
         return url
     }
 
+    /**
+     * 分页获取我的音乐数据列表的url
+     */
+    fun postPagingMyMusicUrl(): String {
+        val url = protocol + serverAddress + "/data/music/myList"
+        return url
+    }
+
     fun getSystemVersion(): String {
         return Build.VERSION.RELEASE
     }

@@ -1,7 +1,7 @@
 package com.melodiousplayer.android.ui.fragment
 
 import android.content.Intent
-import com.melodiousplayer.android.adapter.HomeAdapter
+import com.melodiousplayer.android.adapter.MusicAdapter
 import com.melodiousplayer.android.base.BaseListAdapter
 import com.melodiousplayer.android.base.BaseListFragment
 import com.melodiousplayer.android.base.BaseListPresenter
@@ -10,19 +10,19 @@ import com.melodiousplayer.android.model.MusicBean
 import com.melodiousplayer.android.presenter.impl.MusicPresenterImpl
 import com.melodiousplayer.android.ui.activity.AudioPlayerActivity
 import com.melodiousplayer.android.util.URLProviderUtils
-import com.melodiousplayer.android.widget.MusicView
+import com.melodiousplayer.android.widget.MusicItemView
 
 /**
  * 首页在线音乐界面
  */
-class MusicFragment : BaseListFragment<List<MusicBean>, MusicBean, MusicView>() {
+class MusicFragment : BaseListFragment<List<MusicBean>, MusicBean, MusicItemView>() {
 
     override fun onDataChanged() {
         super.onDataChanged()
     }
 
-    override fun getSpecialAdapter(): BaseListAdapter<MusicBean, MusicView> {
-        return HomeAdapter()
+    override fun getSpecialAdapter(): BaseListAdapter<MusicBean, MusicItemView> {
+        return MusicAdapter()
     }
 
     override fun getSpecialPresenter(): BaseListPresenter {

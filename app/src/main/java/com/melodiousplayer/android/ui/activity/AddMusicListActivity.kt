@@ -423,7 +423,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
      * 分页获取MV列表数据
      */
     private fun getMVList(currentPage: Int, pageSize: Int) {
-        val pageBean = PageBean("", currentPage, pageSize)
+        val pageBean = PageBean("", currentPage, pageSize, null)
         getMVListPresenter.getMVList(token, pageBean)
     }
 
