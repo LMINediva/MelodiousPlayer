@@ -1,14 +1,18 @@
 package com.melodiousplayer.android.ui.fragment
 
+import android.content.Intent
 import com.melodiousplayer.android.adapter.MyMusicAdapter
 import com.melodiousplayer.android.base.BaseGridListFragment
 import com.melodiousplayer.android.base.BaseListAdapter
 import com.melodiousplayer.android.base.BaseListPresenter
+import com.melodiousplayer.android.model.AudioBean
 import com.melodiousplayer.android.model.MusicBean
 import com.melodiousplayer.android.model.MyMusicBean
 import com.melodiousplayer.android.model.PageBean
 import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.presenter.impl.MyMusicPresenterImpl
+import com.melodiousplayer.android.ui.activity.AudioPlayerActivity
+import com.melodiousplayer.android.util.URLProviderUtils
 import com.melodiousplayer.android.widget.MyMusicItemView
 
 /**
@@ -49,6 +53,39 @@ class MyMusicFragment : BaseGridListFragment<MyMusicBean, MusicBean, MyMusicItem
 
     override fun getList(response: MyMusicBean?): List<MusicBean>? {
         return response?.musicList
+    }
+
+    override fun initListener() {
+        super.initListener()
+        // 设置条目点击事件监听函数
+        adapter.setMyListener {
+            // 获取已经加载加载的音乐列表
+            val musicBeans: List<MusicBean> = adapter.list
+            val list: ArrayList<AudioBean> = ArrayList()
+            musicBeans.let {
+                it.forEach { music ->
+                    list.add(
+                        AudioBean(
+                            URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                                    + URLProviderUtils.musicPath + music.url,
+                            music.musicSize!!.toLong(),
+                            music.title!!,
+                            music.artistName,
+                            URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                                    + URLProviderUtils.lyricPath + music.lyric,
+                            true
+                        )
+                    )
+                }
+            }
+            // 位置position
+            val position = adapter.position
+            // 跳转到音乐播放界面
+            val intent = Intent(activity, AudioPlayerActivity::class.java)
+            intent.putExtra("list", list)
+            intent.putExtra("position", position)
+            activity?.startActivity(intent)
+        }
     }
 
     override fun onDestroyView() {

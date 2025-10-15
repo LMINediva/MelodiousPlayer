@@ -1,11 +1,9 @@
 package com.melodiousplayer.android.base
 
 import android.content.Context
-import android.graphics.Color
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.melodiousplayer.android.R
 
 /**
@@ -23,13 +21,12 @@ abstract class BaseGridListFragment<RESPONSE, ITEMBEAN, ITEMVIEW : View> : BaseF
     val presenter by lazy { getSpecialPresenter() }
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var refreshLayout: SwipeRefreshLayout
+
     private var listener: MessageListener? = null
 
     override fun initView(): View? {
-        val view = View.inflate(context, R.layout.fragment_list, null)
+        val view = View.inflate(context, R.layout.fragment_my_list, null)
         recyclerView = view.findViewById(R.id.recyclerView)
-        refreshLayout = view.findViewById(R.id.refreshLayout)
         return view
     }
 
@@ -37,12 +34,6 @@ abstract class BaseGridListFragment<RESPONSE, ITEMBEAN, ITEMVIEW : View> : BaseF
         // 初始化RecyclerView
         recyclerView.layoutManager = GridLayoutManager(context, 3)
         recyclerView.adapter = adapter
-        // 初始化刷新控件
-        refreshLayout.setColorSchemeColors(Color.RED, Color.YELLOW, Color.GREEN)
-        // 刷新监听
-        refreshLayout.setOnRefreshListener {
-            presenter.loadDatas()
-        }
         // 监听列表滑动
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -90,8 +81,6 @@ abstract class BaseGridListFragment<RESPONSE, ITEMBEAN, ITEMVIEW : View> : BaseF
     }
 
     override fun loadSuccess(response: RESPONSE?) {
-        // 隐藏刷新控件
-        refreshLayout.isRefreshing = false
         // 刷新列表
         adapter.updateList(getList(response))
     }
