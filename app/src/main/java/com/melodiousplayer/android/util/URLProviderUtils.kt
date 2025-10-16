@@ -307,6 +307,14 @@ object URLProviderUtils {
         return url
     }
 
+    /**
+     * 分页获取我的MV数据列表的url
+     */
+    fun postPagingMyMVUrl(): String {
+        val url = protocol + serverAddress + "/data/mv/myList"
+        return url
+    }
+
     fun getSystemVersion(): String {
         return Build.VERSION.RELEASE
     }

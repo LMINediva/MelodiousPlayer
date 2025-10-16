@@ -8,13 +8,13 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.melodiousplayer.android.R
-import com.melodiousplayer.android.model.MusicBean
+import com.melodiousplayer.android.model.VideosBean
 import com.melodiousplayer.android.util.URLProviderUtils
 
 /**
- * 我的音乐子项布局
+ * 我的MV子项布局
  */
-class MyMusicItemView : RelativeLayout {
+class MyMVItemView : RelativeLayout {
 
     constructor(context: Context?) : super(context)
 
@@ -30,17 +30,17 @@ class MyMusicItemView : RelativeLayout {
      * 初始化方法
      */
     init {
-        View.inflate(context, R.layout.item_my_music, this)
+        View.inflate(context, R.layout.item_my_mv, this)
     }
 
     /**
      * 刷新条目view数据
      */
-    fun setData(data: MusicBean) {
+    fun setData(data: VideosBean) {
         val title: TextView = findViewById(R.id.title)
         val artistName: TextView = findViewById(R.id.artistName)
         val bg: ImageView = findViewById(R.id.bg)
-        // 歌曲名称
+        // MV名称
         title.setText(data.title)
         // 歌手名称
         artistName.setText(data.artistName)

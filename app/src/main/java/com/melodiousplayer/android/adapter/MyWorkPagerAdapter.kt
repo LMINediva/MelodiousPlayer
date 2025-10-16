@@ -43,7 +43,7 @@ class MyWorkPagerAdapter(
             1 -> {
                 val myMVFragment = MyMVFragment.newInstance()
                 myMVFragment.arguments = bundle
-                return MyMVFragment.newInstance()
+                return myMVFragment
             }
 
             2 -> {
