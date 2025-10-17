@@ -8,13 +8,13 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.melodiousplayer.android.R
-import com.melodiousplayer.android.model.VideosBean
+import com.melodiousplayer.android.model.PlayListsBean
 import com.melodiousplayer.android.util.URLProviderUtils
 
 /**
- * 我的MV子项布局
+ * 我的悦单子项布局
  */
-class MyMVItemView : RelativeLayout {
+class MyMusicListItemView : RelativeLayout {
 
     constructor(context: Context?) : super(context)
 
@@ -30,24 +30,24 @@ class MyMVItemView : RelativeLayout {
      * 初始化方法
      */
     init {
-        View.inflate(context, R.layout.item_my_mv, this)
+        View.inflate(context, R.layout.item_my_music_list, this)
     }
 
     /**
      * 刷新条目view数据
      */
-    fun setData(data: VideosBean) {
+    fun setData(data: PlayListsBean) {
         val title: TextView = findViewById(R.id.title)
-        val artistName: TextView = findViewById(R.id.artistName)
+        val count: TextView = findViewById(R.id.count)
         val bg: ImageView = findViewById(R.id.bg)
-        // MV名称
+        // 悦单名称
         title.setText(data.title)
-        // 歌手名称
-        artistName.setText(data.artistName)
+        // MV数量
+        data.videoCount?.let { count.setText("MV数量：" + it) }
         // 背景图片
         Glide.with(context).load(
             URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                    + URLProviderUtils.mvImagePath + data.posterPic
+                    + URLProviderUtils.listPicturePath + data.thumbnailPic
         ).into(bg)
     }
 

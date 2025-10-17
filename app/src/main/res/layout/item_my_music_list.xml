@@ -20,19 +20,19 @@
             android:background="@mipmap/default_splash_bg"
             android:scaleType="centerCrop" />
 
-        <!--MV名称-->
+        <!--悦单名称-->
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/artistName"
+            android:layout_above="@+id/count"
             android:layout_marginStart="5dp"
             android:textColor="#00FF00"
             android:textSize="15sp" />
 
-        <!--歌手名称-->
+        <!--MV列表数量-->
         <TextView
-            android:id="@+id/artistName"
+            android:id="@+id/count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

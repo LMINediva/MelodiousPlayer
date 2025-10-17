@@ -1,30 +1,24 @@
 package com.melodiousplayer.android.ui.fragment
 
-import android.view.View
-import com.melodiousplayer.android.R
-import com.melodiousplayer.android.base.BaseFragment
+import com.melodiousplayer.android.adapter.MyMusicListAdapter
+import com.melodiousplayer.android.base.BaseGridListFragment
+import com.melodiousplayer.android.base.BaseListAdapter
+import com.melodiousplayer.android.base.BaseListPresenter
+import com.melodiousplayer.android.model.MyMusicListBean
+import com.melodiousplayer.android.model.PageBean
+import com.melodiousplayer.android.model.PlayListsBean
+import com.melodiousplayer.android.model.UserBean
+import com.melodiousplayer.android.presenter.impl.MyMusicListPresenterImpl
+import com.melodiousplayer.android.widget.MyMusicListItemView
 
 /**
  * 我的悦单界面
  */
-class MyMusicListFragment : BaseFragment() {
+class MyMusicListFragment :
+    BaseGridListFragment<MyMusicListBean, PlayListsBean, MyMusicListItemView>() {
 
-    private lateinit var view: View
-
-    override fun initView(): View? {
-        if (!::view.isInitialized) {
-            view = View.inflate(context, R.layout.fragment_my_music_list, null)
-        }
-        return view
-    }
-
-    override fun initData() {
-
-    }
-
-    override fun initListener() {
-
-    }
+    private lateinit var currentUser: UserBean
+    private lateinit var token: String
 
     companion object {
         /**
@@ -32,10 +26,36 @@ class MyMusicListFragment : BaseFragment() {
          */
         @JvmStatic
         fun newInstance(): MyMusicListFragment {
-            return MyMusicListFragment().apply {
-
-            }
+            return MyMusicListFragment()
         }
+    }
+
+    override fun init() {
+        currentUser = arguments?.getSerializable("user") as UserBean
+        token = arguments?.getString("token").toString()
+    }
+
+    override fun onDataChanged() {
+        super.onDataChanged()
+    }
+
+    override fun getSpecialAdapter(): BaseListAdapter<PlayListsBean, MyMusicListItemView> {
+        return MyMusicListAdapter()
+    }
+
+    override fun getSpecialPresenter(): BaseListPresenter {
+        val pageBean = PageBean("", 0, 20, currentUser)
+        return MyMusicListPresenterImpl(this, token, pageBean)
+    }
+
+    override fun getList(response: MyMusicListBean?): List<PlayListsBean>? {
+        return response?.playList
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // 解绑presenter
+        presenter.destroyView()
     }
 
 }
