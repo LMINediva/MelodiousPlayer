@@ -8,7 +8,10 @@ import android.media.MediaMetadataRetriever
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.provider.MediaStore
+import android.view.MenuItem
 import android.widget.RadioGroup
+import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
@@ -21,6 +24,7 @@ import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.model.VideoPlayBean
 import com.melodiousplayer.android.util.FileUtil
 import com.melodiousplayer.android.util.FileUtil.createTemporalFileFrom
+import com.melodiousplayer.android.util.ToolBarManager
 import com.melodiousplayer.android.util.URLProviderUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -31,7 +35,7 @@ import okhttp3.Request
 import java.io.File
 import java.io.IOException
 
-class JiaoZiVideoPlayerActivity : BaseActivity() {
+class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager {
 
     private lateinit var videoPlayer: JzvdStd
     private lateinit var viewPager: ViewPager
@@ -45,11 +49,24 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
     private val client by lazy { OkHttpClient() }
     private var videoPlayBean: VideoPlayBean? = null
 
+    override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
+    override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
+
     override fun getLayoutId(): Int {
         return R.layout.activity_video_player_jiaozi
     }
 
     override fun initData() {
+        initVideoPlayerToolBar()
+        setSupportActionBar(toolbar)
+        supportActionBar?.let {
+            // 启用Toolbar的返回按钮
+            it.setDisplayHomeAsUpEnabled(true)
+            // 显示返回按钮
+            it.setDisplayShowHomeEnabled(true)
+            // 隐藏默认标题
+            it.setDisplayShowTitleEnabled(false)
+        }
         videoPlayer = findViewById(R.id.jz_video)
         viewPager = findViewById(R.id.viewPager)
         rg = findViewById(R.id.rg)
@@ -108,6 +125,66 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    override fun initListener() {
+        // 适配ViewPager
+        viewPager.adapter = VideoPagerAdapter(supportFragmentManager, videoPlayBean)
+        // RadioGroup选中监听
+        rg.setOnCheckedChangeListener { radioGroup, i ->
+            when (i) {
+                R.id.rb1 -> viewPager.setCurrentItem(0)
+                R.id.rb2 -> viewPager.setCurrentItem(1)
+                R.id.rb3 -> viewPager.setCurrentItem(2)
+            }
+        }
+
+        // ViewPager选中状态监听
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+
+            /**
+             * 滑动状态改变的回调
+             */
+            override fun onPageScrollStateChanged(state: Int) {
+
+            }
+
+            /**
+             * 滑动回调
+             */
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+
+            }
+
+            /**
+             * 选中状态改变回调
+             */
+            override fun onPageSelected(position: Int) {
+                when (position) {
+                    0 -> rg.check(R.id.rb1)
+                    1 -> rg.check(R.id.rb2)
+                    2 -> rg.check(R.id.rb3)
+                }
+            }
+
+        })
+    }
+
+    /**
+     * Toolbar上的图标按钮点击事件
+     */
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     /**
@@ -193,63 +270,17 @@ class JiaoZiVideoPlayerActivity : BaseActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        if (Jzvd.backPress()) {
-            return
-        }
-        super.onBackPressed()
-    }
-
     override fun onPause() {
         super.onPause()
         Jzvd.releaseAllVideos()
     }
 
-    override fun initListener() {
-        // 适配ViewPager
-        viewPager.adapter = VideoPagerAdapter(supportFragmentManager, videoPlayBean)
-        // RadioGroup选中监听
-        rg.setOnCheckedChangeListener { radioGroup, i ->
-            when (i) {
-                R.id.rb1 -> viewPager.setCurrentItem(0)
-                R.id.rb2 -> viewPager.setCurrentItem(1)
-                R.id.rb3 -> viewPager.setCurrentItem(2)
-            }
+    override fun onBackPressed() {
+        if (Jzvd.backPress()) {
+            return
         }
-
-        // ViewPager选中状态监听
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-
-            /**
-             * 滑动状态改变的回调
-             */
-            override fun onPageScrollStateChanged(state: Int) {
-
-            }
-
-            /**
-             * 滑动回调
-             */
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-
-            }
-
-            /**
-             * 选中状态改变回调
-             */
-            override fun onPageSelected(position: Int) {
-                when (position) {
-                    0 -> rg.check(R.id.rb1)
-                    1 -> rg.check(R.id.rb2)
-                    2 -> rg.check(R.id.rb3)
-                }
-            }
-
-        })
+        finish()
+        super.onBackPressed()
     }
 
 }

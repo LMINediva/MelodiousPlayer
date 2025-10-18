@@ -7,6 +7,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="这是一款免费的影音播放器" />
+        android:layout_margin="8dp"
+        android:text="@string/about"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
 
 </LinearLayout>

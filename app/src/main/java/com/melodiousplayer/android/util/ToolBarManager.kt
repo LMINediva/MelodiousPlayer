@@ -90,4 +90,12 @@ interface ToolBarManager {
         toolbarTitle.text = "我的作品"
     }
 
+    /**
+     * 初始化视频播放界面中的toolbar
+     */
+    fun initVideoPlayerToolBar() {
+        // 设置标题
+        toolbarTitle.text = "视频详情"
+    }
+
 }

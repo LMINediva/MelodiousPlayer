@@ -1,5 +1,6 @@
 package com.melodiousplayer.android.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +9,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.melodiousplayer.android.R
+import com.melodiousplayer.android.model.VideoPlayBean
 import com.melodiousplayer.android.model.VideosBean
+import com.melodiousplayer.android.ui.activity.JiaoZiVideoPlayerActivity
 import com.melodiousplayer.android.util.URLProviderUtils
 
 /**
@@ -26,7 +29,21 @@ class MusicListInformationAdapter(val mvList: List<VideosBean>) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_mv, parent, false)
-        return ViewHolder(view)
+        val viewHolder = ViewHolder(view)
+        viewHolder.itemView.setOnClickListener {
+            val position = viewHolder.adapterPosition
+            val mv = mvList[position]
+            val videoPlayBean =
+                VideoPlayBean(
+                    mv.id!!, mv.title!!, mv.url!!, mv.thumbnailPic!!, mv.description!!
+                )
+            // 跳转到视频播放界面
+            val intent = Intent(parent.context, JiaoZiVideoPlayerActivity::class.java)
+            intent.putExtra("item", videoPlayBean)
+            parent.context.startActivity(intent)
+        }
+        // 设置条目点击事件
+        return viewHolder
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

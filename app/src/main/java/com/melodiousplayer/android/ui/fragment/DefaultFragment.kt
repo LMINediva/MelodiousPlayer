@@ -14,7 +14,7 @@ class DefaultFragment : BaseFragment() {
     override fun initView(): View? {
         val tv = TextView(context)
         tv.gravity = Gravity.CENTER
-        tv.setTextColor(Color.RED)
+        tv.setTextColor(Color.GRAY)
         tv.text = "暂无"
         return tv
     }

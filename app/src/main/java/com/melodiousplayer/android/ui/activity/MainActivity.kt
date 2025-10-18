@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -174,7 +175,17 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
             }
 
             R.id.navLogout -> {
-                logoutPresenter.logout()
+                AlertDialog.Builder(this).apply {
+                    setTitle("提示")
+                    setMessage("确定要退出登录吗？")
+                    setCancelable(false)
+                    setPositiveButton("确定") { dialog, which ->
+                        logoutPresenter.logout()
+                    }
+                    setNegativeButton("取消") { dialog, which ->
+                    }
+                    show()
+                }
             }
         }
     }
