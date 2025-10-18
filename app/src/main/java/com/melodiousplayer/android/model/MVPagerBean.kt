@@ -1,5 +1,7 @@
 package com.melodiousplayer.android.model
 
+import java.io.Serializable
+
 data class MVPagerBean(var totalCount: Int, var videos: List<VideosBean>)
 
 data class VideosBean(
@@ -25,4 +27,4 @@ data class VideosBean(
     var duration: String?,
     var status: Int?,
     var sysUser: UserBean?
-)
+) : Serializable

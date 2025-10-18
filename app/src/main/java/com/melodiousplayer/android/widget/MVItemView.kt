@@ -39,7 +39,7 @@ class MVItemView : RelativeLayout {
         val bg: ImageView = findViewById(R.id.bg)
         // 歌手名称
         artist.text = data.artistName
-        // 歌曲名称
+        // MV名称
         title.text = data.title
         // 背景图
         Glide.with(context).load(
