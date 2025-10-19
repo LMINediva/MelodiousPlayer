@@ -20,10 +20,10 @@ interface ToolBarManager {
     }
 
     /**
-     * 处理设置界面的toolbar
+     * 初始化设置界面的toolbar
      */
     fun initSettingToolbar() {
-        toolbarTitle.text = "设置界面"
+        toolbarTitle.text = "设置"
     }
 
     /**
@@ -96,6 +96,14 @@ interface ToolBarManager {
     fun initVideoPlayerToolBar() {
         // 设置标题
         toolbarTitle.text = "视频详情"
+    }
+
+    /**
+     * 初始化关于界面中的toolbar
+     */
+    fun initAboutToolBar() {
+        // 设置标题
+        toolbarTitle.text = "关于"
     }
 
 }
