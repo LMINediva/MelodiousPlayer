@@ -106,4 +106,12 @@ interface ToolBarManager {
         toolbarTitle.text = "关于"
     }
 
+    /**
+     * 初始化清理缓存界面中的toolbar
+     */
+    fun initClearCacheToolBar() {
+        // 设置标题
+        toolbarTitle.text = "清理缓存"
+    }
+
 }

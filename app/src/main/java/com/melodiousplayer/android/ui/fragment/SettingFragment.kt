@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.ui.activity.AboutActivity
+import com.melodiousplayer.android.ui.activity.ClearCacheActivity
 
 /**
  * 设置界面布局
@@ -29,10 +30,16 @@ class SettingFragment : PreferenceFragment() {
         preferenceScreen: PreferenceScreen?,
         preference: Preference?
     ): Boolean {
-        val key = preference?.key
-        if ("about".equals(key)) {
-            // 跳转到关于界面
-            activity.startActivity(Intent(activity, AboutActivity::class.java))
+        when (preference?.key) {
+            "clear_cache" -> {
+                // 跳转到清除缓存界面
+                activity.startActivity(Intent(activity, ClearCacheActivity::class.java))
+            }
+
+            "about" -> {
+                // 跳转到关于界面
+                activity.startActivity(Intent(activity, AboutActivity::class.java))
+            }
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference)
     }

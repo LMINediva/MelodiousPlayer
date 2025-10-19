@@ -6,12 +6,19 @@
 
     <include layout="@layout/toolbar" />
 
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp"
-        android:text="@string/about"
-        android:textColor="@color/black"
-        android:textSize="18sp" />
+        android:fillViewport="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:text="@string/about"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+    </ScrollView>
 
 </LinearLayout>

@@ -57,6 +57,9 @@
     <string name="my_work_tab_text_1">音乐</string>
     <string name="my_work_tab_text_2">MV</string>
     <string name="my_work_tab_text_3">悦单</string>
+    <string name="cache_explain">
+        缓存是使用悦听影音过程中产生的临时数据，清理缓存不会影响悦听影音的正常使用。
+    </string>
     <string name="about">
         [悦听影音]\n
         由独立开发者倾力打造\n
@@ -66,8 +69,10 @@
         • 开发初衷：打造一款纯粹、高效的手机影音应用\n
         \n
         应用特色\n
-        ✓ 音乐和视频分类显示\n
-        ✓ 音乐和视频的上传分享\n
+        ✓ 在线音乐和视频分类显示\n
+        ✓ 本地音乐和视频的上传分享\n
+        ✓ 响应其他应用网络视频播放请求\n
+        ✓ 本地视频播放、响应应用外视频播放请求\n
         ✓ 持续更新计划：我们坚持小而美的开发理念，不断优化每一个细节\n
         \n
         联系方式\n
