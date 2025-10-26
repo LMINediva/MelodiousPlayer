@@ -323,6 +323,22 @@ object URLProviderUtils {
         return url
     }
 
+    /**
+     * APK检查更新的url
+     */
+    fun postCheckUpdateUrl(): String {
+        val url = protocol + serverAddress + "/sys/android/checkUpdate"
+        return url
+    }
+
+    /**
+     * APK更新下载的url
+     */
+    fun getAPKUpdateUrl(): String {
+        val url = protocol + serverAddress + "/sys/android/downloadAPK/"
+        return url
+    }
+
     fun getSystemVersion(): String {
         return Build.VERSION.RELEASE
     }
