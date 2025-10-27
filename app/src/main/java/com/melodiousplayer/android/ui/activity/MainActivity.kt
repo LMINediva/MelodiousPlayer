@@ -1,14 +1,17 @@
 package com.melodiousplayer.android.ui.activity
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.util.Log
+import android.content.pm.PackageManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
@@ -33,6 +36,7 @@ import com.melodiousplayer.android.util.FragmentUtil
 import com.melodiousplayer.android.util.ToolBarManager
 import com.melodiousplayer.android.util.URLProviderUtils
 import de.hdodenhof.circleimageview.CircleImageView
+import java.io.File
 import java.io.Serializable
 
 /**
@@ -49,7 +53,8 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
     private lateinit var avatarImage: CircleImageView
     private lateinit var currentUser: UserBean
     private lateinit var menu: Menu
-    private val UPDATE_REQUEST = 1
+    private val PERMISSION_REQUEST = 1
+    private val UPDATE_AVATAR_REQUEST = 1
     private var userSerialized: Serializable? = null
     private val presenter = TokenLoginPresenterImpl(this)
     private val logoutPresenter = LogoutPresenterImpl(this)
@@ -117,6 +122,7 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
                 menu.getItem(i).isVisible = false
             }
         }
+        requestPermissions()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -150,7 +156,7 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
                 // 进入用户个人信息界面，传递用户信息
                 val intent = Intent(this, UserInfoActivity::class.java)
                 intent.putExtra("user", currentUser)
-                startActivityForResult(intent, UPDATE_REQUEST)
+                startActivityForResult(intent, UPDATE_AVATAR_REQUEST)
             }
 
             R.id.navChangePassword -> {
@@ -216,6 +222,85 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
     }
 
     /**
+     * 删除更新APK文件
+     */
+    private fun deleteAPKFile() {
+        // 从SharedPreferences文件中读取apk_file_name的值
+        val apkFileName = getSharedPreferences("data", Context.MODE_PRIVATE)
+            .getString("apk_file_name", "")
+        if (!apkFileName.isNullOrEmpty()) {
+            // 获取externalCacheDir路径
+            if (externalCacheDir != null) {
+                val apkFile = File(externalCacheDir, apkFileName)
+                if (apkFile.exists()) {
+                    // 删除已下载的更新APK文件
+                    val isDeleted = apkFile.delete()
+                    if (isDeleted) {
+                        myToast("更新APK文件删除成功")
+                    } else {
+                        myToast("更新APK文件删除失败")
+                    }
+                } else {
+                    myToast("更新APK文件不存在")
+                }
+            } else {
+                myToast("应用外部缓存存储目录不可用")
+            }
+        }
+    }
+
+    /**
+     * 请求权限
+     */
+    private fun requestPermissions() {
+        val permissions = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        var hasAllPermission = true
+        for (permission in permissions) {
+            if (ContextCompat.checkSelfPermission(this, permission)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                hasAllPermission = false
+                ActivityCompat.requestPermissions(
+                    this, permissions,
+                    PERMISSION_REQUEST
+                )
+            }
+        }
+        if (hasAllPermission) {
+            deleteAPKFile()
+        }
+    }
+
+    /**
+     * 权限请求结果
+     */
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            PERMISSION_REQUEST -> {
+                var allPermissionGranted = true
+                for (result in grantResults) {
+                    if (result != PackageManager.PERMISSION_GRANTED) {
+                        myToast("你拒绝了权限！")
+                        allPermissionGranted = false
+                        break
+                    }
+                }
+                if (allPermissionGranted) {
+                    deleteAPKFile()
+                }
+            }
+        }
+    }
+
+    /**
      * 替换fragment函数
      */
     private fun replaceFragment(fragment: BaseFragment, tag: String) {
@@ -231,7 +316,6 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
 
     override fun onFinishEdit(inputText: String) {
         URLProviderUtils.serverAddress = inputText
-        Log.i("MainActivity", "IP: " + URLProviderUtils.serverAddress)
         refreshData()
     }
 
@@ -307,7 +391,7 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            UPDATE_REQUEST -> if (resultCode == RESULT_OK) {
+            UPDATE_AVATAR_REQUEST -> if (resultCode == RESULT_OK) {
                 val newAvatar = data?.getStringExtra("newAvatar")
                 val newUsername = data?.getStringExtra("newUsername")
                 if (!newAvatar.isNullOrEmpty()) {

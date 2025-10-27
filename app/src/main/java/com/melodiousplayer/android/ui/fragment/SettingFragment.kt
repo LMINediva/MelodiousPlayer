@@ -1,5 +1,6 @@
 package com.melodiousplayer.android.ui.fragment
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -27,6 +28,7 @@ class SettingFragment : PreferenceFragment(), CheckUpdateContract.View,
     OnButtonClickListener {
 
     private var manager: DownloadManager? = null
+    private var apkFileName: String? = null
     private val checkUpdatePresenter = CheckUpdatePresenterImpl(this)
 
     override fun onCreateView(
@@ -78,6 +80,7 @@ class SettingFragment : PreferenceFragment(), CheckUpdateContract.View,
 
     override fun onCheckUpdateSuccess(result: VersionUpdateResultBean) {
         if (result.versionUpdate?.update.equals("Yes")) {
+            apkFileName = result.versionUpdate?.apk_file_url
             manager = DownloadManager.Builder(activity).run {
                 result.versionUpdate?.apk_file_url?.let {
                     apkUrl(URLProviderUtils.getAPKUpdateUrl() + it)
@@ -114,7 +117,12 @@ class SettingFragment : PreferenceFragment(), CheckUpdateContract.View,
     }
 
     override fun onButtonClick(id: Int) {
-
+        if (id == 0 && apkFileName !== null) {
+            val editor = activity.getSharedPreferences("data", Context.MODE_PRIVATE).edit()
+            // 将APK文件名存储到SharedPreferences文件中
+            editor.putString("apk_file_name", apkFileName)
+            editor.apply()
+        }
     }
 
 }
