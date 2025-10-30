@@ -6,9 +6,6 @@
     <Preference
         android:key="clear_cache"
         android:title="清除缓存" />
-    <SwitchPreference
-        android:key="push"
-        android:title="推送通知" />
     <Preference
         android:key="feedback"
         android:title="反馈" />

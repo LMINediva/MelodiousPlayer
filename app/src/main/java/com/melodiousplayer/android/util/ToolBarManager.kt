@@ -114,4 +114,12 @@ interface ToolBarManager {
         toolbarTitle.text = "清理缓存"
     }
 
+    /**
+     * 初始化用户反馈界面中的toolbar
+     */
+    fun initFeedBackToolBar() {
+        // 设置标题
+        toolbarTitle.text = "用户反馈"
+    }
+
 }
