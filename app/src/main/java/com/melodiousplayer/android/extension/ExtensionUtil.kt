@@ -25,3 +25,8 @@ fun String.isValidEmail(): Boolean =
  * 校验用户输入悦单类型是否有效
  */
 fun String.isValidCategory(): Boolean = this.length in 2..10
+
+/**
+ * 校验用户反馈内容长度是否有效
+ */
+fun String.isValidFeedBackContent(): Boolean = this.length in 1..200

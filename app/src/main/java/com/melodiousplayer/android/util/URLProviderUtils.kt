@@ -339,6 +339,22 @@ object URLProviderUtils {
         return url
     }
 
+    /**
+     * 上传用户反馈图片
+     */
+    fun postUploadFeedBackPicture(): String {
+        val url = protocol + serverAddress + "/sys/feedback/uploadImage"
+        return url
+    }
+
+    /**
+     * 添加用户反馈
+     */
+    fun postAddFeedBack(): String {
+        val url = protocol + serverAddress + "/sys/feedback/save"
+        return url
+    }
+
     fun getSystemVersion(): String {
         return Build.VERSION.RELEASE
     }
