@@ -53,6 +53,10 @@
     <string name="add_music_list_failed">添加悦单失败</string>
     <string name="delete_upload_music_list_file_cache_success">删除上传到服务器的悦单相关文件缓存成功</string>
     <string name="delete_upload_music_list_file_cache_failed">删除上传到服务器的悦单相关文件缓存失败</string>
+    <string name="feedback_error">反馈内容不能为空</string>
+    <string name="feedback_length_error">反馈内容长度在1到200个字符之间</string>
+    <string name="add_feedback_success">添加反馈成功</string>
+    <string name="add_feedback_failed">添加反馈失败</string>
     <string name="network_error">网络错误</string>
     <string name="my_work_tab_text_1">音乐</string>
     <string name="my_work_tab_text_2">MV</string>

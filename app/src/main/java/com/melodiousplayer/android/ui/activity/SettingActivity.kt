@@ -1,11 +1,11 @@
 package com.melodiousplayer.android.ui.activity
 
-import android.preference.PreferenceManager
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
+import com.melodiousplayer.android.ui.fragment.SettingFragment
 import com.melodiousplayer.android.util.ToolBarManager
 
 /**
@@ -31,10 +31,11 @@ class SettingActivity : BaseActivity(), ToolBarManager {
             // 隐藏默认标题
             it.setDisplayShowTitleEnabled(false)
         }
-        // 获取推送通知有没有选中
-        val sp = PreferenceManager.getDefaultSharedPreferences(this)
-        val push = sp.getBoolean("push", false)
-        println("push=$push")
+        val fragmentManager = supportFragmentManager
+        val transaction = fragmentManager.beginTransaction()
+        val fragment = SettingFragment()
+        transaction.replace(R.id.fragmentContainer, fragment)
+        transaction.commit()
     }
 
     /**

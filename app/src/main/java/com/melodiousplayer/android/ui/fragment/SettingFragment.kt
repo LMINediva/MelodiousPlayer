@@ -4,13 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.preference.Preference
-import android.preference.PreferenceFragment
-import android.preference.PreferenceScreen
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
+import androidx.preference.PreferenceFragmentCompat
 import com.azhon.appupdate.listener.OnButtonClickListener
 import com.azhon.appupdate.manager.DownloadManager
 import com.melodiousplayer.android.R
@@ -24,32 +19,25 @@ import com.melodiousplayer.android.util.URLProviderUtils
 /**
  * 设置界面布局
  */
-class SettingFragment : PreferenceFragment(), CheckUpdateContract.View,
+class SettingFragment : PreferenceFragmentCompat(), CheckUpdateContract.View,
     OnButtonClickListener {
 
     private var manager: DownloadManager? = null
     private var apkFileName: String? = null
     private val checkUpdatePresenter = CheckUpdatePresenterImpl(this)
 
-    override fun onCreateView(
-        inflater: LayoutInflater?,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        addPreferencesFromResource(R.xml.setting)
-        return super.onCreateView(inflater, container, savedInstanceState)
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.setting, rootKey)
     }
 
-    override fun onPreferenceTreeClick(
-        preferenceScreen: PreferenceScreen?,
-        preference: Preference?
-    ): Boolean {
-        when (preference?.key) {
+    override fun onPreferenceTreeClick(preference: androidx.preference.Preference): Boolean {
+        when (preference.key) {
             "check_update" -> {
                 // 检查更新
-                val packageManager = activity.packageManager
-                val packageInfo = packageManager.getPackageInfo(activity.packageName, 0)
-                val versionName = packageInfo.versionName
+                val packageManager = activity?.packageManager
+                val packageInfo =
+                    activity?.packageName?.let { packageManager?.getPackageInfo(it, 0) }
+                val versionName = packageInfo?.versionName
                 if (versionName != null) {
                     checkUpdatePresenter.checkUpdate(versionName)
                 }
@@ -57,15 +45,15 @@ class SettingFragment : PreferenceFragment(), CheckUpdateContract.View,
 
             "clear_cache" -> {
                 // 跳转到清除缓存界面
-                activity.startActivity(Intent(activity, ClearCacheActivity::class.java))
+                activity?.startActivity(Intent(activity, ClearCacheActivity::class.java))
             }
 
             "about" -> {
                 // 跳转到关于界面
-                activity.startActivity(Intent(activity, AboutActivity::class.java))
+                activity?.startActivity(Intent(activity, AboutActivity::class.java))
             }
         }
-        return super.onPreferenceTreeClick(preferenceScreen, preference)
+        return super.onPreferenceTreeClick(preference)
     }
 
     /**
@@ -81,26 +69,28 @@ class SettingFragment : PreferenceFragment(), CheckUpdateContract.View,
     override fun onCheckUpdateSuccess(result: VersionUpdateResultBean) {
         if (result.versionUpdate?.update.equals("Yes")) {
             apkFileName = result.versionUpdate?.apk_file_url
-            manager = DownloadManager.Builder(activity).run {
-                result.versionUpdate?.apk_file_url?.let {
-                    apkUrl(URLProviderUtils.getAPKUpdateUrl() + it)
+            manager = activity?.let {
+                DownloadManager.Builder(it).run {
+                    result.versionUpdate?.apk_file_url?.let {
+                        apkUrl(URLProviderUtils.getAPKUpdateUrl() + it)
+                    }
+                    result.versionUpdate?.apk_file_url?.let { apkName(it) }
+                    smallIcon(R.mipmap.ic_launcher)
+                    showNewerToast(true)
+                    apkVersionCode(2)
+                    apkVersionName("v" + result.versionUpdate?.new_version)
+                    result.versionUpdate?.target_size?.let { apkSize(it + "MB") }
+                    result.versionUpdate?.update_log?.let { apkDescription(it) }
+                    enableLog(true)
+                    jumpInstallPage(true)
+                    dialogButtonTextColor(Color.WHITE)
+                    showNotification(true)
+                    showBgdToast(false)
+                    result.versionUpdate?.constraint?.let { forcedUpgrade(it) }
+                    dialogImage(R.drawable.top_8)
+                    onButtonClickListener(this@SettingFragment)
+                    build()
                 }
-                result.versionUpdate?.apk_file_url?.let { apkName(it) }
-                smallIcon(R.mipmap.ic_launcher)
-                showNewerToast(true)
-                apkVersionCode(2)
-                apkVersionName("v" + result.versionUpdate?.new_version)
-                result.versionUpdate?.target_size?.let { apkSize(it + "MB") }
-                result.versionUpdate?.update_log?.let { apkDescription(it) }
-                enableLog(true)
-                jumpInstallPage(true)
-                dialogButtonTextColor(Color.WHITE)
-                showNotification(true)
-                showBgdToast(false)
-                result.versionUpdate?.constraint?.let { forcedUpgrade(it) }
-                dialogImage(R.drawable.top_8)
-                onButtonClickListener(this@SettingFragment)
-                build()
             }
             manager?.download()
         } else {
@@ -118,7 +108,7 @@ class SettingFragment : PreferenceFragment(), CheckUpdateContract.View,
 
     override fun onButtonClick(id: Int) {
         if (id == 0 && apkFileName !== null) {
-            val editor = activity.getSharedPreferences("data", Context.MODE_PRIVATE).edit()
+            val editor = activity?.getSharedPreferences("data", Context.MODE_PRIVATE)!!.edit()
             // 将APK文件名存储到SharedPreferences文件中
             editor.putString("apk_file_name", apkFileName)
             editor.apply()

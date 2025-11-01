@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
     <Preference
-        android:key="check_update"
-        android:title="检查更新" />
+        app:icon="@drawable/check_update"
+        app:key="check_update"
+        app:title="检查更新" />
     <Preference
-        android:key="clear_cache"
-        android:title="清除缓存" />
+        app:icon="@drawable/clear_cache"
+        app:key="clear_cache"
+        app:title="清除缓存" />
     <Preference
-        android:key="feedback"
-        android:title="反馈" />
+        app:icon="@drawable/feedback"
+        app:key="feedback"
+        app:title="反馈" />
     <Preference
-        android:key="about"
-        android:title="关于" />
+        app:icon="@drawable/about"
+        app:key="about"
+        app:title="关于" />
 </PreferenceScreen>

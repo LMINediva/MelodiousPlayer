@@ -66,6 +66,7 @@ class FeedBackActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private val uploadFeedBackPicturePresenter = UploadFeedBackPicturePresenterImpl(this)
     private val addFeedBackPresenter = AddFeedBackPresenterImpl(this)
     private var newFeedBackPicture: String? = null
+    private var isAddFeedBackSuccess: Boolean = false
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -320,19 +321,23 @@ class FeedBackActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     }
 
     override fun onFeedBackContentError() {
-        TODO("Not yet implemented")
+        myToast(getString(R.string.feedback_error))
+        content.error = getString(R.string.feedback_error)
     }
 
     override fun onFeedBackContentLengthError() {
-        TODO("Not yet implemented")
+        myToast(getString(R.string.feedback_length_error))
+        content.error = getString(R.string.feedback_length_error)
     }
 
     override fun onAddFeedBackSuccess() {
-        TODO("Not yet implemented")
+        isAddFeedBackSuccess = true
+        myToast(getString(R.string.add_feedback_success))
+        startActivityAndFinish<SuccessActivity>()
     }
 
     override fun onAddFeedBackFailed() {
-        TODO("Not yet implemented")
+        myToast(getString(R.string.add_feedback_failed))
     }
 
     override fun onNetworkError() {

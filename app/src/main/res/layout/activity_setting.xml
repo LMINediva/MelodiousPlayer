@@ -6,10 +6,9 @@
 
     <include layout="@layout/toolbar" />
 
-    <fragment
-        android:id="@+id/setting_fragment"
-        android:name="com.melodiousplayer.android.ui.fragment.SettingFragment"
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </LinearLayout>
