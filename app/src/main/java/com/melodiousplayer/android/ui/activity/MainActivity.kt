@@ -53,6 +53,7 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
     private lateinit var avatarImage: CircleImageView
     private lateinit var currentUser: UserBean
     private lateinit var menu: Menu
+    private var isLogin: Boolean = false
     private val PERMISSION_REQUEST = 1
     private val UPDATE_AVATAR_REQUEST = 1
     private var userSerialized: Serializable? = null
@@ -103,6 +104,7 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
             usernameText.text = currentUser.username
             usernameText.visibility = View.VISIBLE
             toLogin.visibility = View.GONE
+            isLogin = true
             Glide.with(this)
                 .load(
                     URLProviderUtils.protocol + URLProviderUtils.serverAddress
@@ -213,7 +215,13 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.setting -> {
-                startActivity(Intent(this, SettingActivity::class.java))
+                // 进入设置界面，传递用户信息
+                val intent = Intent(this, SettingActivity::class.java)
+                if (isLogin) {
+                    intent.putExtra("user", currentUser)
+                }
+                intent.putExtra("isLogin", isLogin)
+                startActivity(intent)
             }
 
             android.R.id.home -> drawerLayout.openDrawer(GravityCompat.START)
@@ -340,6 +348,7 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
         usernameText.text = currentUser.username
         usernameText.visibility = View.VISIBLE
         toLogin.visibility = View.GONE
+        isLogin = true
         Glide.with(this).load(
             URLProviderUtils.protocol + URLProviderUtils.serverAddress
                     + URLProviderUtils.userAvatarPath + currentUser.avatar
@@ -360,6 +369,7 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
 
     override fun onLogoutSuccess(msg: String?) {
         msg?.let { myToast(it) }
+        isLogin = false
         currentUser = UserBean(
             null, null, null,
             null, null, null, null,

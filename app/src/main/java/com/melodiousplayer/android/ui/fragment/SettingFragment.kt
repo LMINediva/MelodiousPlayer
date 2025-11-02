@@ -10,10 +10,12 @@ import com.azhon.appupdate.manager.DownloadManager
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseFragment
 import com.melodiousplayer.android.contract.CheckUpdateContract
+import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.model.VersionUpdateResultBean
 import com.melodiousplayer.android.presenter.impl.CheckUpdatePresenterImpl
 import com.melodiousplayer.android.ui.activity.AboutActivity
 import com.melodiousplayer.android.ui.activity.ClearCacheActivity
+import com.melodiousplayer.android.ui.activity.FeedBackActivity
 import com.melodiousplayer.android.util.URLProviderUtils
 
 /**
@@ -27,6 +29,7 @@ class SettingFragment : BaseFragment(), CheckUpdateContract.View,
     private lateinit var clearCache: LinearLayout
     private lateinit var feedback: LinearLayout
     private lateinit var about: LinearLayout
+    private lateinit var currentUser: UserBean
     private var manager: DownloadManager? = null
     private var apkFileName: String? = null
     private val checkUpdatePresenter = CheckUpdatePresenterImpl(this)
@@ -43,6 +46,16 @@ class SettingFragment : BaseFragment(), CheckUpdateContract.View,
         clearCache = view.findViewById(R.id.clear_cache)
         feedback = view.findViewById(R.id.feedback)
         about = view.findViewById(R.id.about)
+        val userSerialized = arguments?.getSerializable("user")
+        val isLogin = arguments?.getBoolean("isLogin")!!
+        if (userSerialized != null) {
+            currentUser = userSerialized as UserBean
+        }
+        if (isLogin) {
+            feedback.visibility = View.VISIBLE
+        } else {
+            feedback.visibility = View.GONE
+        }
     }
 
     override fun initListener() {
@@ -68,6 +81,13 @@ class SettingFragment : BaseFragment(), CheckUpdateContract.View,
             R.id.clear_cache -> {
                 // 跳转到清除缓存界面
                 activity?.startActivity(Intent(activity, ClearCacheActivity::class.java))
+            }
+
+            R.id.feedback -> {
+                // 进入用户反馈界面，传递用户信息
+                val intent = Intent(activity, FeedBackActivity::class.java)
+                intent.putExtra("user", currentUser)
+                startActivity(intent)
             }
 
             R.id.about -> {

@@ -27,7 +27,6 @@ import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.contract.AddFeedBackContract
 import com.melodiousplayer.android.contract.UploadPictureContract
 import com.melodiousplayer.android.model.FeedBackBean
-import com.melodiousplayer.android.model.MusicBean
 import com.melodiousplayer.android.model.UploadFileResultBean
 import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.presenter.impl.AddFeedBackPresenterImpl

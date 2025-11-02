@@ -1,10 +1,12 @@
 package com.melodiousplayer.android.ui.activity
 
+import android.os.Bundle
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
+import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.ui.fragment.SettingFragment
 import com.melodiousplayer.android.util.ToolBarManager
 
@@ -13,6 +15,7 @@ import com.melodiousplayer.android.util.ToolBarManager
  */
 class SettingActivity : BaseActivity(), ToolBarManager {
 
+    private lateinit var currentUser: UserBean
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
 
@@ -31,9 +34,18 @@ class SettingActivity : BaseActivity(), ToolBarManager {
             // 隐藏默认标题
             it.setDisplayShowTitleEnabled(false)
         }
+        val userSerialized = intent.getSerializableExtra("user")
+        val isLogin = intent.getBooleanExtra("isLogin", false)
+        val bundle = Bundle()
+        if (userSerialized != null) {
+            currentUser = userSerialized as UserBean
+            bundle.putSerializable("user", currentUser)
+        }
+        bundle.putBoolean("isLogin", isLogin)
         val fragmentManager = supportFragmentManager
         val transaction = fragmentManager.beginTransaction()
         val fragment = SettingFragment()
+        fragment.arguments = bundle
         transaction.replace(R.id.fragmentContainer, fragment)
         transaction.commit()
     }

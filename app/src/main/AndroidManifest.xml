@@ -59,8 +59,9 @@
         <activity android:name=".ui.activity.AddMusicListActivity" />
         <activity android:name=".ui.activity.MyWorkActivity" />
         <activity android:name=".ui.activity.MusicListInformationActivity" />
-        <activity android:name=".ui.activity.AboutActivity" />
         <activity android:name=".ui.activity.ClearCacheActivity" />
+        <activity android:name=".ui.activity.FeedBackActivity" />
+        <activity android:name=".ui.activity.AboutActivity" />
         <activity android:name=".ui.activity.SuccessActivity" />
         <activity android:name=".ui.activity.TextureVideoPlayerActivity" />
         <activity

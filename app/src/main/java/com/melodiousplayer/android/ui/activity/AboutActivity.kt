@@ -13,6 +13,7 @@ import com.melodiousplayer.android.util.ToolBarManager
 class AboutActivity : BaseActivity(), ToolBarManager {
 
     private lateinit var aboutTextView: TextView
+    private lateinit var versionTextView: TextView
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
 
@@ -32,7 +33,10 @@ class AboutActivity : BaseActivity(), ToolBarManager {
             it.setDisplayShowTitleEnabled(false)
         }
         aboutTextView = findViewById(R.id.about)
+        versionTextView = findViewById(R.id.version)
         aboutTextView.setTextIsSelectable(true)
+        val versionName = packageManager.getPackageInfo(packageName, 0).versionName
+        versionTextView.text = "V${versionName}"
     }
 
     /**
