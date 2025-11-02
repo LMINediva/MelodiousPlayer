@@ -63,7 +63,6 @@ dependencies {
     implementation(libs.circleimageview)
     implementation(libs.android.image.cropper)
     implementation(libs.app.update)
-    implementation(libs.preference.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

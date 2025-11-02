@@ -3,12 +3,12 @@ package com.melodiousplayer.android.ui.fragment
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.os.Bundle
-import android.widget.Toast
-import androidx.preference.PreferenceFragmentCompat
+import android.view.View
+import android.widget.LinearLayout
 import com.azhon.appupdate.listener.OnButtonClickListener
 import com.azhon.appupdate.manager.DownloadManager
 import com.melodiousplayer.android.R
+import com.melodiousplayer.android.base.BaseFragment
 import com.melodiousplayer.android.contract.CheckUpdateContract
 import com.melodiousplayer.android.model.VersionUpdateResultBean
 import com.melodiousplayer.android.presenter.impl.CheckUpdatePresenterImpl
@@ -19,20 +19,42 @@ import com.melodiousplayer.android.util.URLProviderUtils
 /**
  * 设置界面布局
  */
-class SettingFragment : PreferenceFragmentCompat(), CheckUpdateContract.View,
-    OnButtonClickListener {
+class SettingFragment : BaseFragment(), CheckUpdateContract.View,
+    OnButtonClickListener, View.OnClickListener {
 
+    private lateinit var view: View
+    private lateinit var checkUpdate: LinearLayout
+    private lateinit var clearCache: LinearLayout
+    private lateinit var feedback: LinearLayout
+    private lateinit var about: LinearLayout
     private var manager: DownloadManager? = null
     private var apkFileName: String? = null
     private val checkUpdatePresenter = CheckUpdatePresenterImpl(this)
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.setting, rootKey)
+    override fun initView(): View? {
+        if (!::view.isInitialized) {
+            view = View.inflate(context, R.layout.setting_preference, null)
+        }
+        return view
     }
 
-    override fun onPreferenceTreeClick(preference: androidx.preference.Preference): Boolean {
-        when (preference.key) {
-            "check_update" -> {
+    override fun initData() {
+        checkUpdate = view.findViewById(R.id.check_update)
+        clearCache = view.findViewById(R.id.clear_cache)
+        feedback = view.findViewById(R.id.feedback)
+        about = view.findViewById(R.id.about)
+    }
+
+    override fun initListener() {
+        checkUpdate.setOnClickListener(this)
+        clearCache.setOnClickListener(this)
+        feedback.setOnClickListener(this)
+        about.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.check_update -> {
                 // 检查更新
                 val packageManager = activity?.packageManager
                 val packageInfo =
@@ -43,26 +65,15 @@ class SettingFragment : PreferenceFragmentCompat(), CheckUpdateContract.View,
                 }
             }
 
-            "clear_cache" -> {
+            R.id.clear_cache -> {
                 // 跳转到清除缓存界面
                 activity?.startActivity(Intent(activity, ClearCacheActivity::class.java))
             }
 
-            "about" -> {
+            R.id.about -> {
                 // 跳转到关于界面
                 activity?.startActivity(Intent(activity, AboutActivity::class.java))
             }
-        }
-        return super.onPreferenceTreeClick(preference)
-    }
-
-    /**
-     * 实现可在子线程中安全的弹出消息
-     */
-    private fun myToast(msg: String) {
-        // 通过父Activity来调用runOnUiThread
-        activity?.runOnUiThread {
-            Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show()
         }
     }
 

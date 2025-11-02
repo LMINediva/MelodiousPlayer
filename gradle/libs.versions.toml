@@ -21,7 +21,6 @@ coroutinesAndroid = "1.9.0"
 circleimageview = "3.1.0"
 androidImageCropper = "2.8.0"
 appUpdate = "4.3.6"
-preferenceKtx = "1.2.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -44,7 +43,6 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 circleimageview = { group = "de.hdodenhof", name = "circleimageview", version.ref = "circleimageview" }
 android-image-cropper = { group = "com.theartofdev.edmodo", name = "android-image-cropper", version.ref = "androidImageCropper" }
 app-update = { group = "io.github.azhon", name = "appupdate", version.ref = "appUpdate" }
-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

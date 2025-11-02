@@ -12,6 +12,7 @@ import com.melodiousplayer.android.util.ToolBarManager
  */
 class AboutActivity : BaseActivity(), ToolBarManager {
 
+    private lateinit var aboutTextView: TextView
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
 
@@ -30,6 +31,8 @@ class AboutActivity : BaseActivity(), ToolBarManager {
             // 隐藏默认标题
             it.setDisplayShowTitleEnabled(false)
         }
+        aboutTextView = findViewById(R.id.about)
+        aboutTextView.setTextIsSelectable(true)
     }
 
     /**
