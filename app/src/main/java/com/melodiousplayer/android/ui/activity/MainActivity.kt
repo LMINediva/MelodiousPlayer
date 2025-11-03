@@ -244,6 +244,9 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
                     // 删除已下载的更新APK文件
                     val isDeleted = apkFile.delete()
                     if (isDeleted) {
+                        val editor = getSharedPreferences("data", Context.MODE_PRIVATE).edit()
+                        editor.remove("apk_file_name")
+                        editor.apply()
                         myToast("更新APK文件删除成功")
                     } else {
                         myToast("更新APK文件删除失败")
