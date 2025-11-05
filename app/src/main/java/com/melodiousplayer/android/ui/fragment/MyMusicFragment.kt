@@ -84,6 +84,7 @@ class MyMusicFragment : BaseGridListFragment<MyMusicBean, MusicBean, MyMusicItem
             val intent = Intent(activity, AudioPlayerActivity::class.java)
             intent.putExtra("list", list)
             intent.putExtra("position", position)
+            intent.putExtra("isMyMusic", true)
             activity?.startActivity(intent)
         }
     }

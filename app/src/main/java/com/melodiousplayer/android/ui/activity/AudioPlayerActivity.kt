@@ -50,6 +50,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     private lateinit var artist: TextView
     private lateinit var audioAnimation: ImageView
     private lateinit var back: ImageView
+    private lateinit var more: ImageView
     private lateinit var progress: TextView
     private lateinit var progressSeekBar: SeekBar
     private lateinit var mode: ImageView
@@ -69,6 +70,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         artist = findViewById(R.id.artist)
         audioAnimation = findViewById(R.id.audio_anim)
         back = findViewById(R.id.audio_back)
+        more = findViewById(R.id.audio_more)
         progress = findViewById(R.id.progress)
         progressSeekBar = findViewById(R.id.progress_sk)
         mode = findViewById(R.id.mode)
@@ -81,6 +83,12 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         EventBus.getDefault().register(this)
         // 通过AudioService播放音乐
         val intent = intent
+        val isMyMusic = intent.getBooleanExtra("isMyMusic", false)
+        if (isMyMusic) {
+            more.visibility = View.VISIBLE
+        } else {
+            more.visibility = View.GONE
+        }
         // 修改
         intent.setClass(this, AudioService::class.java)
         // 先绑定服务
