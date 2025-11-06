@@ -3,14 +3,21 @@ package com.melodiousplayer.android.ui.activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.ServiceConnection
+import android.graphics.Color
 import android.graphics.drawable.AnimationDrawable
 import android.os.Handler
 import android.os.IBinder
 import android.os.Message
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.RelativeLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import com.melodiousplayer.android.R
@@ -32,13 +39,14 @@ import org.greenrobot.eventbus.ThreadMode
 class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeekBarChangeListener,
     AdapterView.OnItemClickListener {
 
-    val connection by lazy { AudioConnection() }
-    var iService: IService? = null
-    var audioBean: AudioBean? = null
-    var drawable: AnimationDrawable? = null
-    var duration: Int = 0
-    val MSG_PROGRESS = 0
-    val handler = object : Handler() {
+    private var popupWindow: PopupWindow? = null
+    private val connection by lazy { AudioConnection() }
+    private var iService: IService? = null
+    private var audioBean: AudioBean? = null
+    private var drawable: AnimationDrawable? = null
+    private var duration: Int = 0
+    private val MSG_PROGRESS = 0
+    private val handler = object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 MSG_PROGRESS -> startUpdateProgress()
@@ -50,7 +58,6 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     private lateinit var artist: TextView
     private lateinit var audioAnimation: ImageView
     private lateinit var back: ImageView
-    private lateinit var more: ImageView
     private lateinit var progress: TextView
     private lateinit var progressSeekBar: SeekBar
     private lateinit var mode: ImageView
@@ -59,6 +66,10 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     private lateinit var playList: ImageView
     private lateinit var audioPlayerBottom: LinearLayout
     private lateinit var lyricView: LyricView
+    private lateinit var more: ImageView
+    private lateinit var cancel: ImageView
+    private lateinit var edit: ImageView
+    private lateinit var delete: ImageView
 
     override fun getLayoutId(): Int {
         return R.layout.activity_audio_player
@@ -70,7 +81,6 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         artist = findViewById(R.id.artist)
         audioAnimation = findViewById(R.id.audio_anim)
         back = findViewById(R.id.audio_back)
-        more = findViewById(R.id.audio_more)
         progress = findViewById(R.id.progress)
         progressSeekBar = findViewById(R.id.progress_sk)
         mode = findViewById(R.id.mode)
@@ -79,6 +89,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         playList = findViewById(R.id.playlist)
         audioPlayerBottom = findViewById(R.id.audio_player_bottom)
         lyricView = findViewById(R.id.lyricView)
+        more = findViewById(R.id.audio_more)
         // 注册EventBus
         EventBus.getDefault().register(this)
         // 通过AudioService播放音乐
@@ -116,6 +127,8 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     }
 
     override fun initListener() {
+        // 更多操作按钮点击事件
+        more.setOnClickListener(this)
         // 播放状态切换
         state.setOnClickListener(this)
         back.setOnClickListener { finish() }
@@ -144,7 +157,33 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
             R.id.pre -> iService?.playPrevious()
             R.id.next -> iService?.playNext()
             R.id.playlist -> showPlayList()
+            R.id.audio_more -> showPopupWindow()
+            R.id.cancel -> popupWindow?.dismiss()
         }
+    }
+
+    /**
+     * 从底部显示PopupWindow
+     */
+    private fun showPopupWindow() {
+        val layoutInflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        if (popupWindow == null) {
+            val view = layoutInflater.inflate(R.layout.popup_operation, null)
+            val width = ViewGroup.LayoutParams.MATCH_PARENT
+            val height = 350
+            cancel = view.findViewById(R.id.cancel)
+            edit = view.findViewById(R.id.edit)
+            delete = view.findViewById(R.id.delete)
+            popupWindow = PopupWindow(view, width, height, true)
+            cancel.setOnClickListener(this)
+            edit.setOnClickListener(this)
+            delete.setOnClickListener(this)
+        }
+        popupWindow?.animationStyle = R.style.bottom_popup
+        popupWindow?.isOutsideTouchable = true
+        popupWindow?.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+        // 显示PopupWindow，参数为锚点View和重力、偏移量，这里设置为底部弹出
+        popupWindow?.showAtLocation(window.decorView, Gravity.BOTTOM, 0, 0)
     }
 
     /**
