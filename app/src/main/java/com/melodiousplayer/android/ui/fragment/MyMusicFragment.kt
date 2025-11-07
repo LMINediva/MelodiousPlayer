@@ -85,6 +85,7 @@ class MyMusicFragment : BaseGridListFragment<MyMusicBean, MusicBean, MyMusicItem
             intent.putExtra("list", list)
             intent.putExtra("position", position)
             intent.putExtra("isMyMusic", true)
+            intent.putExtra("music", musicBeans[position])
             activity?.startActivity(intent)
         }
     }

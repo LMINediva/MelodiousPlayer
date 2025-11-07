@@ -1,5 +1,7 @@
 package com.melodiousplayer.android.model
 
+import java.io.Serializable
+
 /**
  * 首页界面每个条目的bean
  */
@@ -11,4 +13,4 @@ data class MusicBean(
     var uhdUrl: String?, var musicSize: Float?,
     var hdMusicSize: Float?, var uhdMusicSize: Float?,
     var status: Int?, var sysUser: UserBean?
-)
+) : Serializable

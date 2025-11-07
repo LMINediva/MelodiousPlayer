@@ -83,6 +83,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private lateinit var musicName: TextView
     private lateinit var musicError: TextView
     private lateinit var addMusic: Button
+    private lateinit var editMusic: Button
     private lateinit var progress: TextView
     private lateinit var progressSeekBar: SeekBar
     private lateinit var state: ImageView
@@ -96,6 +97,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private lateinit var hintInfo: TextView
     private lateinit var token: String
     private lateinit var currentUser: UserBean
+    private lateinit var currentMusic: MusicBean
     private lateinit var lyricResult: ResultBean
     private lateinit var musicPath: String
     private val mediaPlayer = MediaPlayer()
@@ -131,6 +133,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private var hdMusicSize: Float = 0F
     private var uhdMusicSize: Float = 0F
     private var isAddMusicSuccess: Boolean = false
+    private var isMyMusic: Boolean = false
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -140,16 +143,6 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     }
 
     override fun initData() {
-        initAddMusicToolBar()
-        setSupportActionBar(toolbar)
-        supportActionBar?.let {
-            // 启用Toolbar的返回按钮
-            it.setDisplayHomeAsUpEnabled(true)
-            // 显示返回按钮
-            it.setDisplayShowHomeEnabled(true)
-            // 隐藏默认标题
-            it.setDisplayShowTitleEnabled(false)
-        }
         title = findViewById(R.id.title)
         artistName = findViewById(R.id.artistName)
         description = findViewById(R.id.description)
@@ -164,6 +157,24 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         musicName = findViewById(R.id.musicName)
         musicError = findViewById(R.id.musicError)
         addMusic = findViewById(R.id.addMusic)
+        editMusic = findViewById(R.id.editMusic)
+        isMyMusic = intent.getBooleanExtra("isMyMusic", false)
+        if (isMyMusic) {
+            initEditMusic()
+        } else {
+            addMusic.visibility = View.VISIBLE
+            editMusic.visibility = View.GONE
+            initAddMusicToolBar()
+        }
+        setSupportActionBar(toolbar)
+        supportActionBar?.let {
+            // 启用Toolbar的返回按钮
+            it.setDisplayHomeAsUpEnabled(true)
+            // 显示返回按钮
+            it.setDisplayShowHomeEnabled(true)
+            // 隐藏默认标题
+            it.setDisplayShowTitleEnabled(false)
+        }
         val userSerialized = intent.getSerializableExtra("user")
         if (userSerialized != null) {
             currentUser = userSerialized as UserBean
@@ -174,6 +185,53 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         musicPath =
             URLProviderUtils.protocol + URLProviderUtils.serverAddress + URLProviderUtils.musicPath
         requestPermissions()
+    }
+
+    /**
+     * 初始化修改音乐界面
+     */
+    private fun initEditMusic() {
+        addMusic.visibility = View.GONE
+        editMusic.visibility = View.VISIBLE
+        initEditMusicToolBar()
+        val musicSerialized = intent.getSerializableExtra("music")
+        if (musicSerialized != null) {
+            currentMusic = musicSerialized as MusicBean
+            currentUser = currentMusic.sysUser!!
+        }
+        title.setText(currentMusic.title)
+        artistName.setText(currentMusic.artistName)
+        description.setText(currentMusic.description)
+        if (!currentMusic.posterPic.isNullOrBlank()) {
+            Glide.with(this)
+                .load(
+                    URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                            + URLProviderUtils.musicImagePath + currentMusic.posterPic
+                )
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(posterPicture)
+        }
+        if (!currentMusic.thumbnailPic.isNullOrBlank()) {
+            Glide.with(this)
+                .load(
+                    URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                            + URLProviderUtils.musicImagePath + currentMusic.thumbnailPic
+                )
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(thumbnailPicture)
+        }
+        if (!currentMusic.lyric.isNullOrBlank()) {
+            lyricName.visibility = View.VISIBLE
+            lyricName.text = currentMusic.lyric
+            getLyricTextPresenter.getLyricText(currentMusic.lyric!!)
+        }
+        if (!currentMusic.url.isNullOrBlank()) {
+            musicName.visibility = View.VISIBLE
+            musicName.text = currentMusic.url
+            newMusic = currentMusic.url
+        }
     }
 
     override fun initListener() {
@@ -683,7 +741,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
      * 发送删除上传音乐相关文件缓存的请求
      */
     private fun deleteUploadMusicFileCache() {
-        if (!isAddMusicSuccess) {
+        if (!isAddMusicSuccess && !isMyMusic) {
             if (!newMusicPoster.isNullOrEmpty() || !newMusicThumbnail.isNullOrEmpty()
                 || !newLyric.isNullOrEmpty() || !newMusic.isNullOrEmpty()
             ) {

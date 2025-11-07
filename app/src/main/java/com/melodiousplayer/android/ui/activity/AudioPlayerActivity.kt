@@ -2,8 +2,8 @@ package com.melodiousplayer.android.ui.activity
 
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.content.ServiceConnection
-import android.graphics.Color
 import android.graphics.drawable.AnimationDrawable
 import android.os.Handler
 import android.os.IBinder
@@ -17,13 +17,13 @@ import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
-import android.widget.RelativeLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.adapter.PopupAdapter
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.model.AudioBean
+import com.melodiousplayer.android.model.MusicBean
 import com.melodiousplayer.android.service.AudioService
 import com.melodiousplayer.android.service.IService
 import com.melodiousplayer.android.util.StringUtil
@@ -70,6 +70,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     private lateinit var cancel: ImageView
     private lateinit var edit: ImageView
     private lateinit var delete: ImageView
+    private lateinit var currentMusic: MusicBean
 
     override fun getLayoutId(): Int {
         return R.layout.activity_audio_player
@@ -97,6 +98,10 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         val isMyMusic = intent.getBooleanExtra("isMyMusic", false)
         if (isMyMusic) {
             more.visibility = View.VISIBLE
+            val musicSerialized = intent.getSerializableExtra("music")
+            if (musicSerialized != null) {
+                currentMusic = musicSerialized as MusicBean
+            }
         } else {
             more.visibility = View.GONE
         }
@@ -159,6 +164,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
             R.id.playlist -> showPlayList()
             R.id.audio_more -> showPopupWindow()
             R.id.cancel -> popupWindow?.dismiss()
+            R.id.edit -> editMyMusic()
         }
     }
 
@@ -184,6 +190,18 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         popupWindow?.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
         // 显示PopupWindow，参数为锚点View和重力、偏移量，这里设置为底部弹出
         popupWindow?.showAtLocation(window.decorView, Gravity.BOTTOM, 0, 0)
+    }
+
+    /**
+     * 修改我的音乐
+     */
+    private fun editMyMusic() {
+        popupWindow?.dismiss()
+        // 进入添加音乐界面，传递音乐信息
+        val intent = Intent(this, AddMusicActivity::class.java)
+        intent.putExtra("isMyMusic", true)
+        intent.putExtra("music", currentMusic)
+        startActivity(intent)
     }
 
     /**
