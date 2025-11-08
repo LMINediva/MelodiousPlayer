@@ -108,7 +108,7 @@ class SettingFragment : BaseFragment(), CheckUpdateContract.View,
                     result.versionUpdate?.apk_file_url?.let { apkName(it) }
                     smallIcon(R.mipmap.ic_launcher)
                     showNewerToast(true)
-                    apkVersionCode(2)
+                    result.versionUpdate?.code?.let { apkVersionCode(it) }
                     apkVersionName("v" + result.versionUpdate?.new_version)
                     result.versionUpdate?.target_size?.let { apkSize(it + "MB") }
                     result.versionUpdate?.update_log?.let { apkDescription(it) }

@@ -9,6 +9,7 @@ data class VersionUpdateResultBean(
 data class VersionUpdate(
     var name: String?,
     var update: String?,
+    var code: Int,
     var new_version: String?,
     var apk_file_url: String?,
     var update_log: String?,
