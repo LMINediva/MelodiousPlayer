@@ -16,8 +16,8 @@
         android:paddingBottom="16dp">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/check_update" />
 
         <TextView
@@ -51,8 +51,8 @@
         android:paddingBottom="16dp">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:src="@drawable/clear_cache" />
 
         <TextView
@@ -86,8 +86,8 @@
         android:paddingBottom="16dp">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:src="@drawable/feedback" />
 
         <TextView
@@ -121,8 +121,8 @@
         android:paddingBottom="16dp">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:src="@drawable/about" />
 
         <TextView

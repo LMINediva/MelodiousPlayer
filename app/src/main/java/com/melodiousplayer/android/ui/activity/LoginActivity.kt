@@ -2,6 +2,7 @@ package com.melodiousplayer.android.ui.activity
 
 import android.content.Context
 import android.content.Intent
+import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
@@ -20,7 +21,9 @@ import com.melodiousplayer.android.util.URLProviderUtils
 /**
  * 用户登录界面
  */
-class LoginActivity : BaseActivity(), LoginContract.View {
+class LoginActivity : BaseActivity(), LoginContract.View, View.OnClickListener {
+
+    private lateinit var back: ImageView
     private lateinit var userName: EditText
     private lateinit var password: EditText
     private lateinit var login: Button
@@ -36,6 +39,7 @@ class LoginActivity : BaseActivity(), LoginContract.View {
     }
 
     override fun initData() {
+        back = findViewById(R.id.back)
         userName = findViewById(R.id.userName)
         password = findViewById(R.id.password)
         login = findViewById(R.id.login)
@@ -66,20 +70,35 @@ class LoginActivity : BaseActivity(), LoginContract.View {
     }
 
     override fun initListener() {
-        login.setOnClickListener {
-            login()
-        }
+        back.setOnClickListener(this)
+        login.setOnClickListener(this)
         password.setOnEditorActionListener { v, actionId, event ->
             login()
             true
         }
-        newUser.setOnClickListener {
-            startActivityForResult(Intent(this, RegisterActivity::class.java), REGISTER_REQUEST)
-        }
-        verificationCodeImage.setOnClickListener {
-            Glide.with(this).load(
-                URLProviderUtils.getVerificationCode() + "?d=" + System.currentTimeMillis()
-            ).into(verificationCodeImage)
+        newUser.setOnClickListener(this)
+        verificationCodeImage.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.back -> {
+                startActivityAndFinish<MainActivity>()
+            }
+
+            R.id.login -> {
+                login()
+            }
+
+            R.id.newUser -> {
+                startActivityForResult(Intent(this, RegisterActivity::class.java), REGISTER_REQUEST)
+            }
+
+            R.id.verificationCodeImage -> {
+                Glide.with(this).load(
+                    URLProviderUtils.getVerificationCode() + "?d=" + System.currentTimeMillis()
+                ).into(verificationCodeImage)
+            }
         }
     }
 

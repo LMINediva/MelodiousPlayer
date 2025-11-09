@@ -22,4 +22,7 @@
     <color name="qq_blue_disabled">#559C9C9C</color>
     <color name="qq_red">#FF0000</color>
     <color name="qq_red_dark">#AA0000</color>
+    <color name="colorPlaceholder">#505050</color>
+    <color name="colorEditText">#14000000</color>
+    <color name="colorButton">#0E68FF</color>
 </resources>

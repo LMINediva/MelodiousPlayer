@@ -1,8 +1,11 @@
 package com.melodiousplayer.android.ui.activity
 
 import android.content.Intent
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.contract.RegisterContract
@@ -11,12 +14,14 @@ import com.melodiousplayer.android.presenter.impl.RegisterPresenterImpl
 /**
  * 用户注册界面
  */
-class RegisterActivity : BaseActivity(), RegisterContract.View {
+class RegisterActivity : BaseActivity(), RegisterContract.View, View.OnClickListener {
 
+    private lateinit var back: ImageView
     private lateinit var userName: EditText
     private lateinit var password: EditText
     private lateinit var confirmPassword: EditText
     private lateinit var register: Button
+    private lateinit var toLogin: TextView
     private val presenter = RegisterPresenterImpl(this)
 
     override fun getLayoutId(): Int {
@@ -24,19 +29,37 @@ class RegisterActivity : BaseActivity(), RegisterContract.View {
     }
 
     override fun initData() {
+        back = findViewById(R.id.back)
         userName = findViewById(R.id.userName)
         password = findViewById(R.id.password)
         confirmPassword = findViewById(R.id.confirmPassword)
         register = findViewById(R.id.register)
+        toLogin = findViewById(R.id.toLogin)
     }
 
     override fun initListener() {
-        register.setOnClickListener {
-            register()
-        }
+        back.setOnClickListener(this)
+        register.setOnClickListener(this)
+        toLogin.setOnClickListener(this)
         confirmPassword.setOnEditorActionListener { v, actionId, event ->
             register()
             true
+        }
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.back -> {
+                startActivityAndFinish<LoginActivity>()
+            }
+
+            R.id.register -> {
+                register()
+            }
+
+            R.id.toLogin -> {
+                startActivityAndFinish<LoginActivity>()
+            }
         }
     }
 
@@ -89,6 +112,12 @@ class RegisterActivity : BaseActivity(), RegisterContract.View {
     override fun onNetworkError() {
         dismissProgress()
         myToast(getString(R.string.network_error))
+    }
+
+    override fun onBackPressed() {
+        // 当用户按下返回键时，跳转回到登录界面
+        startActivityAndFinish<LoginActivity>()
+        super.onBackPressed()
     }
 
 }
