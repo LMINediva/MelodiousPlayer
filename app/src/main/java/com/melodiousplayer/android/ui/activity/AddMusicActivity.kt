@@ -240,6 +240,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         lyric.setOnClickListener(this)
         music.setOnClickListener(this)
         addMusic.setOnClickListener(this)
+        editMusic.setOnClickListener(this)
         lyricName.setOnClickListener(this)
         musicName.setOnClickListener(this)
     }
@@ -329,6 +330,36 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                         0, currentUser
                     )
                     addMusicPresenter.addMusic(token, music)
+                }
+            }
+
+            R.id.editMusic -> {
+                if (token.isNotEmpty()) {
+                    val title = title.text.trim().toString()
+                    val artistName = artistName.text.trim().toString()
+                    val description = description.text.trim().toString()
+                    currentMusic.title = title
+                    currentMusic.artistName = artistName
+                    currentMusic.description = description
+                    if (!newMusicPoster.isNullOrBlank()) {
+                        currentMusic.posterPic = newMusicPoster
+                    }
+                    if (!newMusicThumbnail.isNullOrBlank()) {
+                        currentMusic.thumbnailPic = newMusicThumbnail
+                    }
+                    if (!newLyric.isNullOrBlank()) {
+                        currentMusic.lyric = newLyric
+                    }
+                    if (!newMusic.isNullOrBlank()) {
+                        currentMusic.type = musicType
+                        currentMusic.url = newMusic
+                        currentMusic.hdUrl = newMusic
+                        currentMusic.uhdUrl = newMusic
+                        currentMusic.musicSize = musicSize
+                        currentMusic.hdMusicSize = musicSize
+                        currentMusic.uhdMusicSize = musicSize
+                    }
+                    addMusicPresenter.addMusic(token, currentMusic)
                 }
             }
         }

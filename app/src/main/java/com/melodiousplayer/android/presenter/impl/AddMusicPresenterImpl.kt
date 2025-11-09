@@ -29,35 +29,16 @@ class AddMusicPresenterImpl(val view: AddMusicContract.View) :
 
     override fun addMusic(token: String, music: MusicBean) {
         if (!music.title.isNullOrEmpty()) {
-            // 音乐名不为空，检查音乐名是否存在
-            if (checkMusicTitleRequest(token, music.title)) {
-                // 音乐名不存在，继续校验歌手姓名
-                if (!music.artistName.isNullOrEmpty()) {
-                    // 歌手姓名不为空，继续校验音乐描述
-                    if (!music.description.isNullOrEmpty()) {
-                        // 音乐描述不为空，继续校验音乐海报图片
-                        if (!music.posterPic.isNullOrEmpty()) {
-                            // 音乐海报图片不为空，继续校验音乐缩略图
-                            if (!music.thumbnailPic.isNullOrEmpty()) {
-                                // 音乐缩略图不为空，继续校验音乐文件
-                                if (!music.url.isNullOrEmpty()) {
-                                    // 音乐文件不为空，开始添加音乐
-                                    addMusicRequest(token, music)
-                                } else {
-                                    view.onMusicFileError()
-                                }
-                            } else {
-                                view.onMusicThumbnailError()
-                            }
-                        } else {
-                            view.onMusicPosterError()
-                        }
-                    } else {
-                        view.onDescriptionError()
-                    }
-                } else {
-                    view.onArtistNameError()
+            // 音乐名不为空，检查音乐id是否为空
+            if (music.id == null) {
+                // 音乐id为空，检查音乐名是否存在
+                if (checkMusicTitleRequest(token, music.title)) {
+                    // 音乐名不存在，继续校验剩余项
+                    verificationMusic(token, music)
                 }
+            } else {
+                // 音乐id不为空，继续校验剩余项
+                verificationMusic(token, music)
             }
         } else {
             view.onMusicTitleError()
@@ -122,6 +103,35 @@ class AddMusicPresenterImpl(val view: AddMusicContract.View) :
             delay(500)
         }
         return isValidMusicTitle
+    }
+
+    private fun verificationMusic(token: String, music: MusicBean) {
+        if (!music.artistName.isNullOrEmpty()) {
+            // 歌手姓名不为空，继续校验音乐描述
+            if (!music.description.isNullOrEmpty()) {
+                // 音乐描述不为空，继续校验音乐海报图片
+                if (!music.posterPic.isNullOrEmpty()) {
+                    // 音乐海报图片不为空，继续校验音乐缩略图
+                    if (!music.thumbnailPic.isNullOrEmpty()) {
+                        // 音乐缩略图不为空，继续校验音乐文件
+                        if (!music.url.isNullOrEmpty()) {
+                            // 音乐文件不为空，开始添加音乐
+                            addMusicRequest(token, music)
+                        } else {
+                            view.onMusicFileError()
+                        }
+                    } else {
+                        view.onMusicThumbnailError()
+                    }
+                } else {
+                    view.onMusicPosterError()
+                }
+            } else {
+                view.onDescriptionError()
+            }
+        } else {
+            view.onArtistNameError()
+        }
     }
 
     private fun addMusicRequest(token: String, music: MusicBean) {
