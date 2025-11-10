@@ -30,6 +30,8 @@
     <string name="get_lyric_text_error">获取歌词文本错误</string>
     <string name="add_music_success">添加或修改音乐成功</string>
     <string name="add_music_failed">添加或修改音乐失败</string>
+    <string name="delete_music_success">删除音乐成功</string>
+    <string name="delete_music_failed">删除音乐失败</string>
     <string name="delete_upload_music_file_cache_success">删除上传到服务器的音乐相关文件缓存成功</string>
     <string name="delete_upload_music_file_cache_failed">删除上传到服务器的音乐相关文件缓存失败</string>
     <string name="file_upload_reminder">如网络不佳，则需要较长时间</string>

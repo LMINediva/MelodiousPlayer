@@ -19,11 +19,15 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.adapter.PopupAdapter
 import com.melodiousplayer.android.base.BaseActivity
+import com.melodiousplayer.android.contract.DeleteMusicContract
 import com.melodiousplayer.android.model.AudioBean
 import com.melodiousplayer.android.model.MusicBean
+import com.melodiousplayer.android.model.ResultBean
+import com.melodiousplayer.android.presenter.impl.DeleteMusicPresenterImpl
 import com.melodiousplayer.android.service.AudioService
 import com.melodiousplayer.android.service.IService
 import com.melodiousplayer.android.util.StringUtil
@@ -37,22 +41,8 @@ import org.greenrobot.eventbus.ThreadMode
  * 音乐播放界面
  */
 class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeekBarChangeListener,
-    AdapterView.OnItemClickListener {
+    AdapterView.OnItemClickListener, DeleteMusicContract.View {
 
-    private var popupWindow: PopupWindow? = null
-    private val connection by lazy { AudioConnection() }
-    private var iService: IService? = null
-    private var audioBean: AudioBean? = null
-    private var drawable: AnimationDrawable? = null
-    private var duration: Int = 0
-    private val MSG_PROGRESS = 0
-    private val handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
-            when (msg.what) {
-                MSG_PROGRESS -> startUpdateProgress()
-            }
-        }
-    }
     private lateinit var state: ImageView
     private lateinit var audioTitle: TextView
     private lateinit var artist: TextView
@@ -71,6 +61,22 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     private lateinit var edit: ImageView
     private lateinit var delete: ImageView
     private lateinit var currentMusic: MusicBean
+    private var popupWindow: PopupWindow? = null
+    private val connection by lazy { AudioConnection() }
+    private var iService: IService? = null
+    private var audioBean: AudioBean? = null
+    private var drawable: AnimationDrawable? = null
+    private var duration: Int = 0
+    private val MSG_PROGRESS = 0
+    private var token: String? = null
+    private val handler = object : Handler() {
+        override fun handleMessage(msg: Message) {
+            when (msg.what) {
+                MSG_PROGRESS -> startUpdateProgress()
+            }
+        }
+    }
+    private val deleteMusicPresenter = DeleteMusicPresenterImpl(this)
 
     override fun getLayoutId(): Int {
         return R.layout.activity_audio_player
@@ -98,6 +104,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         val isMyMusic = intent.getBooleanExtra("isMyMusic", false)
         if (isMyMusic) {
             more.visibility = View.VISIBLE
+            token = intent.getStringExtra("token")
             val musicSerialized = intent.getSerializableExtra("music")
             if (musicSerialized != null) {
                 currentMusic = musicSerialized as MusicBean
@@ -165,6 +172,25 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
             R.id.audio_more -> showPopupWindow()
             R.id.cancel -> popupWindow?.dismiss()
             R.id.edit -> editMyMusic()
+            R.id.delete -> {
+                popupWindow?.dismiss()
+                AlertDialog.Builder(this).apply {
+                    setTitle("提示")
+                    setMessage("确定要删除音乐吗？")
+                    setCancelable(false)
+                    setPositiveButton("确定") { dialog, which ->
+                        token?.let {
+                            deleteMusicPresenter.deleteMusic(
+                                it,
+                                arrayOf(currentMusic.id!!)
+                            )
+                        }
+                    }
+                    setNegativeButton("取消") { dialog, which ->
+                    }
+                    show()
+                }
+            }
         }
     }
 
@@ -368,6 +394,27 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         lyricView.updateProgress(pro)
     }
 
+    /**
+     * 弹出的播放列表条目点击事件
+     */
+    override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        // 播放当前的歌曲
+        iService?.playPosition(position)
+    }
+
+    override fun onDeleteMusicSuccess(result: ResultBean) {
+        myToast(getString(R.string.delete_music_success))
+        startActivityAndFinish<SuccessActivity>()
+    }
+
+    override fun onDeleteMusicFailed(result: ResultBean) {
+        myToast(getString(R.string.delete_music_failed))
+    }
+
+    override fun onNetworkError() {
+        myToast(getString(R.string.network_error))
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         // 手动解绑服务
@@ -376,14 +423,6 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         EventBus.getDefault().unregister(this)
         // 清空handler发送的所有消息
         handler.removeCallbacksAndMessages(null)
-    }
-
-    /**
-     * 弹出的播放列表条目点击事件
-     */
-    override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        // 播放当前的歌曲
-        iService?.playPosition(position)
     }
 
 }
