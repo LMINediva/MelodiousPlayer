@@ -14,4 +14,5 @@ interface IService {
     fun playNext()
     fun getPlayList(): List<AudioBean>?
     fun playPosition(position: Int)
+    fun closeNotification()
 }

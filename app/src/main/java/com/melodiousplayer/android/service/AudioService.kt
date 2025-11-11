@@ -23,6 +23,7 @@ import java.util.Random
 class AudioService : Service() {
 
     var list: ArrayList<AudioBean>? = null
+    var channel: NotificationChannel? = null
     var manager: NotificationManager? = null
     var notification: Notification? = null
 
@@ -117,17 +118,17 @@ class AudioService : Service() {
         private fun showNotification() {
             manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val channel =
+                channel =
                     NotificationChannel(
                         "normal",
                         "音乐播放后台服务",
                         NotificationManager.IMPORTANCE_DEFAULT
                     )
                 // 禁用震动
-                channel.enableVibration(false)
+                channel?.enableVibration(false)
                 // 设置null来移除铃声
-                channel.setSound(null, null)
-                manager?.createNotificationChannel(channel)
+                channel?.setSound(null, null)
+                manager?.createNotificationChannel(channel!!)
             }
             notification = getNotification()
             manager?.notify(1, notification)
@@ -412,6 +413,28 @@ class AudioService : Service() {
         override fun playPosition(position: Int) {
             this@AudioService.position = position
             playItem()
+        }
+
+        /**
+         * 关闭通知
+         */
+        override fun closeNotification() {
+            // 获取当前播放状态
+            val isPlaying = isPlaying()
+            // 切换播放状态
+            isPlaying?.let {
+                if (isPlaying) {
+                    // 播放，暂停
+                    pause()
+                }
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (channel != null) {
+                    manager?.deleteNotificationChannel("normal")
+                }
+            } else {
+                manager?.cancel(1)
+            }
         }
 
     }

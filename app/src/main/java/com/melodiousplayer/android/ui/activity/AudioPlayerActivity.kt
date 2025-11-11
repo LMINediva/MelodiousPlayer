@@ -404,7 +404,14 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
 
     override fun onDeleteMusicSuccess(result: ResultBean) {
         myToast(getString(R.string.delete_music_success))
-        startActivityAndFinish<SuccessActivity>()
+        // 关闭通知
+        iService?.closeNotification()
+        // 返回我的作品界面，传递用户信息，并退出AudioPlayerActivity
+        val intent = Intent(this, MyWorkActivity::class.java)
+        intent.putExtra("user", currentMusic.sysUser)
+        intent.putExtra("refresh", true)
+        startActivityForResult(intent, 1)
+        finish()
     }
 
     override fun onDeleteMusicFailed(result: ResultBean) {

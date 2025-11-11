@@ -1,6 +1,7 @@
 package com.melodiousplayer.android.ui.activity
 
 import android.content.Context
+import android.content.Intent
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
@@ -21,6 +22,7 @@ class MyWorkActivity : BaseActivity(), ToolBarManager {
     private lateinit var viewPager: ViewPager
     private lateinit var currentUser: UserBean
     private lateinit var token: String
+    private lateinit var adapter: MyWorkPagerAdapter
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -52,7 +54,10 @@ class MyWorkActivity : BaseActivity(), ToolBarManager {
         // 从SharedPreferences文件中读取token的值
         token = getSharedPreferences("data", Context.MODE_PRIVATE)
             .getString("token", "").toString()
-        val adapter = MyWorkPagerAdapter(this, supportFragmentManager, currentUser, token)
+        adapter = MyWorkPagerAdapter(
+            this, supportFragmentManager,
+            currentUser, token
+        )
         viewPager.adapter = adapter
         tabLayout.setupWithViewPager(viewPager)
     }
@@ -68,6 +73,25 @@ class MyWorkActivity : BaseActivity(), ToolBarManager {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            1 -> if (resultCode == RESULT_OK) {
+                val refresh = data?.getBooleanExtra("refresh", false)
+                if (refresh == true) {
+                    val userSerialized = data.getSerializableExtra("user")
+                    if (userSerialized != null) {
+                        currentUser = userSerialized as UserBean
+                        currentUser.loginDate = null
+                        currentUser.createTime = null
+                        currentUser.updateTime = null
+                    }
+                    adapter.notifyDataSetChanged()
+                }
+            }
+        }
     }
 
     override fun onBackPressed() {
