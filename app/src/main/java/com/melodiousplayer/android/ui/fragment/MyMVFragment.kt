@@ -65,6 +65,7 @@ class MyMVFragment : BaseGridListFragment<MyMVBean, VideosBean, MyMVItemView>() 
             // 跳转到视频播放界面
             val intent = Intent(activity, JiaoZiVideoPlayerActivity::class.java)
             intent.putExtra("item", videoPlayBean)
+            intent.putExtra("isMyMV", true)
             activity?.startActivity(intent)
         }
     }

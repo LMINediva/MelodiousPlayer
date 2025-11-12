@@ -8,7 +8,15 @@ import android.media.MediaMetadataRetriever
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.provider.MediaStore
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.ImageView
+import android.widget.PopupWindow
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
@@ -35,11 +43,14 @@ import okhttp3.Request
 import java.io.File
 import java.io.IOException
 
-class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager {
+class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
 
     private lateinit var videoPlayer: JzvdStd
     private lateinit var viewPager: ViewPager
     private lateinit var rg: RadioGroup
+    private lateinit var cancel: ImageView
+    private lateinit var edit: ImageView
+    private lateinit var delete: ImageView
     private var data: Uri? = null
     private val permissions: Array<String> = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -48,6 +59,8 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager {
     private var hasPermissions: Boolean = true
     private val client by lazy { OkHttpClient() }
     private var videoPlayBean: VideoPlayBean? = null
+    private var popupWindow: PopupWindow? = null
+    private var isMyMV: Boolean = false
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -70,6 +83,7 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager {
         videoPlayer = findViewById(R.id.jz_video)
         viewPager = findViewById(R.id.viewPager)
         rg = findViewById(R.id.rg)
+        isMyMV = intent.getBooleanExtra("isMyMV", false)
         data = intent.data
         if (data == null) {
             // 获取传递的数据
@@ -174,6 +188,21 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager {
         })
     }
 
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.cancel -> popupWindow?.dismiss()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        // 设置action按钮
+        menuInflater.inflate(R.menu.video_player, menu)
+        if (!isMyMV) {
+            menu?.findItem(R.id.video_more)?.setVisible(false)
+        }
+        return true
+    }
+
     /**
      * Toolbar上的图标按钮点击事件
      */
@@ -181,10 +210,37 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager {
         when (item.itemId) {
             android.R.id.home -> {
                 finish()
-                return true
+            }
+
+            R.id.video_more -> {
+                showPopupWindow()
             }
         }
-        return super.onOptionsItemSelected(item)
+        return true
+    }
+
+    /**
+     * 从底部显示PopupWindow
+     */
+    private fun showPopupWindow() {
+        val layoutInflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        if (popupWindow == null) {
+            val view = layoutInflater.inflate(R.layout.popup_operation, null)
+            val width = ViewGroup.LayoutParams.MATCH_PARENT
+            val height = 350
+            cancel = view.findViewById(R.id.cancel)
+            edit = view.findViewById(R.id.edit)
+            delete = view.findViewById(R.id.delete)
+            popupWindow = PopupWindow(view, width, height, true)
+            cancel.setOnClickListener(this)
+            edit.setOnClickListener(this)
+            delete.setOnClickListener(this)
+        }
+        popupWindow?.animationStyle = R.style.bottom_popup
+        popupWindow?.isOutsideTouchable = true
+        popupWindow?.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+        // 显示PopupWindow，参数为锚点View和重力、偏移量，这里设置为底部弹出
+        popupWindow?.showAtLocation(window.decorView, Gravity.BOTTOM, 0, 0)
     }
 
     /**

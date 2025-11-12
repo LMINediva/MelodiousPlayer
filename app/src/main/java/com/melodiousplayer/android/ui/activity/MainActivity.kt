@@ -127,12 +127,6 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
         requestPermissions()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        // 设置action按钮
-        menuInflater.inflate(R.menu.main, menu)
-        return true
-    }
-
     override fun initListener() {
         // 设置tab切换监听
         bottomBar.setOnItemSelectedListener { item ->
@@ -150,6 +144,12 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
             drawerLayout.closeDrawers()
             true
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        // 设置action按钮
+        menuInflater.inflate(R.menu.main, menu)
+        return true
     }
 
     private fun handleMenuItemClick(itemId: Int) {
