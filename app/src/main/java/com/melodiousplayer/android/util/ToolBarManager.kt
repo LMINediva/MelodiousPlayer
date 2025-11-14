@@ -75,6 +75,14 @@ interface ToolBarManager {
     }
 
     /**
+     * 初始化编辑MV界面中的toolbar
+     */
+    fun initEditMVToolBar() {
+        // 设置标题
+        toolbarTitle.text = "编辑MV"
+    }
+
+    /**
      * 初始化音乐清单界面中的toolbar
      */
     fun initAddMusicListToolBar() {

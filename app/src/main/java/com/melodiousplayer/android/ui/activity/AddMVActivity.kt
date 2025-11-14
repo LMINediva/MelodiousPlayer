@@ -82,6 +82,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     private lateinit var mvName: TextView
     private lateinit var mvError: TextView
     private lateinit var addMV: Button
+    private lateinit var editMV: Button
     private lateinit var progressInfo: LinearLayout
     private lateinit var uploadCompletedText: TextView
     private lateinit var progressText: TextView
@@ -92,6 +93,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     private lateinit var videoPlayer: JzvdStd
     private lateinit var adapter: ArrayAdapter<String>
     private lateinit var currentUser: UserBean
+    private lateinit var currentMV: VideosBean
     private lateinit var token: String
     private lateinit var mvAreas: List<MVAreaBean>
     private val PERMISSION_REQUEST = 1
@@ -115,6 +117,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     private var hdMVSize: Float = 0F
     private var uhdMVSize: Float = 0F
     private var isAddMVSuccess: Boolean = false
+    private var isMyMusic: Boolean = false
     private var mvAreasPosition: Int = 0
     private var mvDuration: String? = null
 
@@ -126,16 +129,6 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     }
 
     override fun initData() {
-        initAddMVToolBar()
-        setSupportActionBar(toolbar)
-        supportActionBar?.let {
-            // 启用Toolbar的返回按钮
-            it.setDisplayHomeAsUpEnabled(true)
-            // 显示返回按钮
-            it.setDisplayShowHomeEnabled(true)
-            // 隐藏默认标题
-            it.setDisplayShowTitleEnabled(false)
-        }
         title = findViewById(R.id.title)
         artistName = findViewById(R.id.artistName)
         description = findViewById(R.id.description)
@@ -148,6 +141,24 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
         mvName = findViewById(R.id.mvName)
         mvError = findViewById(R.id.mvError)
         addMV = findViewById(R.id.addMV)
+        editMV = findViewById(R.id.editMV)
+        isMyMusic = intent.getBooleanExtra("isMyMusic", false)
+        if (isMyMusic) {
+            initEditMV()
+        } else {
+            addMV.visibility = View.VISIBLE
+            editMV.visibility = View.GONE
+            initAddMVToolBar()
+        }
+        setSupportActionBar(toolbar)
+        supportActionBar?.let {
+            // 启用Toolbar的返回按钮
+            it.setDisplayHomeAsUpEnabled(true)
+            // 显示返回按钮
+            it.setDisplayShowHomeEnabled(true)
+            // 隐藏默认标题
+            it.setDisplayShowTitleEnabled(false)
+        }
         val userSerialized = intent.getSerializableExtra("user")
         if (userSerialized != null) {
             currentUser = userSerialized as UserBean
@@ -163,6 +174,49 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
         // 将ArrayAdapter设置给Spinner
         areaSpinner.adapter = adapter
         requestPermissions()
+    }
+
+    /**
+     * 初始化修改音乐界面
+     */
+    private fun initEditMV() {
+        addMV.visibility = View.GONE
+        editMV.visibility = View.VISIBLE
+        initEditMVToolBar()
+        val mvSerialized = intent.getSerializableExtra("mv")
+        if (mvSerialized != null) {
+            currentMV = mvSerialized as VideosBean
+            currentUser = currentMV.sysUser!!
+        }
+        title.setText(currentMV.title)
+        artistName.setText(currentMV.artistName)
+        description.setText(currentMV.description)
+        areaSpinner.setSelection(currentMV.mvArea?.id?.minus(1) ?: 0)
+        if (!currentMV.posterPic.isNullOrBlank()) {
+            Glide.with(this)
+                .load(
+                    URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                            + URLProviderUtils.mvImagePath + currentMV.posterPic
+                )
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(posterPicture)
+        }
+        if (!currentMV.thumbnailPic.isNullOrBlank()) {
+            Glide.with(this)
+                .load(
+                    URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                            + URLProviderUtils.mvImagePath + currentMV.thumbnailPic
+                )
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(thumbnailPicture)
+        }
+        if (!currentMV.url.isNullOrBlank()) {
+            mvName.visibility = View.VISIBLE
+            mvName.text = currentMV.url
+            newMV = currentMV.url
+        }
     }
 
     override fun initListener() {

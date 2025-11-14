@@ -2,6 +2,7 @@ package com.melodiousplayer.android.ui.activity
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
@@ -30,6 +31,7 @@ import com.melodiousplayer.android.R
 import com.melodiousplayer.android.adapter.VideoPagerAdapter
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.model.VideoPlayBean
+import com.melodiousplayer.android.model.VideosBean
 import com.melodiousplayer.android.util.FileUtil
 import com.melodiousplayer.android.util.FileUtil.createTemporalFileFrom
 import com.melodiousplayer.android.util.ToolBarManager
@@ -51,6 +53,7 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
     private lateinit var cancel: ImageView
     private lateinit var edit: ImageView
     private lateinit var delete: ImageView
+    private lateinit var currentMV: VideosBean
     private var data: Uri? = null
     private val permissions: Array<String> = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -60,6 +63,7 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
     private val client by lazy { OkHttpClient() }
     private var videoPlayBean: VideoPlayBean? = null
     private var popupWindow: PopupWindow? = null
+    private var token: String? = null
     private var isMyMV: Boolean = false
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
@@ -84,6 +88,13 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
         viewPager = findViewById(R.id.viewPager)
         rg = findViewById(R.id.rg)
         isMyMV = intent.getBooleanExtra("isMyMV", false)
+        if (isMyMV) {
+            token = intent.getStringExtra("token")
+            val mvSerialized = intent.getSerializableExtra("mv")
+            if (mvSerialized != null) {
+                currentMV = mvSerialized as VideosBean
+            }
+        }
         data = intent.data
         if (data == null) {
             // 获取传递的数据
@@ -191,6 +202,7 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.cancel -> popupWindow?.dismiss()
+            R.id.edit -> editMyMV()
         }
     }
 
@@ -241,6 +253,18 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
         popupWindow?.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
         // 显示PopupWindow，参数为锚点View和重力、偏移量，这里设置为底部弹出
         popupWindow?.showAtLocation(window.decorView, Gravity.BOTTOM, 0, 0)
+    }
+
+    /**
+     * 修改我的MV
+     */
+    private fun editMyMV() {
+        popupWindow?.dismiss()
+        // 进入添加MV界面，传递MV信息
+        val intent = Intent(this, AddMVActivity::class.java)
+        intent.putExtra("isMyMusic", true)
+        intent.putExtra("mv", currentMV)
+        startActivity(intent)
     }
 
     /**

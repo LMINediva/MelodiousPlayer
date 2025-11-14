@@ -66,6 +66,7 @@ class MyMVFragment : BaseGridListFragment<MyMVBean, VideosBean, MyMVItemView>() 
             val intent = Intent(activity, JiaoZiVideoPlayerActivity::class.java)
             intent.putExtra("item", videoPlayBean)
             intent.putExtra("isMyMV", true)
+            intent.putExtra("token", token)
             intent.putExtra("mv", it)
             activity?.startActivity(intent)
         }
