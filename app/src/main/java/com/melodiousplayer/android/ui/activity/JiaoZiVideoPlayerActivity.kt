@@ -262,7 +262,7 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
         popupWindow?.dismiss()
         // 进入添加MV界面，传递MV信息
         val intent = Intent(this, AddMVActivity::class.java)
-        intent.putExtra("isMyMusic", true)
+        intent.putExtra("isMyMV", true)
         intent.putExtra("mv", currentMV)
         startActivity(intent)
     }

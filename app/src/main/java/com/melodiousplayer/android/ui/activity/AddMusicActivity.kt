@@ -230,7 +230,6 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         if (!currentMusic.url.isNullOrBlank()) {
             musicName.visibility = View.VISIBLE
             musicName.text = currentMusic.url
-            newMusic = currentMusic.url
         }
     }
 
@@ -686,7 +685,11 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
      * 弹窗显示音乐播放控件
      */
     private fun showPlayMusicDialog(context: Context) {
-        initMediaPlayer(musicPath + newMusic)
+        if (newMusic == null) {
+            initMediaPlayer(musicPath + currentMusic.url)
+        } else {
+            initMediaPlayer(musicPath + newMusic)
+        }
         val dialog = AlertDialog.Builder(context)
             .setTitle(newMusic)
             .setView(R.layout.popup_music_player)
@@ -772,7 +775,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
      * 发送删除上传音乐相关文件缓存的请求
      */
     private fun deleteUploadMusicFileCache() {
-        if (!isAddMusicSuccess && !isMyMusic) {
+        if (!isAddMusicSuccess) {
             if (!newMusicPoster.isNullOrEmpty() || !newMusicThumbnail.isNullOrEmpty()
                 || !newLyric.isNullOrEmpty() || !newMusic.isNullOrEmpty()
             ) {

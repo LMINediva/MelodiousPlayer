@@ -114,10 +114,8 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     private var newMV: String? = null
     private var mvType: String? = null
     private var mvSize: Float = 0F
-    private var hdMVSize: Float = 0F
-    private var uhdMVSize: Float = 0F
     private var isAddMVSuccess: Boolean = false
-    private var isMyMusic: Boolean = false
+    private var isMyMV: Boolean = false
     private var mvAreasPosition: Int = 0
     private var mvDuration: String? = null
 
@@ -142,8 +140,8 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
         mvError = findViewById(R.id.mvError)
         addMV = findViewById(R.id.addMV)
         editMV = findViewById(R.id.editMV)
-        isMyMusic = intent.getBooleanExtra("isMyMusic", false)
-        if (isMyMusic) {
+        isMyMV = intent.getBooleanExtra("isMyMV", false)
+        if (isMyMV) {
             initEditMV()
         } else {
             addMV.visibility = View.VISIBLE
@@ -215,7 +213,6 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
         if (!currentMV.url.isNullOrBlank()) {
             mvName.visibility = View.VISIBLE
             mvName.text = currentMV.url
-            newMV = currentMV.url
         }
     }
 
@@ -227,6 +224,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
         mv.setOnClickListener(this)
         mvName.setOnClickListener(this)
         addMV.setOnClickListener(this)
+        editMV.setOnClickListener(this)
     }
 
     /**
@@ -281,7 +279,11 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
             }
 
             R.id.mvName -> {
-                showPlayMVDialog(this)
+                if (newMV == null) {
+                    currentMV.url?.let { showPlayMVDialog(this, it) }
+                } else {
+                    showPlayMVDialog(this, newMV!!)
+                }
             }
 
             R.id.addMV -> {
@@ -294,12 +296,41 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
                     val mv = VideosBean(
                         null, title, description, mvArea,
                         artistName, newMVPoster, newMVThumbnail, registrationDate,
-                        mvType, null, null, null,
-                        null, newMV, newMV, newMV,
-                        mvSize, hdMVSize, uhdMVSize, mvDuration,
+                        mvType, 0, 0, 0,
+                        0, newMV, newMV, newMV,
+                        mvSize, mvSize, mvSize, mvDuration,
                         0, currentUser
                     )
                     addMVPresenter.addMV(token, mv)
+                }
+            }
+
+            R.id.editMV -> {
+                if (token.isNotEmpty()) {
+                    val title = title.text.trim().toString()
+                    val artistName = artistName.text.trim().toString()
+                    val description = description.text.trim().toString()
+                    val mvArea = mvAreas[mvAreasPosition]
+                    currentMV.title = title
+                    currentMV.artistName = artistName
+                    currentMV.description = description
+                    currentMV.mvArea = mvArea
+                    if (!newMVPoster.isNullOrBlank()) {
+                        currentMV.posterPic = newMVPoster
+                    }
+                    if (!newMVThumbnail.isNullOrBlank()) {
+                        currentMV.thumbnailPic = newMVThumbnail
+                    }
+                    if (!newMV.isNullOrBlank()) {
+                        currentMV.videoSourceTypeName = mvType
+                        currentMV.url = newMV
+                        currentMV.hdUrl = newMV
+                        currentMV.uhdUrl = newMV
+                        currentMV.videoSize = mvSize
+                        currentMV.hdVideoSize = mvSize
+                        currentMV.uhdVideoSize = mvSize
+                    }
+                    addMVPresenter.addMV(token, currentMV)
                 }
             }
         }
@@ -514,8 +545,6 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
         val bigDecimal = BigDecimal(fileSize / (1024 * 1024))
         val fileSizeMB = bigDecimal.setScale(1, RoundingMode.HALF_UP).toFloat()
         mvSize = fileSizeMB
-        hdMVSize = fileSizeMB
-        uhdMVSize = fileSizeMB
         mvType = type
         return true
     }
@@ -605,9 +634,9 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     /**
      * 弹窗显示MV播放控件
      */
-    private fun showPlayMVDialog(context: Context) {
+    private fun showPlayMVDialog(context: Context, mvUrl: String) {
         val dialog = AlertDialog.Builder(context)
-            .setTitle(newMV)
+            .setTitle(mvUrl)
             .setView(R.layout.popup_mv_player)
             .setCancelable(false)
             .setPositiveButton("确定") { dialog, which ->
@@ -624,8 +653,8 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
         // 从服务器请求上传的视频进行播放
         videoPlayer.setUp(
             URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                    + URLProviderUtils.mvPath + newMV,
-            newMV,
+                    + URLProviderUtils.mvPath + mvUrl,
+            mvUrl,
             JzvdStd.SCREEN_NORMAL
         )
         // 设置视频默认缩略图
@@ -647,7 +676,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
                         null, newMV, null, null, null, newMVPoster,
                         newMVThumbnail, null, mvType, null, null,
                         null, null, newMV, newMV, newMV,
-                        mvSize, hdMVSize, uhdMVSize, null, null, currentUser
+                        mvSize, mvSize, mvSize, null, null, currentUser
                     )
                     deleteUploadMVFileCachePresenter.deleteUploadMVFileCache(token, mv)
                 }

@@ -29,35 +29,16 @@ class AddMVPresenterImpl(val view: AddMVContract.View) :
 
     override fun addMV(token: String, mv: VideosBean) {
         if (!mv.title.isNullOrEmpty()) {
-            // MV名不为空，检查MV名是否存在
-            if (checkMVTitleRequest(token, mv.title)) {
-                // MV名不存在，继续校验歌手姓名
-                if (!mv.artistName.isNullOrEmpty()) {
-                    // 歌手姓名不为空，继续校验MV描述
-                    if (!mv.description.isNullOrEmpty()) {
-                        // MV描述不为空，继续校验MV海报图片
-                        if (!mv.posterPic.isNullOrEmpty()) {
-                            // MV海报图片不为空，继续校验MV缩略图
-                            if (!mv.thumbnailPic.isNullOrEmpty()) {
-                                // MV缩略图不为空，继续校验MV文件
-                                if (!mv.url.isNullOrEmpty()) {
-                                    // MV文件不为空，开始添加MV
-                                    addMVRequest(token, mv)
-                                } else {
-                                    view.onMVFileError()
-                                }
-                            } else {
-                                view.onMVThumbnailError()
-                            }
-                        } else {
-                            view.onMVPosterError()
-                        }
-                    } else {
-                        view.onDescriptionError()
-                    }
-                } else {
-                    view.onArtistNameError()
+            // MV名不为空，检查MV的id是否为空
+            if (mv.id == null) {
+                // MV的id为空，检查MV名是否存在
+                if (checkMVTitleRequest(token, mv.title)) {
+                    // MV名不存在，继续校验剩余项
+                    verificationMV(token, mv)
                 }
+            } else {
+                // MV的id不为空，继续校验剩余项
+                verificationMV(token, mv)
             }
         } else {
             view.onMVTitleError()
@@ -123,6 +104,35 @@ class AddMVPresenterImpl(val view: AddMVContract.View) :
             delay(500)
         }
         return isValidMVTitle
+    }
+
+    private fun verificationMV(token: String, mv: VideosBean) {
+        if (!mv.artistName.isNullOrEmpty()) {
+            // 歌手姓名不为空，继续校验MV描述
+            if (!mv.description.isNullOrEmpty()) {
+                // MV描述不为空，继续校验MV海报图片
+                if (!mv.posterPic.isNullOrEmpty()) {
+                    // MV海报图片不为空，继续校验MV缩略图
+                    if (!mv.thumbnailPic.isNullOrEmpty()) {
+                        // MV缩略图不为空，继续校验MV文件
+                        if (!mv.url.isNullOrEmpty()) {
+                            // MV文件不为空，开始添加MV
+                            addMVRequest(token, mv)
+                        } else {
+                            view.onMVFileError()
+                        }
+                    } else {
+                        view.onMVThumbnailError()
+                    }
+                } else {
+                    view.onMVPosterError()
+                }
+            } else {
+                view.onDescriptionError()
+            }
+        } else {
+            view.onArtistNameError()
+        }
     }
 
     private fun addMVRequest(token: String, mv: VideosBean) {
