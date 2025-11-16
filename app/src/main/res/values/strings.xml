@@ -45,6 +45,7 @@
     <string name="mv_file_error">MV文件不能为空</string>
     <string name="add_mv_success">添加MV成功</string>
     <string name="add_mv_failed">添加MV失败</string>
+    <string name="delete_mv_success">删除MV成功</string>
     <string name="get_mv_list_failed">获取MV列表失败</string>
     <string name="music_list_title_error">悦单名不能为空</string>
     <string name="music_list_title_exist_error">悦单名已存在</string>

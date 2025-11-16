@@ -30,8 +30,11 @@ import com.bumptech.glide.Glide
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.adapter.VideoPagerAdapter
 import com.melodiousplayer.android.base.BaseActivity
+import com.melodiousplayer.android.contract.DeleteMVContract
+import com.melodiousplayer.android.model.ResultBean
 import com.melodiousplayer.android.model.VideoPlayBean
 import com.melodiousplayer.android.model.VideosBean
+import com.melodiousplayer.android.presenter.impl.DeleteMVPresenterImpl
 import com.melodiousplayer.android.util.FileUtil
 import com.melodiousplayer.android.util.FileUtil.createTemporalFileFrom
 import com.melodiousplayer.android.util.ToolBarManager
@@ -45,7 +48,8 @@ import okhttp3.Request
 import java.io.File
 import java.io.IOException
 
-class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
+class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
+    DeleteMVContract.View {
 
     private lateinit var videoPlayer: JzvdStd
     private lateinit var viewPager: ViewPager
@@ -55,16 +59,17 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
     private lateinit var delete: ImageView
     private lateinit var currentMV: VideosBean
     private var data: Uri? = null
-    private val permissions: Array<String> = arrayOf(
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
-    )
     private var hasPermissions: Boolean = true
-    private val client by lazy { OkHttpClient() }
     private var videoPlayBean: VideoPlayBean? = null
     private var popupWindow: PopupWindow? = null
     private var token: String? = null
     private var isMyMV: Boolean = false
+    private val permissions: Array<String> = arrayOf(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
+    private val client by lazy { OkHttpClient() }
+    private val deleteMVPresenter = DeleteMVPresenterImpl(this)
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -203,6 +208,9 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
         when (v?.id) {
             R.id.cancel -> popupWindow?.dismiss()
             R.id.edit -> editMyMV()
+            R.id.delete -> {
+
+            }
         }
     }
 
@@ -353,6 +361,21 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
     override fun onPause() {
         super.onPause()
         Jzvd.releaseAllVideos()
+    }
+
+    override fun onDeleteMVSuccess(result: ResultBean) {
+        myToast(getString(R.string.delete_mv_success))
+        if (videoPlayer.state == Jzvd.STATE_PLAYING) {
+            videoPlayer.onStatePause()
+        }
+    }
+
+    override fun onDeleteMVFailed(result: ResultBean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onNetworkError() {
+        TODO("Not yet implemented")
     }
 
     override fun onBackPressed() {
