@@ -20,6 +20,7 @@ import android.widget.ImageView
 import android.widget.PopupWindow
 import android.widget.RadioGroup
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -209,7 +210,23 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
             R.id.cancel -> popupWindow?.dismiss()
             R.id.edit -> editMyMV()
             R.id.delete -> {
-
+                popupWindow?.dismiss()
+                AlertDialog.Builder(this).apply {
+                    setTitle("提示")
+                    setMessage("确定要删除MV吗？")
+                    setCancelable(false)
+                    setPositiveButton("确定") { dialog, which ->
+                        token?.let {
+                            deleteMVPresenter.deleteMV(
+                                it,
+                                arrayOf(currentMV.id!!)
+                            )
+                        }
+                    }
+                    setNegativeButton("取消") { dialog, which ->
+                    }
+                    show()
+                }
             }
         }
     }
@@ -366,16 +383,23 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
     override fun onDeleteMVSuccess(result: ResultBean) {
         myToast(getString(R.string.delete_mv_success))
         if (videoPlayer.state == Jzvd.STATE_PLAYING) {
-            videoPlayer.onStatePause()
+            videoPlayer.onClickUiToggle()
+            videoPlayer.startButton.performClick()
         }
+        // 返回我的作品界面，传递用户信息，并退出AudioPlayerActivity
+        val intent = Intent(this, MyWorkActivity::class.java)
+        intent.putExtra("user", currentMV.sysUser)
+        intent.putExtra("refresh", true)
+        startActivityForResult(intent, 1)
+        finish()
     }
 
     override fun onDeleteMVFailed(result: ResultBean) {
-        TODO("Not yet implemented")
+        myToast(getString(R.string.delete_mv_failed))
     }
 
     override fun onNetworkError() {
-        TODO("Not yet implemented")
+        myToast(getString(R.string.network_error))
     }
 
     override fun onBackPressed() {
