@@ -63,6 +63,9 @@ class MyMusicListFragment :
             val intent = Intent(activity, MusicListInformationActivity::class.java)
             intent.putExtra("title", it.title)
             intent.putExtra("mvList", it.mvList as Serializable)
+            intent.putExtra("isMyMusicList", true)
+            intent.putExtra("token", token)
+            intent.putExtra("musicList", it)
             activity?.startActivity(intent)
         }
     }

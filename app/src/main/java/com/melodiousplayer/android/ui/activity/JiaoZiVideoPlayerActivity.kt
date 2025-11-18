@@ -233,9 +233,9 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         // 设置action按钮
-        menuInflater.inflate(R.menu.video_player, menu)
+        menuInflater.inflate(R.menu.more_operation, menu)
         if (!isMyMV) {
-            menu?.findItem(R.id.video_more)?.setVisible(false)
+            menu?.findItem(R.id.more)?.setVisible(false)
         }
         return true
     }
@@ -249,7 +249,7 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
                 finish()
             }
 
-            R.id.video_more -> {
+            R.id.more -> {
                 showPopupWindow()
             }
         }

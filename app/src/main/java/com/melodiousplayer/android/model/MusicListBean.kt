@@ -1,5 +1,7 @@
 package com.melodiousplayer.android.model
 
+import java.io.Serializable
+
 data class MusicListBean(
     var totalCount: Int?,
     var playLists: List<PlayListsBean>?
@@ -23,4 +25,4 @@ data class PlayListsBean(
     var totalUser: Int?,
     var rank: Int?,
     var sysUser: UserBean?
-)
+) : Serializable

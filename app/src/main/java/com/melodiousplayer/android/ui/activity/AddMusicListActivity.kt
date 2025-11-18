@@ -69,6 +69,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
     private lateinit var thumbnailPictureError: TextView
     private lateinit var mvListError: TextView
     private lateinit var addMusicList: Button
+    private lateinit var editMusicList: Button
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: PagingAdapter
     private lateinit var btnPrevious: Button
@@ -128,6 +129,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
         thumbnailPictureError = findViewById(R.id.thumbnailPictureError)
         mvListError = findViewById(R.id.mvListError)
         addMusicList = findViewById(R.id.addMusicList)
+        editMusicList = findViewById(R.id.editMusicList)
         recyclerView = findViewById(R.id.recyclerView)
         btnPrevious = findViewById(R.id.btnPrevious)
         btnNext = findViewById(R.id.btnNext)
