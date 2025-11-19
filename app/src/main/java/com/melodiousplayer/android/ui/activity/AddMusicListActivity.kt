@@ -84,6 +84,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
     private lateinit var totalText: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var hintInfo: TextView
+    private lateinit var currentMusicList: PlayListsBean
     private lateinit var currentUser: UserBean
     private lateinit var token: String
     private val PERMISSION_REQUEST = 1
@@ -103,6 +104,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
     private var selectedItems = mutableSetOf<VideosBean>()
     private var newMusicListThumbnail: String? = null
     private var isAddMusicListSuccess: Boolean = false
+    private var isMyMusicList: Boolean = false
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -112,16 +114,6 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
     }
 
     override fun initData() {
-        initAddMusicListToolBar()
-        setSupportActionBar(toolbar)
-        supportActionBar?.let {
-            // 启用Toolbar的返回按钮
-            it.setDisplayHomeAsUpEnabled(true)
-            // 显示返回按钮
-            it.setDisplayShowHomeEnabled(true)
-            // 隐藏默认标题
-            it.setDisplayShowTitleEnabled(false)
-        }
         title = findViewById(R.id.title)
         description = findViewById(R.id.description)
         category = findViewById(R.id.category)
@@ -136,6 +128,23 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
         pageInfo = findViewById(R.id.pageInfo)
         totalInfo = findViewById(R.id.totalInfo)
         spinnerPageSize = findViewById(R.id.spinnerPageSize)
+        isMyMusicList = intent.getBooleanExtra("isMyMusicList", false)
+        if (isMyMusicList) {
+            initEditMusicList()
+        } else {
+            addMusicList.visibility = View.VISIBLE
+            editMusicList.visibility = View.GONE
+            initAddMusicListToolBar()
+        }
+        setSupportActionBar(toolbar)
+        supportActionBar?.let {
+            // 启用Toolbar的返回按钮
+            it.setDisplayHomeAsUpEnabled(true)
+            // 显示返回按钮
+            it.setDisplayShowHomeEnabled(true)
+            // 隐藏默认标题
+            it.setDisplayShowTitleEnabled(false)
+        }
         val userSerialized = intent.getSerializableExtra("user")
         if (userSerialized != null) {
             currentUser = userSerialized as UserBean
@@ -166,6 +175,34 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
             spinnerPageSize.adapter = adapter
         }
         requestPermissions()
+    }
+
+    /**
+     * 初始化修改音乐界面
+     */
+    private fun initEditMusicList() {
+        addMusicList.visibility = View.GONE
+        editMusicList.visibility = View.VISIBLE
+        initEditMusicListToolBar()
+        val musicListSerialized = intent.getSerializableExtra("musicList")
+        if (musicListSerialized != null) {
+            currentMusicList = musicListSerialized as PlayListsBean
+            currentUser = currentMusicList.sysUser!!
+        }
+        title.setText(currentMusicList.title)
+        description.setText(currentMusicList.description)
+        category.setText(currentMusicList.category)
+        if (!currentMusicList.thumbnailPic.isNullOrBlank()) {
+            Glide.with(this)
+                .load(
+                    URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                            + URLProviderUtils.listPicturePath + currentMusicList.thumbnailPic
+                )
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(thumbnailPicture)
+        }
+        selectedItems = currentMusicList.mvList!!
     }
 
     override fun initListener() {
@@ -336,7 +373,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
             CROP_THUMBNAIL_REQUEST -> {
                 if (resultCode == RESULT_OK) {
                     val resultUri = CropImage.getActivityResult(data).uri
-                    // 将裁剪好的MV缩略图图片上传到服务器
+                    // 将裁剪好的音乐清单缩略图图片上传到服务器
                     if (resultUri != null) {
                         if (token.isNotEmpty()) {
                             showUploadFileDialog(this)
@@ -397,7 +434,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
     }
 
     /**
-     * 弹窗显示MV相关文件上传进度
+     * 弹窗显示音乐清单相关文件上传进度
      */
     private fun showUploadFileDialog(context: Context) {
         val dialog = AlertDialog.Builder(context)
@@ -440,9 +477,6 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
         // RecyclerView的post方法在数据渲染完成后执行操作
         recyclerView.post {
             isUpdate = false
-        }
-        for (mv in selectedItems) {
-            println("id = ${mv.id}")
         }
     }
 
@@ -520,11 +554,11 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
     override fun onUploadThumbnailSuccess(result: UploadFileResultBean) {
         thumbnailPictureError.visibility = View.GONE
         newMusicListThumbnail = result.data?.title.toString()
-        // 将上传成功的MV缩略图图片显示出来
+        // 将上传成功的音乐清单缩略图图片显示出来
         Glide.with(this)
             .load(
                 URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                        + URLProviderUtils.mvImagePath + newMusicListThumbnail
+                        + URLProviderUtils.listPicturePath + newMusicListThumbnail
             )
             .skipMemoryCache(true)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
