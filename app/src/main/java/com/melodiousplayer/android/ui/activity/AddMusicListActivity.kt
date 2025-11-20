@@ -309,6 +309,23 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
                     addMusicListPresenter.addMusicList(token, play)
                 }
             }
+
+            R.id.editMusicList -> {
+                if (token.isNotEmpty()) {
+                    val title = title.text.trim().toString()
+                    val description = description.text.trim().toString()
+                    val category = category.text.trim().toString()
+                    val videoCount = selectedItems.size
+                    val createTime = DateUtil.getCurrentTime()
+                    val play = PlayListsBean(
+                        null, title, newMusicListThumbnail, videoCount,
+                        selectedItems, description, category, 0,
+                        0, 0, null, createTime,
+                        0, 0, 0, 0, currentUser
+                    )
+                    addMusicListPresenter.addMusicList(token, play)
+                }
+            }
         }
     }
 

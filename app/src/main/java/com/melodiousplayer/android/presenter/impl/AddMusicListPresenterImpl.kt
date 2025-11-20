@@ -30,30 +30,16 @@ class AddMusicListPresenterImpl(val view: AddMusicListContract.View) :
 
     override fun addMusicList(token: String, play: PlayListsBean) {
         if (!play.title.isNullOrEmpty()) {
-            // 悦单名不为空，检查悦单名是否存在
-            if (checkMusicListTitleRequest(token, play.title)) {
-                // 悦单名不存在，继续校验悦单描述
-                if (!play.description.isNullOrEmpty()) {
-                    // 悦单描述不为空，继续校验悦单类型是否在规定大小范围中
-                    if (play.category!!.isValidCategory()) {
-                        // 悦单类型字符数在规定大小范围中，继续校验悦单缩略图
-                        if (!play.thumbnailPic.isNullOrEmpty()) {
-                            // 悦单缩略图不为空，继续校验悦单中MV数量是否在规定大小范围中
-                            if (play.mvList!!.size in 3..50) {
-                                // 悦单中MV数量在规定大小范围中，开始添加悦单
-                                addMusicListRequest(token, play)
-                            } else {
-                                view.onMusicListMVQuantityError()
-                            }
-                        } else {
-                            view.onMusicListThumbnailError()
-                        }
-                    } else {
-                        view.onCategoryError()
-                    }
-                } else {
-                    view.onDescriptionError()
+            // 悦单名不为空，检查悦单的id是否为空
+            if (play.id == null) {
+                // 悦单的id为空，检查悦单名是否存在
+                if (checkMusicListTitleRequest(token, play.title)) {
+                    // 悦单名不存在，继续校验剩余项
+                    verificationMusicList(token, play)
                 }
+            } else {
+                // 悦单的id不为空，继续校验剩余项
+                verificationMusicList(token, play)
             }
         } else {
             view.onMusicListTitleError()
@@ -118,6 +104,30 @@ class AddMusicListPresenterImpl(val view: AddMusicListContract.View) :
             delay(500)
         }
         return isValidMVTitle
+    }
+
+    private fun verificationMusicList(token: String, play: PlayListsBean) {
+        if (!play.description.isNullOrEmpty()) {
+            // 悦单描述不为空，继续校验悦单类型是否在规定大小范围中
+            if (play.category!!.isValidCategory()) {
+                // 悦单类型字符数在规定大小范围中，继续校验悦单缩略图
+                if (!play.thumbnailPic.isNullOrEmpty()) {
+                    // 悦单缩略图不为空，继续校验悦单中MV数量是否在规定大小范围中
+                    if (play.mvList!!.size in 3..50) {
+                        // 悦单中MV数量在规定大小范围中，开始添加悦单
+                        addMusicListRequest(token, play)
+                    } else {
+                        view.onMusicListMVQuantityError()
+                    }
+                } else {
+                    view.onMusicListThumbnailError()
+                }
+            } else {
+                view.onCategoryError()
+            }
+        } else {
+            view.onDescriptionError()
+        }
     }
 
     private fun addMusicListRequest(token: String, play: PlayListsBean) {
