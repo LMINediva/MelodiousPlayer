@@ -251,6 +251,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
         btnNext.setOnClickListener(this)
         thumbnailPicture.setOnClickListener(this)
         addMusicList.setOnClickListener(this)
+        editMusicList.setOnClickListener(this)
     }
 
     /**
@@ -316,14 +317,17 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
                     val description = description.text.trim().toString()
                     val category = category.text.trim().toString()
                     val videoCount = selectedItems.size
-                    val createTime = DateUtil.getCurrentTime()
-                    val play = PlayListsBean(
-                        null, title, newMusicListThumbnail, videoCount,
-                        selectedItems, description, category, 0,
-                        0, 0, null, createTime,
-                        0, 0, 0, 0, currentUser
-                    )
-                    addMusicListPresenter.addMusicList(token, play)
+                    val updateTime = DateUtil.getCurrentTime()
+                    currentMusicList.title = title
+                    currentMusicList.description = description
+                    currentMusicList.category = category
+                    currentMusicList.videoCount = videoCount
+                    currentMusicList.updateTime = updateTime
+                    currentMusicList.mvList = selectedItems
+                    if (!newMusicListThumbnail.isNullOrEmpty()) {
+                        currentMusicList.thumbnailPic = newMusicListThumbnail
+                    }
+                    addMusicListPresenter.addMusicList(token, currentMusicList)
                 }
             }
         }
