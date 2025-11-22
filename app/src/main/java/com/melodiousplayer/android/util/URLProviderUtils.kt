@@ -308,6 +308,14 @@ object URLProviderUtils {
     }
 
     /**
+     * 删除悦单
+     */
+    fun postDeleteMusicList(): String {
+        val url = protocol + serverAddress + "/data/list/delete"
+        return url
+    }
+
+    /**
      * 删除上传到服务器的悦单相关文件缓存
      */
     fun postDeleteUploadMusicListFileCache(): String {

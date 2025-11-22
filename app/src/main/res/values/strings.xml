@@ -55,6 +55,8 @@
     <string name="music_list_mv_list_size_error">MV数量最少选3部，最多选50部</string>
     <string name="add_music_list_success">添加悦单成功</string>
     <string name="add_music_list_failed">添加悦单失败</string>
+    <string name="delete_music_list_success">删除悦单成功</string>
+    <string name="delete_music_list_failed">删除悦单失败</string>
     <string name="delete_upload_music_list_file_cache_success">删除上传到服务器的悦单相关文件缓存成功</string>
     <string name="delete_upload_music_list_file_cache_failed">删除上传到服务器的悦单相关文件缓存失败</string>
     <string name="feedback_error">反馈内容不能为空</string>

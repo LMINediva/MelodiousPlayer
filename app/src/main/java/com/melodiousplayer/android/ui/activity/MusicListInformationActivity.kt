@@ -12,20 +12,25 @@ import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.PopupWindow
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.adapter.MusicListInformationAdapter
 import com.melodiousplayer.android.base.BaseActivity
+import com.melodiousplayer.android.contract.DeleteMusicListContract
 import com.melodiousplayer.android.model.PlayListsBean
+import com.melodiousplayer.android.model.ResultBean
 import com.melodiousplayer.android.model.VideosBean
+import com.melodiousplayer.android.presenter.impl.DeleteMusicListPresenterImpl
 import com.melodiousplayer.android.util.ToolBarManager
 
 /**
  * 悦单中的MV列表界面
  */
-class MusicListInformationActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
+class MusicListInformationActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
+    DeleteMusicListContract.View {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var cancel: ImageView
@@ -36,6 +41,7 @@ class MusicListInformationActivity : BaseActivity(), ToolBarManager, View.OnClic
     private var isMyMusicList: Boolean = false
     private var token: String? = null
     private var popupWindow: PopupWindow? = null
+    private val deleteMusicListPresenter = DeleteMusicListPresenterImpl(this)
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -76,6 +82,25 @@ class MusicListInformationActivity : BaseActivity(), ToolBarManager, View.OnClic
         when (v?.id) {
             R.id.cancel -> popupWindow?.dismiss()
             R.id.edit -> editMyMusicList()
+            R.id.delete -> {
+                popupWindow?.dismiss()
+                AlertDialog.Builder(this).apply {
+                    setTitle("提示")
+                    setMessage("确定要删除悦单吗？")
+                    setCancelable(false)
+                    setPositiveButton("确定") { dialog, which ->
+                        token?.let {
+                            deleteMusicListPresenter.deleteMusicList(
+                                it,
+                                arrayOf(currentMusicList.id!!)
+                            )
+                        }
+                    }
+                    setNegativeButton("取消") { dialog, which ->
+                    }
+                    show()
+                }
+            }
         }
     }
 
@@ -139,6 +164,24 @@ class MusicListInformationActivity : BaseActivity(), ToolBarManager, View.OnClic
         intent.putExtra("isMyMusicList", true)
         intent.putExtra("musicList", currentMusicList)
         startActivity(intent)
+    }
+
+    override fun onDeleteMusicListSuccess(result: ResultBean) {
+        myToast(getString(R.string.delete_music_list_success))
+        // 返回我的作品界面，传递用户信息，并退出MusicListInformationActivity
+        val intent = Intent(this, MyWorkActivity::class.java)
+        intent.putExtra("user", currentMusicList.sysUser)
+        intent.putExtra("refresh", true)
+        startActivityForResult(intent, 1)
+        finish()
+    }
+
+    override fun onDeleteMusicListFailed(result: ResultBean) {
+        myToast(getString(R.string.delete_music_list_failed))
+    }
+
+    override fun onNetworkError() {
+        myToast(getString(R.string.network_error))
     }
 
     override fun onBackPressed() {
