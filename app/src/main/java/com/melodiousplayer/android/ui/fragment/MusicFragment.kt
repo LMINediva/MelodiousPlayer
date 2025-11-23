@@ -17,10 +17,6 @@ import com.melodiousplayer.android.widget.MusicItemView
  */
 class MusicFragment : BaseListFragment<List<MusicBean>, MusicBean, MusicItemView>() {
 
-    override fun onDataChanged() {
-        super.onDataChanged()
-    }
-
     override fun getSpecialAdapter(): BaseListAdapter<MusicBean, MusicItemView> {
         return MusicAdapter()
     }
@@ -64,12 +60,6 @@ class MusicFragment : BaseListFragment<List<MusicBean>, MusicBean, MusicItemView
             intent.putExtra("position", position)
             activity?.startActivity(intent)
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        // 解绑presenter
-        presenter.destroyView()
     }
 
 }

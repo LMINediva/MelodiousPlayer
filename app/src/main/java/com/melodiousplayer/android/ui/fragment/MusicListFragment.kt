@@ -42,10 +42,4 @@ class MusicListFragment :
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        // 解绑presenter
-        presenter.destroyView()
-    }
-
 }
