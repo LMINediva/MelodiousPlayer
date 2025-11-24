@@ -72,10 +72,4 @@ class MyMVFragment : BaseGridListFragment<MyMVBean, VideosBean, MyMVItemView>() 
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        // 解绑presenter
-        presenter.destroyView()
-    }
-
 }

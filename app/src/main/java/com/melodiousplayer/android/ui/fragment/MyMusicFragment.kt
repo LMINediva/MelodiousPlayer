@@ -38,10 +38,6 @@ class MyMusicFragment : BaseGridListFragment<MyMusicBean, MusicBean, MyMusicItem
         token = arguments?.getString("token").toString()
     }
 
-    override fun onDataChanged() {
-        super.onDataChanged()
-    }
-
     override fun getSpecialAdapter(): BaseListAdapter<MusicBean, MyMusicItemView> {
         return MyMusicAdapter()
     }
@@ -89,12 +85,6 @@ class MyMusicFragment : BaseGridListFragment<MyMusicBean, MusicBean, MyMusicItem
             intent.putExtra("music", musicBeans[position])
             activity?.startActivity(intent)
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        // 解绑presenter
-        presenter.destroyView()
     }
 
 }

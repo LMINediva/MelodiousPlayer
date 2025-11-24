@@ -21,7 +21,6 @@ abstract class BaseGridListFragment<RESPONSE, ITEMBEAN, ITEMVIEW : View> : BaseF
     val presenter by lazy { getSpecialPresenter() }
 
     private lateinit var recyclerView: RecyclerView
-
     private var listener: MessageListener? = null
 
     override fun initView(): View? {

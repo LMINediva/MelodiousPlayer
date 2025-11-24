@@ -11,6 +11,7 @@ import com.melodiousplayer.android.ui.fragment.MyMVFragment
 import com.melodiousplayer.android.ui.fragment.MyMusicFragment
 import com.melodiousplayer.android.ui.fragment.MyMusicListFragment
 
+
 class MyWorkPagerAdapter(
     private val context: Context,
     fm: FragmentManager,
