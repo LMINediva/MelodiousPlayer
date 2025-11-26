@@ -37,7 +37,7 @@
             android:layout_toRightOf="@+id/author_image"
             android:maxLines="1"
             android:text="MV列表数量"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/black"
             android:textSize="20sp" />
 
         <!--悦单创建者用户名-->
@@ -50,7 +50,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="创建者名称"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/black"
             android:textSize="20sp" />
 
         <!--MV列表名称-->
@@ -62,7 +62,7 @@
             android:layout_toRightOf="@+id/author_image"
             android:maxLines="1"
             android:text="MV列表名称"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/black"
             android:textSize="20sp" />
     </RelativeLayout>
 

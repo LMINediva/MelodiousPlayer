@@ -16,13 +16,16 @@ import com.melodiousplayer.android.R
 abstract class BaseGridListFragment<RESPONSE, ITEMBEAN, ITEMVIEW : View> : BaseFragment(),
     BaseView<RESPONSE>, OnDataChangedListener {
 
+    companion object {
+        private var offset: Int = 1
+    }
+
     // 适配
     val adapter by lazy { getSpecialAdapter() }
     val presenter by lazy { getSpecialPresenter() }
 
     private lateinit var recyclerView: RecyclerView
     private var listener: MessageListener? = null
-    private var offset: Int = 1
 
     override fun initView(): View? {
         val view = View.inflate(context, R.layout.fragment_my_list, null)
@@ -58,7 +61,15 @@ abstract class BaseGridListFragment<RESPONSE, ITEMBEAN, ITEMVIEW : View> : BaseF
                         val lastPosition = manager.findLastVisibleItemPosition()
                         if (lastPosition == adapter.itemCount - 1) {
                             // 最后一条已经显示了
-                            presenter.loadMore(++offset)
+                            if (((adapter.itemCount - 1) / 20) == 0) {
+                                presenter.loadMore(2)
+                            } else {
+                                if (((adapter.itemCount - 1) % 20) == 0) {
+                                    presenter.loadMore((adapter.itemCount - 1) / 20 + 1)
+                                } else {
+                                    presenter.loadMore((adapter.itemCount - 1) / 20 + 2)
+                                }
+                            }
                         }
                     }
                 }
