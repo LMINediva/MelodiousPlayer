@@ -20,10 +20,22 @@ class MyWorkPagerAdapter(
 ) : FragmentPagerAdapter(fm) {
 
     private val bundle = Bundle()
+    private var mFragmentArrayList: List<Fragment>
 
     init {
         bundle.putSerializable("user", currentUser)
         bundle.putString("token", token)
+        val myMusicFragment = MyMusicFragment.newInstance()
+        myMusicFragment.arguments = bundle
+        val myMVFragment = MyMVFragment.newInstance()
+        myMVFragment.arguments = bundle
+        val myMusicListFragment = MyMusicListFragment.newInstance()
+        myMusicListFragment.arguments = bundle
+        mFragmentArrayList = listOf(
+            myMusicFragment,
+            myMVFragment,
+            myMusicListFragment
+        )
     }
 
     // 顶部TabLayout的标题
@@ -34,28 +46,7 @@ class MyWorkPagerAdapter(
     )
 
     override fun getItem(position: Int): Fragment {
-        when (position) {
-            0 -> {
-                val myMusicFragment = MyMusicFragment.newInstance()
-                myMusicFragment.arguments = bundle
-                return myMusicFragment
-            }
-
-            1 -> {
-                val myMVFragment = MyMVFragment.newInstance()
-                myMVFragment.arguments = bundle
-                return myMVFragment
-            }
-
-            2 -> {
-                val myMusicListFragment = MyMusicListFragment.newInstance()
-                myMusicListFragment.arguments = bundle
-                return myMusicListFragment
-            }
-        }
-        val myMusicFragment = MyMusicFragment.newInstance()
-        myMusicFragment.arguments = bundle
-        return myMusicFragment
+        return mFragmentArrayList[position]
     }
 
     override fun getPageTitle(position: Int): CharSequence? {

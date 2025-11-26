@@ -11,6 +11,7 @@ import com.melodiousplayer.android.widget.LoadMoreView
  */
 abstract class BaseListAdapter<ITEMBEAN, ITEMVIEW : View> :
     RecyclerView.Adapter<BaseListAdapter.BaseListHolder>() {
+
     var list = ArrayList<ITEMBEAN>()
     var position: Int = 0
 
@@ -35,10 +36,8 @@ abstract class BaseListAdapter<ITEMBEAN, ITEMVIEW : View> :
     fun loadMoreList(list: List<ITEMBEAN>?) {
         list?.let {
             // 如果不是最后一页数据
-            if (list.size >= 20) {
-                this.list.addAll(list)
-                notifyDataSetChanged()
-            }
+            this.list.addAll(list)
+            notifyDataSetChanged()
         }
     }
 
