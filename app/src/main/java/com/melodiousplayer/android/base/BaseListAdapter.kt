@@ -44,7 +44,7 @@ abstract class BaseListAdapter<ITEMBEAN, ITEMVIEW : View> :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseListHolder {
         if (viewType == 1) {
             // 最后一条
-            if (list.size < 20) {
+            if (list.size < 20 || (list.size % 20) != 0) {
                 // 最后一页数据
                 val loadMoreView = LoadMoreView(parent.context)
                 loadMoreView.setData()
