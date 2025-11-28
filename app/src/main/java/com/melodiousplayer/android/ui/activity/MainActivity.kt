@@ -21,8 +21,6 @@ import com.google.android.material.navigation.NavigationView
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.base.BaseFragment
-import com.melodiousplayer.android.base.InputDialogListener
-import com.melodiousplayer.android.base.MessageListener
 import com.melodiousplayer.android.base.OnDataChangedListener
 import com.melodiousplayer.android.contract.LogoutContract
 import com.melodiousplayer.android.contract.TokenLoginContract
@@ -31,7 +29,6 @@ import com.melodiousplayer.android.model.UserResultBean
 import com.melodiousplayer.android.presenter.impl.LogoutPresenterImpl
 import com.melodiousplayer.android.presenter.impl.TokenLoginPresenterImpl
 import com.melodiousplayer.android.ui.fragment.MusicFragment
-import com.melodiousplayer.android.ui.fragment.InputDialogFragment
 import com.melodiousplayer.android.util.FragmentUtil
 import com.melodiousplayer.android.util.ToolBarManager
 import com.melodiousplayer.android.util.URLProviderUtils
@@ -42,8 +39,8 @@ import java.io.Serializable
 /**
  * 主界面
  */
-class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, MessageListener,
-    OnDataChangedListener, View.OnClickListener, TokenLoginContract.View, LogoutContract.View {
+class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
+    View.OnClickListener, TokenLoginContract.View, LogoutContract.View {
 
     private lateinit var bottomBar: BottomNavigationView
     private lateinit var drawerLayout: DrawerLayout
@@ -320,29 +317,9 @@ class MainActivity : BaseActivity(), ToolBarManager, InputDialogListener, Messag
         transaction.commit()
     }
 
-    private fun showInputDialog() {
-        val dialog = InputDialogFragment()
-        dialog.show(supportFragmentManager, "InputDialog")
-    }
-
-    override fun onFinishEdit(inputText: String) {
-        URLProviderUtils.serverAddress = inputText
-        refreshData()
-    }
-
-    override fun onMessageReceived(message: String) {
-        if (message == "error") {
-            showInputDialog()
-        }
-    }
-
     override fun onDataChanged() {
         val fragment = FragmentUtil.fragmentUtil.getFragment(R.id.tab_home) as MusicFragment
         fragment.onDataChanged()
-    }
-
-    fun refreshData() {
-        onDataChanged()
     }
 
     override fun onTokenLoginSuccess(userResult: UserResultBean?) {
