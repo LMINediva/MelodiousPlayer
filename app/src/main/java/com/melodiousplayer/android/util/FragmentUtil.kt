@@ -12,9 +12,6 @@ import com.melodiousplayer.android.ui.fragment.LocalMusicFragment
  */
 class FragmentUtil private constructor() { // 私有化构造函数
 
-    // 首页
-    val musicFragment by lazy { MusicFragment() }
-
     // MV
     val mvFragment by lazy { MVFragment() }
 
@@ -33,7 +30,7 @@ class FragmentUtil private constructor() { // 私有化构造函数
      */
     fun getFragment(tabId: Int): BaseFragment? {
         when (tabId) {
-            R.id.tab_home -> return musicFragment
+            R.id.tab_home -> return MusicFragment.newInstance()
             R.id.tab_mv -> return mvFragment
             R.id.tab_local_music_list -> return localMusicFragment
             R.id.tab_music_list -> return musicListFragment

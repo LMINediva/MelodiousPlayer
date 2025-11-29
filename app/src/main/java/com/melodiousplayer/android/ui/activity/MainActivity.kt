@@ -122,6 +122,13 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
             }
         }
         requestPermissions()
+        val addOrModifySuccess = intent.getBooleanExtra("addOrModifySuccess", false)
+        if (addOrModifySuccess) {
+            val fragment = FragmentUtil.fragmentUtil.getFragment(R.id.tab_home) as MusicFragment
+            if (fragment.isAdded) {
+                fragment.onDataChanged()
+            }
+        }
     }
 
     override fun initListener() {

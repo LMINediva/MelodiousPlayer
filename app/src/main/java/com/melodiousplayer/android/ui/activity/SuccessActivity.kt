@@ -1,5 +1,6 @@
 package com.melodiousplayer.android.ui.activity
 
+import android.content.Intent
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
@@ -14,7 +15,7 @@ import com.melodiousplayer.android.util.ToolBarManager
  */
 class SuccessActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
 
-    private lateinit var backButton: Button
+    private lateinit var backHomePageButton: Button
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -34,11 +35,11 @@ class SuccessActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
             // 隐藏默认标题
             it.setDisplayShowTitleEnabled(false)
         }
-        backButton = findViewById(R.id.backButton)
+        backHomePageButton = findViewById(R.id.backHomePageButton)
     }
 
     override fun initListener() {
-        backButton.setOnClickListener(this)
+        backHomePageButton.setOnClickListener(this)
     }
 
     /**
@@ -56,13 +57,19 @@ class SuccessActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.backButton -> {
+            R.id.backHomePageButton -> {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("addOrModifySuccess", true)
+                startActivity(intent)
                 finish()
             }
         }
     }
 
     override fun onBackPressed() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("addOrModifySuccess", true)
+        startActivity(intent)
         finish()
         super.onBackPressed()
     }

@@ -17,6 +17,16 @@ import com.melodiousplayer.android.widget.MusicItemView
  */
 class MusicFragment : BaseListFragment<List<MusicBean>, MusicBean, MusicItemView>() {
 
+    companion object {
+        /**
+         * 单例，返回此片段的新实例
+         */
+        @JvmStatic
+        fun newInstance(): MusicFragment {
+            return MusicFragment()
+        }
+    }
+
     override fun getSpecialAdapter(): BaseListAdapter<MusicBean, MusicItemView> {
         return MusicAdapter()
     }
