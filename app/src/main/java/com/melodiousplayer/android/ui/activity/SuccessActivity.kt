@@ -68,7 +68,7 @@ class SuccessActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
 
     override fun onBackPressed() {
         val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("addOrModifySuccess", true)
+        intent.putExtra("addOrModifyMusicSuccess", true)
         startActivity(intent)
         finish()
         super.onBackPressed()
