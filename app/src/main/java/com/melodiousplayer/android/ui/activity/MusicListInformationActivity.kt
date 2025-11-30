@@ -169,10 +169,10 @@ class MusicListInformationActivity : BaseActivity(), ToolBarManager, View.OnClic
     override fun onDeleteMusicListSuccess(result: ResultBean) {
         myToast(getString(R.string.delete_music_list_success))
         // 返回我的作品界面，传递用户信息，并退出MusicListInformationActivity
-        val intent = Intent(this, MyWorkActivity::class.java)
+        val intent = Intent()
         intent.putExtra("user", currentMusicList.sysUser)
-        intent.putExtra("refresh", true)
-        startActivityForResult(intent, 1)
+        intent.putExtra("refreshMyMusicList", true)
+        setResult(RESULT_OK, intent)
         finish()
     }
 

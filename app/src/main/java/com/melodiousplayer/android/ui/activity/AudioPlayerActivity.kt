@@ -407,10 +407,10 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         // 关闭通知
         iService?.closeNotification()
         // 返回我的作品界面，传递用户信息，并退出AudioPlayerActivity
-        val intent = Intent(this, MyWorkActivity::class.java)
+        val intent = Intent()
         intent.putExtra("user", currentMusic.sysUser)
-        intent.putExtra("refresh", true)
-        startActivityForResult(intent, 1)
+        intent.putExtra("refreshMyMusic", true)
+        setResult(RESULT_OK, intent)
         finish()
     }
 

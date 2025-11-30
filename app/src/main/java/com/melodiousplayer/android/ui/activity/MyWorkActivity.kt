@@ -11,6 +11,9 @@ import com.melodiousplayer.android.R
 import com.melodiousplayer.android.adapter.MyWorkPagerAdapter
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.model.UserBean
+import com.melodiousplayer.android.ui.fragment.MyMVFragment
+import com.melodiousplayer.android.ui.fragment.MyMusicFragment
+import com.melodiousplayer.android.ui.fragment.MyMusicListFragment
 import com.melodiousplayer.android.util.ToolBarManager
 
 /**
@@ -79,8 +82,8 @@ class MyWorkActivity : BaseActivity(), ToolBarManager {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             1 -> if (resultCode == RESULT_OK) {
-                val refresh = data?.getBooleanExtra("refresh", false)
-                if (refresh == true) {
+                val refreshMyMusic = data?.getBooleanExtra("refreshMyMusic", false)
+                if (refreshMyMusic == true) {
                     val userSerialized = data.getSerializableExtra("user")
                     if (userSerialized != null) {
                         currentUser = userSerialized as UserBean
@@ -88,7 +91,48 @@ class MyWorkActivity : BaseActivity(), ToolBarManager {
                         currentUser.createTime = null
                         currentUser.updateTime = null
                     }
-                    adapter.notifyDataSetChanged()
+                    val myMusicFragment = adapter.getItem(viewPager.currentItem) as MyMusicFragment
+                    if (myMusicFragment.isAdded) {
+                        myMusicFragment.onDataChanged()
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+            }
+
+            2 -> if (resultCode == RESULT_OK) {
+                val refreshMyMV = data?.getBooleanExtra("refreshMyMV", false)
+                if (refreshMyMV == true) {
+                    val userSerialized = data.getSerializableExtra("user")
+                    if (userSerialized != null) {
+                        currentUser = userSerialized as UserBean
+                        currentUser.loginDate = null
+                        currentUser.createTime = null
+                        currentUser.updateTime = null
+                    }
+                    val myMVFragment = adapter.getItem(viewPager.currentItem) as MyMVFragment
+                    if (myMVFragment.isAdded) {
+                        myMVFragment.onDataChanged()
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+            }
+
+            3 -> if (resultCode == RESULT_OK) {
+                val refreshMyMusicList = data?.getBooleanExtra("refreshMyMusicList", false)
+                if (refreshMyMusicList == true) {
+                    val userSerialized = data.getSerializableExtra("user")
+                    if (userSerialized != null) {
+                        currentUser = userSerialized as UserBean
+                        currentUser.loginDate = null
+                        currentUser.createTime = null
+                        currentUser.updateTime = null
+                    }
+                    val myMusicListFragment =
+                        adapter.getItem(viewPager.currentItem) as MyMusicListFragment
+                    if (myMusicListFragment.isAdded) {
+                        myMusicListFragment.onDataChanged()
+                        adapter.notifyDataSetChanged()
+                    }
                 }
             }
         }

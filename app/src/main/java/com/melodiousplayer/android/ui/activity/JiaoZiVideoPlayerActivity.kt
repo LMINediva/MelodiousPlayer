@@ -386,11 +386,11 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
             videoPlayer.onClickUiToggle()
             videoPlayer.startButton.performClick()
         }
-        // 返回我的作品界面，传递用户信息，并退出AudioPlayerActivity
-        val intent = Intent(this, MyWorkActivity::class.java)
+        // 返回我的作品界面，传递用户信息，并退出JiaoZiVideoPlayerActivity
+        val intent = Intent()
         intent.putExtra("user", currentMV.sysUser)
-        intent.putExtra("refresh", true)
-        startActivityForResult(intent, 1)
+        intent.putExtra("refreshMyMV", true)
+        setResult(RESULT_OK, intent)
         finish()
     }
 

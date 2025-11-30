@@ -68,7 +68,7 @@ class MyMVFragment : BaseGridListFragment<MyMVBean, VideosBean, MyMVItemView>() 
             intent.putExtra("isMyMV", true)
             intent.putExtra("token", token)
             intent.putExtra("mv", it)
-            activity?.startActivity(intent)
+            activity?.startActivityForResult(intent, 2)
         }
     }
 

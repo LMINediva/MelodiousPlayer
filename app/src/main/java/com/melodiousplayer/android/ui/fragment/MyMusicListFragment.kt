@@ -66,7 +66,7 @@ class MyMusicListFragment :
             intent.putExtra("isMyMusicList", true)
             intent.putExtra("token", token)
             intent.putExtra("musicList", it)
-            activity?.startActivity(intent)
+            activity?.startActivityForResult(intent, 3)
         }
     }
 

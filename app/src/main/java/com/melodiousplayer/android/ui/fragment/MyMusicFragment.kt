@@ -83,7 +83,7 @@ class MyMusicFragment : BaseGridListFragment<MyMusicBean, MusicBean, MyMusicItem
             intent.putExtra("isMyMusic", true)
             intent.putExtra("token", token)
             intent.putExtra("music", musicBeans[position])
-            activity?.startActivity(intent)
+            activity?.startActivityForResult(intent, 1)
         }
     }
 
