@@ -2,6 +2,7 @@ package com.melodiousplayer.android.util
 
 import com.melodiousplayer.android.model.LyricBean
 import java.io.File
+import java.util.regex.Pattern
 
 /**
  * 歌词解析工具类
@@ -74,11 +75,8 @@ object LyricUtil {
         for (index in 0 until arr.size - 1) {
             val value = arr.get(index)
             // 将非时间内容进行过滤处理
-            if ((value.indexOf("[ar:") != -1) || (value.indexOf("[ti:") != -1)
-                || (value.indexOf("[by:") != -1)
-                || (value.indexOf("[al:") != -1)
-                || (value.indexOf("[offset:") != -1) || value.equals("")
-            ) {
+            val pattern = Pattern.compile("^\\[(\\d{2}):(\\d{2})(.*)")
+            if (!pattern.matcher(value).matches()) {
                 list.add(LyricBean(0, content))
                 continue
             }
