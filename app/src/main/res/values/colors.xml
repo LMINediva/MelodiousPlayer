@@ -25,4 +25,5 @@
     <color name="colorPlaceholder">#505050</color>
     <color name="colorEditText">#14000000</color>
     <color name="colorButton">#0E68FF</color>
+    <color name="colorButtonPressed">#0E61DB</color>
 </resources>
