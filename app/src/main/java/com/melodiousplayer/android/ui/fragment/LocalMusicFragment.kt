@@ -9,7 +9,9 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore.Audio.Media
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.ListView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -43,12 +45,37 @@ class LocalMusicFragment : BaseFragment() {
         // 动态权限申请
         handlePermission()
         // 检查通知是否打开
-        var notificationON = false
+        var notificationON: Boolean
         context?.let {
             notificationON = isNotificationEnabled(it)
             if (!notificationON) {
+                showOpenNotificationDialog()
+            }
+        }
+    }
+
+    /**
+     * 显示开启通知提示弹窗
+     */
+    private fun showOpenNotificationDialog() {
+        context?.let {
+            val builder = AlertDialog.Builder(it)
+            val inflater = LayoutInflater.from(it)
+            val dialogView = inflater.inflate(R.layout.dialog_open_notification, null)
+            builder.setView(dialogView)
+            val alertDialog = builder.create()
+            alertDialog.show()
+            val cancelButton = dialogView.findViewById<Button>(R.id.cancel)
+            val openButton = dialogView.findViewById<Button>(R.id.open)
+            cancelButton.setOnClickListener {
+                alertDialog.dismiss()
+            }
+            openButton.setOnClickListener {
+                alertDialog.dismiss()
                 // 引导用户打开通知权限
-                gotoSetNotification(it)
+                context?.let {
+                    gotoSetNotification(it)
+                }
             }
         }
     }

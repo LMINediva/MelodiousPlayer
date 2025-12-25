@@ -70,6 +70,10 @@
     <string name="cache_explain">
         缓存是使用悦听影音过程中产生的临时数据，清理缓存不会影响悦听影音的正常使用。
     </string>
+    <string name="open_notification_title">开启后台通知</string>
+    <string name="open_notification">
+        后台播放音乐需要开启通知，以获得更好的播放体验。
+    </string>
     <string name="about">
         由独立开发者倾力打造\n
         悦听影音后台管理系统网址（建议使用PC端浏览器打开）：\n
