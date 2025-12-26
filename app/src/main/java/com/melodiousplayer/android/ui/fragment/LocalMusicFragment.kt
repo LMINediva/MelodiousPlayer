@@ -6,22 +6,18 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
-import android.net.Uri
-import android.os.Build
 import android.provider.MediaStore.Audio.Media
-import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
 import android.widget.ListView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.adapter.LocalMusicAdapter
 import com.melodiousplayer.android.base.BaseFragment
 import com.melodiousplayer.android.model.AudioBean
 import com.melodiousplayer.android.ui.activity.AudioPlayerActivity
+import com.melodiousplayer.android.util.NotificationUtil
 
 /**
  * 本地音乐
@@ -44,37 +40,21 @@ class LocalMusicFragment : BaseFragment() {
         adapter = LocalMusicAdapter(context, null)
         // 动态权限申请
         handlePermission()
-        // 检查通知是否打开
-        var notificationON: Boolean
         context?.let {
-            notificationON = isNotificationEnabled(it)
-            if (!notificationON) {
-                showOpenNotificationDialog()
-            }
-        }
-    }
-
-    /**
-     * 显示开启通知提示弹窗
-     */
-    private fun showOpenNotificationDialog() {
-        context?.let {
-            val builder = AlertDialog.Builder(it)
-            val inflater = LayoutInflater.from(it)
-            val dialogView = inflater.inflate(R.layout.dialog_open_notification, null)
-            builder.setView(dialogView)
-            val alertDialog = builder.create()
-            alertDialog.show()
-            val cancelButton = dialogView.findViewById<Button>(R.id.cancel)
-            val openButton = dialogView.findViewById<Button>(R.id.open)
-            cancelButton.setOnClickListener {
-                alertDialog.dismiss()
-            }
-            openButton.setOnClickListener {
-                alertDialog.dismiss()
-                // 引导用户打开通知权限
-                context?.let {
-                    gotoSetNotification(it)
+            // 检查通知是否打开
+            val notificationON: Boolean = NotificationUtil.isNotificationEnabled(it)
+            if (!NotificationUtil.isNotificationKeyExist(it)) {
+                if (!notificationON) {
+                    NotificationUtil.setNotification(it, false)
+                    NotificationUtil.showOpenNotificationDialog(it)
+                } else {
+                    NotificationUtil.setNotification(it, true)
+                }
+            } else {
+                if (!notificationON) {
+                    NotificationUtil.setNotification(it, false)
+                } else {
+                    NotificationUtil.setNotification(it, true)
                 }
             }
         }
@@ -200,43 +180,6 @@ class LocalMusicFragment : BaseFragment() {
             ),
             null, null, null
         )
-    }
-
-    /**
-     * 检查通知显示是否开启
-     */
-    fun isNotificationEnabled(context: Context): Boolean {
-        var isOpened = false
-        isOpened = try {
-            NotificationManagerCompat.from(context).areNotificationsEnabled()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false
-        }
-        return isOpened
-    }
-
-    /**
-     * 引导用户打开通知
-     */
-    fun gotoSetNotification(context: Context) {
-        val intent = Intent()
-        if (Build.VERSION.SDK_INT >= 26) {
-            // android 8.0引导
-            intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS")
-            intent.putExtra("android.provider.extra.APP_PACKAGE", context.getPackageName())
-        } else if (Build.VERSION.SDK_INT >= 21) {
-            // android 5.0-7.0
-            intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS")
-            intent.putExtra("app_package", context.getPackageName())
-            intent.putExtra("app_uid", context.getApplicationInfo().uid)
-        } else {
-            // 其他
-            intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS")
-            intent.setData(Uri.fromParts("package", context.getPackageName(), null))
-        }
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(intent)
     }
 
     override fun initListener() {
