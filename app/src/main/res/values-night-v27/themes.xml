@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme.FullScreen">
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <!-- 导航栏移除内容覆盖层 -->
+        <item name="android:navigationBarColor">
+            @null
+        </item>
+        <!-- 状态栏移除内容覆盖层 -->
+        <item name="android:statusBarColor">
+            @null
+        </item>
+        <!-- 不要标题栏 -->
+        <item name="windowActionBar">false</item>
+        <item name="android:windowBackground">@mipmap/default_splash_bg</item>
+    </style>
+
+</resources>

@@ -39,7 +39,7 @@
             android:layout_above="@+id/title"
             android:maxLines="1"
             android:text="歌手名称"
-            android:textColor="#00FF00"
+            android:textColor="@color/white"
             android:textSize="25sp" />
     </RelativeLayout>
 

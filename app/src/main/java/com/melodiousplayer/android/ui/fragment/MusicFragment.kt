@@ -75,6 +75,13 @@ class MusicFragment : BaseListFragment<List<MusicBean>, MusicBean, MusicItemView
                         val list: ArrayList<AudioBean> = ArrayList()
                         musicBeans.let {
                             it.forEach { music ->
+                                var onlineLyric: String?
+                                if (music.lyric.isNullOrBlank()) {
+                                    onlineLyric = null
+                                } else {
+                                    onlineLyric =
+                                        URLProviderUtils.protocol + URLProviderUtils.serverAddress + URLProviderUtils.lyricPath + music.lyric
+                                }
                                 list.add(
                                     AudioBean(
                                         URLProviderUtils.protocol + URLProviderUtils.serverAddress
@@ -82,8 +89,7 @@ class MusicFragment : BaseListFragment<List<MusicBean>, MusicBean, MusicItemView
                                         music.musicSize!!.toLong(),
                                         music.title!!,
                                         music.artistName,
-                                        URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                                                + URLProviderUtils.lyricPath + music.lyric,
+                                        onlineLyric,
                                         true
                                     )
                                 )
@@ -108,6 +114,13 @@ class MusicFragment : BaseListFragment<List<MusicBean>, MusicBean, MusicItemView
                     val list: ArrayList<AudioBean> = ArrayList()
                     musicBeans.let {
                         it.forEach { music ->
+                            var onlineLyric: String?
+                            if (music.lyric.isNullOrBlank()) {
+                                onlineLyric = null
+                            } else {
+                                onlineLyric =
+                                    URLProviderUtils.protocol + URLProviderUtils.serverAddress + URLProviderUtils.lyricPath + music.lyric
+                            }
                             list.add(
                                 AudioBean(
                                     URLProviderUtils.protocol + URLProviderUtils.serverAddress
@@ -115,8 +128,7 @@ class MusicFragment : BaseListFragment<List<MusicBean>, MusicBean, MusicItemView
                                     music.musicSize!!.toLong(),
                                     music.title!!,
                                     music.artistName,
-                                    URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                                            + URLProviderUtils.lyricPath + music.lyric,
+                                    onlineLyric,
                                     true
                                 )
                             )
