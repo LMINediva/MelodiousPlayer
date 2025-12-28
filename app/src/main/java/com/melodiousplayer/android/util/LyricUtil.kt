@@ -17,7 +17,7 @@ object LyricUtil {
         val list = ArrayList<LyricBean>()
         // 判断歌词是否为空
         if (!file.exists()) {
-            list.add(LyricBean(0, "本地歌词未找到"))
+            list.add(LyricBean(0, "歌词未找到"))
             return list
         }
         // 解析歌词文件，添加到集合中
@@ -43,7 +43,7 @@ object LyricUtil {
         val list = ArrayList<LyricBean>()
         // 判断歌词是否为空
         if (lyric == null) {
-            list.add(LyricBean(0, "在线歌词未找到"))
+            list.add(LyricBean(0, "歌词未找到"))
             return list
         }
         // 解析歌词文件，添加到集合中

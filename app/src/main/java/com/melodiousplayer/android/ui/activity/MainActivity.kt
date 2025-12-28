@@ -330,7 +330,6 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
     }
 
     override fun onTokenLoginSuccess(userResult: UserResultBean?) {
-        myToast(getString(R.string.login_success))
         currentUser = userResult?.currentUser!!
         usernameText.text = currentUser.username
         usernameText.visibility = View.VISIBLE
@@ -351,7 +350,6 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
         for (i in 0 until menu.size()) {
             menu.getItem(i).isVisible = false
         }
-        msg?.let { myToast(it) }
     }
 
     override fun onLogoutSuccess(msg: String?) {

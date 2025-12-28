@@ -59,6 +59,7 @@
         <activity android:name=".ui.activity.AddMusicListActivity" />
         <activity android:name=".ui.activity.MyWorkActivity" />
         <activity android:name=".ui.activity.MusicListInformationActivity" />
+        <activity android:name=".ui.activity.NotificationSettingActivity" />
         <activity android:name=".ui.activity.ClearCacheActivity" />
         <activity android:name=".ui.activity.FeedBackActivity" />
         <activity android:name=".ui.activity.AboutActivity" />

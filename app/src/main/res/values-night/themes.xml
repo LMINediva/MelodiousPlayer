@@ -29,7 +29,12 @@
         </item>
         <!-- 不要标题栏 -->
         <item name="windowActionBar">false</item>
-        <item name="android:windowBackground">@mipmap/default_splash_bg</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowDisablePreview">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">false</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowBackground">@drawable/welcome</item>
     </style>
 
     <style name="pop">

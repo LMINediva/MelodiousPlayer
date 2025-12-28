@@ -17,7 +17,7 @@
             android:id="@+id/bg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@mipmap/default_splash_bg"
+            android:background="@drawable/loading"
             android:scaleType="centerCrop" />
 
         <!--悦单创建者头像-->

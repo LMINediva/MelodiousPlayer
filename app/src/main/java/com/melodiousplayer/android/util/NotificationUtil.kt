@@ -54,7 +54,7 @@ object NotificationUtil {
     /**
      * 引导用户打开通知
      */
-    private fun gotoSetNotification(context: Context) {
+    fun gotoSetNotification(context: Context) {
         val intent = Intent()
         if (Build.VERSION.SDK_INT >= 26) {
             // android 8.0引导
@@ -87,10 +87,22 @@ object NotificationUtil {
         }
     }
 
+    /**
+     * 设置SharedPreferences中的通知设置属性
+     */
     fun setNotification(context: Context, isEnable: Boolean) {
         val editor = context.getSharedPreferences("data", Context.MODE_PRIVATE).edit()
         editor.putBoolean("enable_notification", isEnable)
         editor.apply()
+    }
+
+    /**
+     * 获取SharedPreferences中的通知设置属性
+     */
+    fun getNotification(context: Context): Boolean {
+        val prefs = context.getSharedPreferences("data", Context.MODE_PRIVATE)
+        val isEnableNotification = prefs.getBoolean("enable_notification", false)
+        return isEnableNotification
     }
 
 }

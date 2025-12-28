@@ -72,7 +72,11 @@
     </string>
     <string name="open_notification_title">开启后台通知</string>
     <string name="open_notification">
-        后台播放音乐需要开启通知，以获得更好的播放体验。可在「设置」->「开启通知」中开启。
+        后台播放音乐需要手动开启通知，以获得更好的播放体验。可在「设置」->「通知设置」中开启。
+    </string>
+    <string name="close_notification_title">关闭后台通知</string>
+    <string name="close_notification">
+        关闭后台播放音乐通知后，将无法在状态栏中显示。可在「设置」->「通知设置」中开启。
     </string>
     <string name="about">
         由独立开发者倾力打造\n

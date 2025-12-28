@@ -16,6 +16,7 @@ import com.melodiousplayer.android.presenter.impl.CheckUpdatePresenterImpl
 import com.melodiousplayer.android.ui.activity.AboutActivity
 import com.melodiousplayer.android.ui.activity.ClearCacheActivity
 import com.melodiousplayer.android.ui.activity.FeedBackActivity
+import com.melodiousplayer.android.ui.activity.NotificationSettingActivity
 import com.melodiousplayer.android.util.URLProviderUtils
 
 /**
@@ -26,6 +27,7 @@ class SettingFragment : BaseFragment(), CheckUpdateContract.View,
 
     private lateinit var view: View
     private lateinit var checkUpdate: LinearLayout
+    private lateinit var notificationSetting: LinearLayout
     private lateinit var clearCache: LinearLayout
     private lateinit var feedback: LinearLayout
     private lateinit var about: LinearLayout
@@ -43,6 +45,7 @@ class SettingFragment : BaseFragment(), CheckUpdateContract.View,
 
     override fun initData() {
         checkUpdate = view.findViewById(R.id.check_update)
+        notificationSetting = view.findViewById(R.id.notification_setting)
         clearCache = view.findViewById(R.id.clear_cache)
         feedback = view.findViewById(R.id.feedback)
         about = view.findViewById(R.id.about)
@@ -60,6 +63,7 @@ class SettingFragment : BaseFragment(), CheckUpdateContract.View,
 
     override fun initListener() {
         checkUpdate.setOnClickListener(this)
+        notificationSetting.setOnClickListener(this)
         clearCache.setOnClickListener(this)
         feedback.setOnClickListener(this)
         about.setOnClickListener(this)
@@ -76,6 +80,11 @@ class SettingFragment : BaseFragment(), CheckUpdateContract.View,
                 if (versionName != null) {
                     checkUpdatePresenter.checkUpdate(versionName)
                 }
+            }
+
+            R.id.notification_setting -> {
+                // 跳转到通知设置界面
+                activity?.startActivity(Intent(activity, NotificationSettingActivity::class.java))
             }
 
             R.id.clear_cache -> {

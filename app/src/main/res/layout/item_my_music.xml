@@ -10,14 +10,14 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:padding="5dp">
+        android:padding="2dp">
 
         <!--背景图-->
         <ImageView
             android:id="@+id/bg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@mipmap/default_splash_bg"
+            android:background="@drawable/loading"
             android:scaleType="centerCrop" />
 
         <!--歌曲名称-->
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/artistName"
             android:layout_marginStart="5dp"
-            android:textColor="#00FF00"
+            android:textColor="@color/white"
             android:textSize="15sp" />
 
         <!--歌手名称-->
@@ -38,7 +38,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginStart="5dp"
             android:layout_marginBottom="5dp"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:textSize="10sp" />
 
     </RelativeLayout>

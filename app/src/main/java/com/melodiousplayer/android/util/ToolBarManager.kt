@@ -146,4 +146,12 @@ interface ToolBarManager {
         toolbarTitle.text = "用户反馈"
     }
 
+    /**
+     * 初始化通知设置界面中的toolbar
+     */
+    fun initNotificationSettingToolBar() {
+        // 设置标题
+        toolbarTitle.text = "通知设置"
+    }
+
 }
