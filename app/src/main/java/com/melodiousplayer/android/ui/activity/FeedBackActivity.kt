@@ -192,6 +192,7 @@ class FeedBackActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                             // 在截图界面显示选择好的照片
                             val intent = CropImage.activity(uri)
                                 .setGuidelines(CropImageView.Guidelines.ON)
+                                .setInitialCropWindowPaddingRatio(0F)
                                 .getIntent(this)
                             startActivityForResult(intent, CROP_FEEDBACK_REQUEST)
                         }

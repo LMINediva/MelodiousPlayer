@@ -145,6 +145,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginRight="30dp"
                 android:background="@drawable/button_background"
+                android:outlineProvider="none"
                 android:text="注册"
                 android:textAllCaps="false"
                 android:textColor="@color/white"

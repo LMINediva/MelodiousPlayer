@@ -13,15 +13,19 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.contract.LoginContract
+import com.melodiousplayer.android.contract.VerificationCodeContract
+import com.melodiousplayer.android.model.ResultBean
 import com.melodiousplayer.android.model.UserResultBean
 import com.melodiousplayer.android.presenter.impl.LoginPresenterImpl
+import com.melodiousplayer.android.presenter.impl.VerificationCodePresenterImpl
 import com.melodiousplayer.android.util.EncryptUtil
 import com.melodiousplayer.android.util.URLProviderUtils
 
 /**
  * 用户登录界面
  */
-class LoginActivity : BaseActivity(), LoginContract.View, View.OnClickListener {
+class LoginActivity : BaseActivity(), VerificationCodeContract.View,
+    LoginContract.View, View.OnClickListener {
 
     private lateinit var back: ImageView
     private lateinit var userName: EditText
@@ -32,7 +36,8 @@ class LoginActivity : BaseActivity(), LoginContract.View, View.OnClickListener {
     private lateinit var verificationCode: EditText
     private lateinit var verificationCodeImage: ImageView
     private val REGISTER_REQUEST = 1
-    private val presenter = LoginPresenterImpl(this)
+    private val verificationCodePresenter = VerificationCodePresenterImpl(this)
+    private val loginPresenter = LoginPresenterImpl(this)
 
     override fun getLayoutId(): Int {
         return R.layout.activity_login
@@ -71,13 +76,13 @@ class LoginActivity : BaseActivity(), LoginContract.View, View.OnClickListener {
 
     override fun initListener() {
         back.setOnClickListener(this)
-        login.setOnClickListener(this)
-        password.setOnEditorActionListener { v, actionId, event ->
-            login()
+        verificationCodeImage.setOnClickListener(this)
+        verificationCode.setOnEditorActionListener { v, actionId, event ->
+            compareVerificationCode()
             true
         }
+        login.setOnClickListener(this)
         newUser.setOnClickListener(this)
-        verificationCodeImage.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -87,7 +92,7 @@ class LoginActivity : BaseActivity(), LoginContract.View, View.OnClickListener {
             }
 
             R.id.login -> {
-                login()
+                compareVerificationCode()
             }
 
             R.id.newUser -> {
@@ -114,13 +119,25 @@ class LoginActivity : BaseActivity(), LoginContract.View, View.OnClickListener {
         }
     }
 
-    private fun login() {
+    private fun compareVerificationCode() {
         // 隐藏软键盘
         hideSoftKeyboard()
+        val verificationCodeString = verificationCode.text.trim().toString()
+        verificationCodePresenter.compare(verificationCodeString)
+    }
+
+    private fun login() {
         val userNameString = userName.text.trim().toString()
         val passwordString = password.text.trim().toString()
-        val verificationCodeString = verificationCode.text.trim().toString()
-        presenter.login(userNameString, passwordString, verificationCodeString)
+        loginPresenter.login(userNameString, passwordString)
+    }
+
+    override fun onCompareVerificationCodeSuccess() {
+        login()
+    }
+
+    override fun onCompareVerificationCodeFailed(result: ResultBean?) {
+        result?.msg?.let { verificationCode.error = it }
     }
 
     override fun onUserNameError() {
@@ -129,12 +146,6 @@ class LoginActivity : BaseActivity(), LoginContract.View, View.OnClickListener {
 
     override fun onPasswordError() {
         password.error = getString(R.string.password_error)
-    }
-
-    override fun onVerificationCodeError(msg: String?) {
-        runOnUiThread {
-            verificationCode.error = msg
-        }
     }
 
     override fun onStartLogin() {

@@ -8,13 +8,12 @@ import com.melodiousplayer.android.model.UserResultBean
 interface LoginContract {
 
     interface Presenter : BasePresenter {
-        fun login(userName: String, password: String, verificationCode: String)
+        fun login(userName: String, password: String)
     }
 
     interface View {
         fun onUserNameError()
         fun onPasswordError()
-        fun onVerificationCodeError(msg: String?)
         fun onStartLogin()
         fun onLoginSuccess(userResult: UserResultBean?)
         fun onLoginFailed()
