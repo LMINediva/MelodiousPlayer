@@ -3,7 +3,7 @@ package com.melodiousplayer.android.extension
 /**
  * 校验用户输入用户名是否有效
  */
-fun String.isValidUserName(): Boolean = this.length in 3..20
+fun String.isValidUserName(): Boolean = this.length in 2..20
 
 /**
  * 校验用户输入密码是否有效
@@ -20,6 +20,16 @@ fun String.isValidPhoneNumber(): Boolean = this.matches(Regex("^1[3456789]\\d{9}
  */
 fun String.isValidEmail(): Boolean =
     this.matches(Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$"))
+
+/**
+ * 校验用户输入音乐名是否有效
+ */
+fun String.isValidMusicTitle(): Boolean = this.length in 1..80
+
+/**
+ * 校验用户输入歌手姓名是否有效
+ */
+fun String.isValidArtistName(): Boolean = this.length in 1..6
 
 /**
  * 校验用户输入悦单类型是否有效

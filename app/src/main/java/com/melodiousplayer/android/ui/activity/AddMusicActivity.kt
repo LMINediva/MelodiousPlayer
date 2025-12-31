@@ -28,11 +28,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.google.gson.Gson
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.contract.AddMusicContract
 import com.melodiousplayer.android.contract.DeleteUploadMusicFileCacheContract
 import com.melodiousplayer.android.contract.GetLyricTextContract
+import com.melodiousplayer.android.contract.TitleContract
 import com.melodiousplayer.android.contract.UploadLyricContract
 import com.melodiousplayer.android.contract.UploadMusicContract
 import com.melodiousplayer.android.contract.UploadPosterContract
@@ -44,6 +46,7 @@ import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.presenter.impl.AddMusicPresenterImpl
 import com.melodiousplayer.android.presenter.impl.DeleteUploadMusicFileCachePresenterImpl
 import com.melodiousplayer.android.presenter.impl.GetLyricTextPresenterImpl
+import com.melodiousplayer.android.presenter.impl.TitlePresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadLyricPresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadMusicPosterPresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadMusicPresenterImpl
@@ -67,7 +70,7 @@ import java.math.RoundingMode
 class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     SeekBar.OnSeekBarChangeListener, UploadPosterContract.View, UploadThumbnailContract.View,
     UploadLyricContract.View, UploadMusicContract.View, AddMusicContract.View,
-    GetLyricTextContract.View, DeleteUploadMusicFileCacheContract.View {
+    GetLyricTextContract.View, DeleteUploadMusicFileCacheContract.View, TitleContract.View {
 
     private lateinit var title: EditText
     private lateinit var artistName: EditText
@@ -116,6 +119,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private val addMusicPresenter = AddMusicPresenterImpl(this)
     private val getLyricTextPresenter = GetLyricTextPresenterImpl(this)
     private val deleteUploadMusicFileCachePresenter = DeleteUploadMusicFileCachePresenterImpl(this)
+    private val titlePresenter = TitlePresenterImpl(this)
     private val handler = object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
@@ -319,25 +323,29 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
 
             R.id.addMusic -> {
                 if (token.isNotEmpty()) {
-                    val title = title.text.trim().toString()
-                    val artistName = artistName.text.trim().toString()
-                    val description = description.text.trim().toString()
+                    val musicTitle = title.text.trim().toString()
                     val music = MusicBean(
-                        null, musicType, title, artistName, description,
-                        newMusicPoster, newMusicThumbnail, newLyric, newMusic, newMusic,
-                        newMusic, musicSize, musicSize, musicSize,
-                        0, currentUser
+                        null, null, musicTitle, null, null,
+                        null, null, null, null, null,
+                        null, null, null, null,
+                        0, null
                     )
-                    addMusicPresenter.addMusic(token, music)
+                    val json = Gson().toJson(music)
+                    titlePresenter.checkTitle(
+                        token,
+                        URLProviderUtils.postCheckMusicTitle(),
+                        musicTitle,
+                        json
+                    )
                 }
             }
 
             R.id.editMusic -> {
                 if (token.isNotEmpty()) {
-                    val title = title.text.trim().toString()
+                    val musicTitle = title.text.trim().toString()
                     val artistName = artistName.text.trim().toString()
                     val description = description.text.trim().toString()
-                    currentMusic.title = title
+                    currentMusic.title = musicTitle
                     currentMusic.artistName = artistName
                     currentMusic.description = description
                     if (!newMusicPoster.isNullOrBlank()) {
@@ -998,16 +1006,6 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         musicError.visibility = View.VISIBLE
     }
 
-    override fun onMusicTitleError() {
-        myToast(getString(R.string.music_title_error))
-        title.error = getString(R.string.music_title_error)
-    }
-
-    override fun onMusicTitleExistError() {
-        myToast(getString(R.string.music_title_exist_error))
-        title.error = getString(R.string.music_title_exist_error)
-    }
-
     override fun onArtistNameError() {
         myToast(getString(R.string.artist_name_error))
         artistName.error = getString(R.string.artist_name_error)
@@ -1034,6 +1032,31 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         myToast(getString(R.string.music_file_error))
         musicError.text = getString(R.string.music_file_error)
         musicError.visibility = View.VISIBLE
+    }
+
+    override fun onTitleError() {
+        myToast(getString(R.string.music_title_error))
+        title.error = getString(R.string.music_title_error)
+    }
+
+    override fun onCheckTitleSuccess() {
+        if (token.isNotEmpty()) {
+            val musicTitle = title.text.trim().toString()
+            val artistName = artistName.text.trim().toString()
+            val description = description.text.trim().toString()
+            val music = MusicBean(
+                null, musicType, musicTitle, artistName, description,
+                newMusicPoster, newMusicThumbnail, newLyric, newMusic, newMusic,
+                newMusic, musicSize, musicSize, musicSize,
+                0, currentUser
+            )
+            addMusicPresenter.addMusic(token, music)
+        }
+    }
+
+    override fun onCheckTitleFailed(result: ResultBean) {
+        myToast(getString(R.string.music_title_exist_error))
+        title.error = getString(R.string.music_title_exist_error)
     }
 
     override fun onAddMusicSuccess() {

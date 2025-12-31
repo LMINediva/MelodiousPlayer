@@ -8,7 +8,7 @@ import com.melodiousplayer.android.model.ResultBean
 interface VerificationCodeContract {
 
     interface Presenter : BasePresenter {
-        fun compare(inputVerificationCode: String)
+        fun compareVerificationCode(inputVerificationCode: String)
     }
 
     interface View {

@@ -123,7 +123,7 @@ class LoginActivity : BaseActivity(), VerificationCodeContract.View,
         // 隐藏软键盘
         hideSoftKeyboard()
         val verificationCodeString = verificationCode.text.trim().toString()
-        verificationCodePresenter.compare(verificationCodeString)
+        verificationCodePresenter.compareVerificationCode(verificationCodeString)
     }
 
     private fun login() {

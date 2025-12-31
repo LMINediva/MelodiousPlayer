@@ -1,6 +1,5 @@
 package com.melodiousplayer.android.presenter.impl
 
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.melodiousplayer.android.adapter.DateTypeAdapter
 import com.melodiousplayer.android.contract.AddMusicContract
@@ -8,104 +7,13 @@ import com.melodiousplayer.android.model.MusicBean
 import com.melodiousplayer.android.model.ResultBean
 import com.melodiousplayer.android.net.AddMusicRequest
 import com.melodiousplayer.android.net.ResponseHandler
-import com.melodiousplayer.android.util.ThreadUtil
-import com.melodiousplayer.android.util.URLProviderUtils
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
-import okhttp3.Response
-import java.io.IOException
 import java.util.Date
 
 class AddMusicPresenterImpl(val view: AddMusicContract.View) :
     AddMusicContract.Presenter, ResponseHandler<ResultBean> {
 
-    private val client by lazy { OkHttpClient() }
-
     override fun addMusic(token: String, music: MusicBean) {
-        if (!music.title.isNullOrEmpty()) {
-            // 音乐名不为空，检查音乐id是否为空
-            if (music.id == null) {
-                // 音乐id为空，检查音乐名是否存在
-                if (checkMusicTitleRequest(token, music.title)) {
-                    // 音乐名不存在，继续校验剩余项
-                    verificationMusic(token, music)
-                }
-            } else {
-                // 音乐id不为空，继续校验剩余项
-                verificationMusic(token, music)
-            }
-        } else {
-            view.onMusicTitleError()
-        }
-    }
-
-    private fun checkMusicTitleRequest(token: String, musicTitle: String?): Boolean {
-        val music = MusicBean(
-            null, null, musicTitle, null,
-            null, null, null, null,
-            null, null, null, null, null,
-            null, null, null
-        )
-        val json = Gson().toJson(music)
-        val requestBody: RequestBody =
-            RequestBody.create("application/json;charset=utf-8".toMediaType(), json)
-        val request = Request.Builder()
-            .url(URLProviderUtils.postCheckMusicTitle())
-            .post(requestBody)
-            .addHeader("token", token)
-            .build()
-
-        var isValidMusicTitle = false
-        client.newCall(request).enqueue(object : Callback {
-            /**
-             * 请求成功，子线程中调用
-             */
-            override fun onResponse(call: Call, response: Response) {
-                val result = response.body?.string()
-                val gson = Gson()
-                val musicTitleResult = gson.fromJson(
-                    result,
-                    ResultBean::class.java
-                )
-                if (musicTitleResult.code == 200) {
-                    isValidMusicTitle = true
-                } else {
-                    isValidMusicTitle = false
-                    ThreadUtil.runOnMainThread(object : Runnable {
-                        override fun run() {
-                            view.onMusicTitleExistError()
-                        }
-                    })
-                }
-            }
-
-            /**
-             * 请求失败，子线程中调用
-             */
-            override fun onFailure(call: Call, e: IOException) {
-                isValidMusicTitle = false
-                // 回调到view层处理
-                ThreadUtil.runOnMainThread(object : Runnable {
-                    override fun run() {
-                        view.onNetworkError()
-                    }
-                })
-            }
-        })
-        // 延时500ms，确保isValidMusicTitle变量更新成功
-        runBlocking {
-            delay(500)
-        }
-        return isValidMusicTitle
-    }
-
-    private fun verificationMusic(token: String, music: MusicBean) {
+        // 检查歌手姓名是否为空
         if (!music.artistName.isNullOrEmpty()) {
             // 歌手姓名不为空，继续校验音乐描述
             if (!music.description.isNullOrEmpty()) {

@@ -10,7 +10,7 @@ import com.melodiousplayer.android.net.VerificationCodeRequest
 class VerificationCodePresenterImpl(val view: VerificationCodeContract.View) :
     VerificationCodeContract.Presenter, ResponseHandler<ResultBean> {
 
-    override fun compare(inputVerificationCode: String) {
+    override fun compareVerificationCode(inputVerificationCode: String) {
         val verificationCode = VerificationCodeBean(inputVerificationCode)
         val json = Gson().toJson(verificationCode)
         VerificationCodeRequest(this).executePostWithJSON(json = json)
