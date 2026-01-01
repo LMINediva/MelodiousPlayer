@@ -116,10 +116,10 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private val uploadMusicThumbnailPresenter = UploadMusicThumbnailPresenterImpl(this)
     private val uploadLyricPresenter = UploadLyricPresenterImpl(this)
     private val uploadMusicPresenter = UploadMusicPresenterImpl(this)
-    private val addMusicPresenter = AddMusicPresenterImpl(this)
     private val getLyricTextPresenter = GetLyricTextPresenterImpl(this)
     private val deleteUploadMusicFileCachePresenter = DeleteUploadMusicFileCachePresenterImpl(this)
     private val titlePresenter = TitlePresenterImpl(this)
+    private val addMusicPresenter = AddMusicPresenterImpl(this)
     private val handler = object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {

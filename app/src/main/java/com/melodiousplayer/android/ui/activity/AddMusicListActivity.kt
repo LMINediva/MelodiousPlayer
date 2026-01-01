@@ -27,12 +27,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.google.gson.Gson
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.adapter.PagingAdapter
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.contract.AddMusicListContract
 import com.melodiousplayer.android.contract.DeleteUploadMusicListFileCacheContract
 import com.melodiousplayer.android.contract.GetMVListContract
+import com.melodiousplayer.android.contract.TitleContract
 import com.melodiousplayer.android.contract.UploadThumbnailContract
 import com.melodiousplayer.android.model.MVListResultBean
 import com.melodiousplayer.android.model.PageBean
@@ -44,6 +46,7 @@ import com.melodiousplayer.android.model.VideosBean
 import com.melodiousplayer.android.presenter.impl.AddMusicListPresenterImpl
 import com.melodiousplayer.android.presenter.impl.DeleteUploadMusicListFileCachePresenterImpl
 import com.melodiousplayer.android.presenter.impl.GetMVListPresenterImpl
+import com.melodiousplayer.android.presenter.impl.TitlePresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadMusicListThumbnailPresenterImpl
 import com.melodiousplayer.android.util.DateUtil
 import com.melodiousplayer.android.util.ToolBarManager
@@ -60,7 +63,7 @@ import kotlin.math.ceil
  */
 class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.View,
     View.OnClickListener, UploadThumbnailContract.View, AddMusicListContract.View,
-    DeleteUploadMusicListFileCacheContract.View {
+    DeleteUploadMusicListFileCacheContract.View, TitleContract.View {
 
     private lateinit var title: EditText
     private lateinit var description: EditText
@@ -94,6 +97,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
     private val uploadMusicListThumbnailPresenter = UploadMusicListThumbnailPresenterImpl(this)
     private val deleteUploadMusicListFileCachePresenter =
         DeleteUploadMusicListFileCachePresenterImpl(this)
+    private val titlePresenter = TitlePresenterImpl(this)
     private val addMusicListPresenter = AddMusicListPresenterImpl(this)
     private var currentPage = 1
     private var totalPages = 1
@@ -296,18 +300,20 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
 
             R.id.addMusicList -> {
                 if (token.isNotEmpty()) {
-                    val title = title.text.trim().toString()
-                    val description = description.text.trim().toString()
-                    val category = category.text.trim().toString()
-                    val videoCount = selectedItems.size
-                    val createTime = DateUtil.getCurrentTime()
+                    val musicListTitle = title.text.trim().toString()
                     val play = PlayListsBean(
-                        null, title, newMusicListThumbnail, videoCount,
-                        selectedItems, description, category, 0,
-                        0, 0, null, createTime,
-                        0, 0, 0, 0, currentUser
+                        null, musicListTitle, null, 0,
+                        null, null, null, 0,
+                        0, 0, null, null,
+                        0, 0, 0, 0, null
                     )
-                    addMusicListPresenter.addMusicList(token, play)
+                    val json = Gson().toJson(play)
+                    titlePresenter.checkTitle(
+                        token,
+                        URLProviderUtils.postCheckMusicListTitle(),
+                        musicListTitle,
+                        json
+                    )
                 }
             }
 
@@ -592,16 +598,6 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
         thumbnailPictureError.visibility = View.VISIBLE
     }
 
-    override fun onMusicListTitleError() {
-        myToast(getString(R.string.music_list_title_error))
-        title.error = getString(R.string.music_list_title_error)
-    }
-
-    override fun onMusicListTitleExistError() {
-        myToast(getString(R.string.music_list_title_exist_error))
-        title.error = getString(R.string.music_list_title_exist_error)
-    }
-
     override fun onDescriptionError() {
         myToast(getString(R.string.description_error))
         description.error = getString(R.string.description_error)
@@ -622,6 +618,33 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
         myToast(getString(R.string.music_list_mv_list_size_error))
         mvListError.text = getString(R.string.music_list_mv_list_size_error)
         mvListError.visibility = View.VISIBLE
+    }
+
+    override fun onTitleError() {
+        myToast(getString(R.string.music_list_title_error))
+        title.error = getString(R.string.music_list_title_error)
+    }
+
+    override fun onCheckTitleSuccess() {
+        if (token.isNotEmpty()) {
+            val title = title.text.trim().toString()
+            val description = description.text.trim().toString()
+            val category = category.text.trim().toString()
+            val videoCount = selectedItems.size
+            val createTime = DateUtil.getCurrentTime()
+            val play = PlayListsBean(
+                null, title, newMusicListThumbnail, videoCount,
+                selectedItems, description, category, 0,
+                0, 0, null, createTime,
+                0, 0, 0, 0, currentUser
+            )
+            addMusicListPresenter.addMusicList(token, play)
+        }
+    }
+
+    override fun onCheckTitleFailed(result: ResultBean) {
+        myToast(getString(R.string.music_list_title_exist_error))
+        title.error = getString(R.string.music_list_title_exist_error)
     }
 
     override fun onAddMusicListSuccess() {

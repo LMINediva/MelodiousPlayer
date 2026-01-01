@@ -3,6 +3,8 @@ package com.melodiousplayer.android.presenter.impl
 import com.google.gson.GsonBuilder
 import com.melodiousplayer.android.adapter.DateTypeAdapter
 import com.melodiousplayer.android.contract.AddMusicContract
+import com.melodiousplayer.android.extension.isValidArtistName
+import com.melodiousplayer.android.extension.isValidDescription
 import com.melodiousplayer.android.model.MusicBean
 import com.melodiousplayer.android.model.ResultBean
 import com.melodiousplayer.android.net.AddMusicRequest
@@ -13,11 +15,11 @@ class AddMusicPresenterImpl(val view: AddMusicContract.View) :
     AddMusicContract.Presenter, ResponseHandler<ResultBean> {
 
     override fun addMusic(token: String, music: MusicBean) {
-        // 检查歌手姓名是否为空
-        if (!music.artistName.isNullOrEmpty()) {
-            // 歌手姓名不为空，继续校验音乐描述
-            if (!music.description.isNullOrEmpty()) {
-                // 音乐描述不为空，继续校验音乐海报图片
+        // 校验歌手姓名
+        if (music.artistName?.isValidArtistName() == true) {
+            // 歌手姓名有效，继续校验音乐描述
+            if (music.description?.isValidDescription() == true) {
+                // 音乐描述有效，继续校验音乐海报图片
                 if (!music.posterPic.isNullOrEmpty()) {
                     // 音乐海报图片不为空，继续校验音乐缩略图
                     if (!music.thumbnailPic.isNullOrEmpty()) {

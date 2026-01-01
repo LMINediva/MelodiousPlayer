@@ -22,8 +22,8 @@
     <string name="change_password_success">密码修改成功，下一次登录生效</string>
     <string name="music_title_error">音乐名长度在1到80个字符之间</string>
     <string name="music_title_exist_error">音乐名已存在</string>
-    <string name="artist_name_error">歌手姓名不能为空</string>
-    <string name="description_error">描述不能为空</string>
+    <string name="artist_name_error">歌手姓名长度在1到80个字符之间</string>
+    <string name="description_error">描述长度在1到220个字符之间</string>
     <string name="music_poster_error">音乐海报不能为空</string>
     <string name="music_thumbnail_error">音乐缩略图不能为空</string>
     <string name="music_file_error">音乐文件不能为空</string>
@@ -38,7 +38,7 @@
     <string name="get_mv_areas_failed">获取MV区域失败</string>
     <string name="delete_upload_mv_file_cache_success">删除上传到服务器的MV相关文件缓存成功</string>
     <string name="delete_upload_mv_file_cache_failed">删除上传到服务器的MV相关文件缓存失败</string>
-    <string name="mv_title_error">MV名不能为空</string>
+    <string name="mv_title_error">MV名长度在1到80个字符之间</string>
     <string name="mv_title_exist_error">MV名已存在</string>
     <string name="mv_poster_error">MV海报不能为空</string>
     <string name="mv_thumbnail_error">MV缩略图不能为空</string>
@@ -48,7 +48,7 @@
     <string name="delete_mv_success">删除MV成功</string>
     <string name="delete_mv_failed">删除MV失败</string>
     <string name="get_mv_list_failed">获取MV列表失败</string>
-    <string name="music_list_title_error">悦单名不能为空</string>
+    <string name="music_list_title_error">悦单名长度在1到80个字符之间</string>
     <string name="music_list_title_exist_error">悦单名已存在</string>
     <string name="music_list_category_error">悦单类型长度在2到10个字符之间</string>
     <string name="music_list_thumbnail_error">悦单缩略图不能为空</string>

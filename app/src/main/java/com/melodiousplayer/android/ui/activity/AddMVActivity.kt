@@ -30,11 +30,13 @@ import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.google.gson.Gson
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.contract.AddMVContract
 import com.melodiousplayer.android.contract.DeleteUploadMVFileCacheContract
 import com.melodiousplayer.android.contract.MVAreasContract
+import com.melodiousplayer.android.contract.TitleContract
 import com.melodiousplayer.android.contract.UploadMVContract
 import com.melodiousplayer.android.contract.UploadPosterContract
 import com.melodiousplayer.android.contract.UploadThumbnailContract
@@ -46,6 +48,7 @@ import com.melodiousplayer.android.model.VideosBean
 import com.melodiousplayer.android.presenter.impl.AddMVPresenterImpl
 import com.melodiousplayer.android.presenter.impl.DeleteUploadMVFileCachePresenterImpl
 import com.melodiousplayer.android.presenter.impl.MVAreasPresenterImpl
+import com.melodiousplayer.android.presenter.impl.TitlePresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadMVPosterPresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadMVPresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadMVThumbnailPresenterImpl
@@ -68,7 +71,7 @@ import java.math.RoundingMode
 class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelectedListener,
     MVAreasContract.View, View.OnClickListener, UploadPosterContract.View,
     UploadThumbnailContract.View, UploadMVContract.View, DeleteUploadMVFileCacheContract.View,
-    AddMVContract.View {
+    AddMVContract.View, TitleContract.View {
 
     private lateinit var title: EditText
     private lateinit var artistName: EditText
@@ -108,6 +111,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     private val uploadMVThumbnailPresenter = UploadMVThumbnailPresenterImpl(this)
     private val uploadMVPresenter = UploadMVPresenterImpl(this)
     private val deleteUploadMVFileCachePresenter = DeleteUploadMVFileCachePresenterImpl(this)
+    private val titlePresenter = TitlePresenterImpl(this)
     private val addMVPresenter = AddMVPresenterImpl(this)
     private var newMVPoster: String? = null
     private var newMVThumbnail: String? = null
@@ -288,20 +292,22 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
 
             R.id.addMV -> {
                 if (token.isNotEmpty()) {
-                    val title = title.text.trim().toString()
-                    val artistName = artistName.text.trim().toString()
-                    val description = description.text.trim().toString()
-                    val mvArea = mvAreas[mvAreasPosition]
-                    val registrationDate = DateUtil.getCurrentTime()
+                    val mvTitle = title.text.trim().toString()
                     val mv = VideosBean(
-                        null, title, description, mvArea,
-                        artistName, newMVPoster, newMVThumbnail, registrationDate,
-                        mvType, 0, 0, 0,
-                        0, newMV, newMV, newMV,
-                        mvSize, mvSize, mvSize, mvDuration,
-                        0, currentUser
+                        null, mvTitle, null, null,
+                        null, null, null, null,
+                        null, 0, 0, 0,
+                        0, null, null, null,
+                        0F, 0F, 0F, null,
+                        0, null
                     )
-                    addMVPresenter.addMV(token, mv)
+                    val json = Gson().toJson(mv)
+                    titlePresenter.checkTitle(
+                        token,
+                        URLProviderUtils.postCheckMVTitle(),
+                        mvTitle,
+                        json
+                    )
                 }
             }
 
@@ -817,16 +823,6 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
         myToast(getString(R.string.delete_upload_mv_file_cache_failed))
     }
 
-    override fun onMVTitleError() {
-        myToast(getString(R.string.mv_title_error))
-        title.error = getString(R.string.mv_title_error)
-    }
-
-    override fun onMVTitleExistError() {
-        myToast(getString(R.string.mv_title_exist_error))
-        title.error = getString(R.string.mv_title_exist_error)
-    }
-
     override fun onArtistNameError() {
         myToast(getString(R.string.artist_name_error))
         artistName.error = getString(R.string.artist_name_error)
@@ -853,6 +849,35 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
         myToast(getString(R.string.mv_file_error))
         mvError.text = getString(R.string.mv_file_error)
         mvError.visibility = View.VISIBLE
+    }
+
+    override fun onTitleError() {
+        myToast(getString(R.string.mv_title_error))
+        title.error = getString(R.string.mv_title_error)
+    }
+
+    override fun onCheckTitleSuccess() {
+        if (token.isNotEmpty()) {
+            val mvTitle = title.text.trim().toString()
+            val artistName = artistName.text.trim().toString()
+            val description = description.text.trim().toString()
+            val mvArea = mvAreas[mvAreasPosition]
+            val registrationDate = DateUtil.getCurrentTime()
+            val mv = VideosBean(
+                null, mvTitle, description, mvArea,
+                artistName, newMVPoster, newMVThumbnail, registrationDate,
+                mvType, 0, 0, 0,
+                0, newMV, newMV, newMV,
+                mvSize, mvSize, mvSize, mvDuration,
+                0, currentUser
+            )
+            addMVPresenter.addMV(token, mv)
+        }
+    }
+
+    override fun onCheckTitleFailed(result: ResultBean) {
+        myToast(getString(R.string.mv_title_exist_error))
+        title.error = getString(R.string.mv_title_exist_error)
     }
 
     override fun onAddMVSuccess() {

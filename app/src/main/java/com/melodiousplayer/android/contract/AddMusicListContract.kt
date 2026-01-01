@@ -12,8 +12,6 @@ interface AddMusicListContract {
     }
 
     interface View {
-        fun onMusicListTitleError()
-        fun onMusicListTitleExistError()
         fun onDescriptionError()
         fun onCategoryError()
         fun onMusicListThumbnailError()

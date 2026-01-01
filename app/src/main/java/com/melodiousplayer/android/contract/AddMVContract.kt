@@ -12,8 +12,6 @@ interface AddMVContract {
     }
 
     interface View {
-        fun onMVTitleError()
-        fun onMVTitleExistError()
         fun onArtistNameError()
         fun onDescriptionError()
         fun onMVPosterError()
