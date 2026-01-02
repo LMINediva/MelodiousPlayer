@@ -650,7 +650,9 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
     override fun onAddMusicListSuccess() {
         isAddMusicListSuccess = true
         myToast(getString(R.string.add_music_list_success))
-        startActivityAndFinish<SuccessActivity>()
+        val intent = Intent(this, SuccessActivity::class.java)
+        intent.putExtra("addOrModifyMusicListSuccess", true)
+        startActivity(intent)
     }
 
     override fun onAddMusicListFailed() {

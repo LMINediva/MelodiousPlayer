@@ -218,20 +218,25 @@ class LyricView : View {
      * 设置在线歌曲播放名称
      * 解析歌词文件并且添加到集合中
      */
-    fun setOnlineSongName(url: String) {
+    fun setOnlineSongName(url: String?) {
         // 在IO调度器上启动一个协程
         GlobalScope.launch(Dispatchers.IO) {
             // 在这里执行异步操作
-            // 加载在线音乐
-            val request = Request.Builder()
-                .url(url)
-                .build()
-            client.newCall(request).execute().use { response ->
-                if (!response.isSuccessful) throw IOException("Failed to load lyric.")
+            if (url != null && url.endsWith(".lrc")) {
+                // 加载在线音乐
+                val request = Request.Builder()
+                    .url(url)
+                    .build()
+                client.newCall(request).execute().use { response ->
+                    if (!response.isSuccessful) throw IOException("Failed to load lyric.")
+                    this@LyricView.list.clear()
+                    this@LyricView.list.addAll(LyricUtil.parseOnlineLyric(response.body?.string()))
+                    // 关闭响应，释放资源
+                    response.close()
+                }
+            } else {
                 this@LyricView.list.clear()
-                this@LyricView.list.addAll(LyricUtil.parseOnlineLyric(response.body?.string()))
-                // 关闭响应，释放资源
-                response.close()
+                this@LyricView.list.addAll(LyricUtil.parseOnlineLyric(null))
             }
         }
     }

@@ -283,7 +283,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
             R.id.lyric -> {
                 val intent = Intent(Intent.ACTION_GET_CONTENT)
                 // 过滤出文本文件，包括LRC文件
-                intent.type = "text/*"
+                intent.type = "*/*"
                 startActivityForResult(intent, LYRIC_FILE_REQUEST)
             }
 
@@ -1062,7 +1062,10 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     override fun onAddMusicSuccess() {
         isAddMusicSuccess = true
         myToast(getString(R.string.add_music_success))
-        startActivityAndFinish<SuccessActivity>()
+        val intent = Intent(this, SuccessActivity::class.java)
+        intent.putExtra("addOrModifyMusicSuccess", true)
+        startActivity(intent)
+        finish()
     }
 
     override fun onAddMusicFailed() {

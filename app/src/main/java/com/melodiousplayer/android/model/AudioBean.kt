@@ -14,7 +14,7 @@ data class AudioBean(
     var displayName: String,
     var artist: String?,
     var lyric: String?,
-    var isOnline: Boolean
+    var isOnline: Boolean = false
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(

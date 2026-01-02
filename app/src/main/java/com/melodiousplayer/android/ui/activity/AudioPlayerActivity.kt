@@ -67,8 +67,8 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     private var audioBean: AudioBean? = null
     private var drawable: AnimationDrawable? = null
     private var duration: Int = 0
-    private val MSG_PROGRESS = 0
     private var token: String? = null
+    private val MSG_PROGRESS = 0
     private val handler = object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
@@ -228,6 +228,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         intent.putExtra("isMyMusic", true)
         intent.putExtra("music", currentMusic)
         startActivity(intent)
+        finish()
     }
 
     /**
@@ -340,9 +341,9 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEventMainThread(itemBean: AudioBean) {
-        if (itemBean.isOnline && itemBean.lyric!!.endsWith(".lrc")) {
+        if (itemBean.isOnline) {
             // 设置在线播放歌曲名称
-            lyricView.setOnlineSongName(itemBean.lyric!!)
+            lyricView.setOnlineSongName(itemBean.lyric)
         } else {
             // 设置本地播放歌曲名称
             lyricView.setSongName(itemBean.displayName)

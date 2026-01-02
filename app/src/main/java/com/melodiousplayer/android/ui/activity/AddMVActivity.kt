@@ -883,7 +883,9 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     override fun onAddMVSuccess() {
         isAddMVSuccess = true
         myToast(getString(R.string.add_mv_success))
-        startActivityAndFinish<SuccessActivity>()
+        val intent = Intent(this, SuccessActivity::class.java)
+        intent.putExtra("addOrModifyMVSuccess", true)
+        startActivity(intent)
     }
 
     override fun onAddMVFailed() {

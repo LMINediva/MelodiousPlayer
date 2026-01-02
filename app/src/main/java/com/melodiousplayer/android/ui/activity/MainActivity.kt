@@ -28,7 +28,9 @@ import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.model.UserResultBean
 import com.melodiousplayer.android.presenter.impl.LogoutPresenterImpl
 import com.melodiousplayer.android.presenter.impl.TokenLoginPresenterImpl
+import com.melodiousplayer.android.ui.fragment.MVFragment
 import com.melodiousplayer.android.ui.fragment.MusicFragment
+import com.melodiousplayer.android.ui.fragment.MusicListFragment
 import com.melodiousplayer.android.util.FragmentUtil
 import com.melodiousplayer.android.util.ToolBarManager
 import com.melodiousplayer.android.util.URLProviderUtils
@@ -123,8 +125,23 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
         }
         requestPermissions()
         val addOrModifyMusicSuccess = intent.getBooleanExtra("addOrModifyMusicSuccess", false)
+        val addOrModifyMVSuccess = intent.getBooleanExtra("addOrModifyMVSuccess", false)
+        val addOrModifyMusicListSuccess = intent.getBooleanExtra("addOrModifyMVSuccess", false)
         if (addOrModifyMusicSuccess) {
             val fragment = FragmentUtil.fragmentUtil.getFragment(R.id.tab_home) as MusicFragment
+            if (fragment.isAdded) {
+                fragment.onDataChanged()
+            }
+        }
+        if (addOrModifyMVSuccess) {
+            val fragment = FragmentUtil.fragmentUtil.getFragment(R.id.tab_mv) as MVFragment
+            if (fragment.isAdded) {
+                fragment.presenter.loadDatas()
+            }
+        }
+        if (addOrModifyMusicListSuccess) {
+            val fragment =
+                FragmentUtil.fragmentUtil.getFragment(R.id.tab_music_list) as MusicListFragment
             if (fragment.isAdded) {
                 fragment.onDataChanged()
             }
