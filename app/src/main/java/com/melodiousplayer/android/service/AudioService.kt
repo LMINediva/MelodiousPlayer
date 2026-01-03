@@ -428,13 +428,8 @@ class AudioService : Service() {
                     pause()
                 }
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if (channel != null) {
-                    manager?.deleteNotificationChannel("normal")
-                }
-            } else {
-                manager?.cancel(1)
-            }
+            stopForeground(false)
+            stopSelf()
         }
 
     }

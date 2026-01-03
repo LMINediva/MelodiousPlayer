@@ -1,6 +1,7 @@
 package com.melodiousplayer.android.ui.fragment
 
 import android.content.Intent
+import android.os.Bundle
 import com.melodiousplayer.android.adapter.MusicAdapter
 import com.melodiousplayer.android.base.BaseListAdapter
 import com.melodiousplayer.android.base.BaseListFragment
@@ -9,6 +10,7 @@ import com.melodiousplayer.android.model.AudioBean
 import com.melodiousplayer.android.model.MusicBean
 import com.melodiousplayer.android.presenter.impl.MusicPresenterImpl
 import com.melodiousplayer.android.ui.activity.AudioPlayerActivity
+import com.melodiousplayer.android.ui.activity.MainActivity
 import com.melodiousplayer.android.util.NotificationUtil
 import com.melodiousplayer.android.util.URLProviderUtils
 import com.melodiousplayer.android.widget.MusicItemView
@@ -57,6 +59,11 @@ class MusicFragment : BaseListFragment<List<MusicBean>, MusicBean, MusicItemView
             notificationON = NotificationUtil.isNotificationEnabled(it)
             notificationKeyExist = NotificationUtil.isNotificationKeyExist(it)
         }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        (context as MainActivity).onMusicFragmentAdded()
     }
 
     override fun initListener() {

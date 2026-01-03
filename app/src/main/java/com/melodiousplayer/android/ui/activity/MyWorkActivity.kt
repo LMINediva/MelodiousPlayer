@@ -26,6 +26,9 @@ class MyWorkActivity : BaseActivity(), ToolBarManager {
     private lateinit var currentUser: UserBean
     private lateinit var token: String
     private lateinit var adapter: MyWorkPagerAdapter
+    private var refreshMusic: Boolean = false
+    private var refreshMV: Boolean = false
+    private var refreshMusicList: Boolean = false
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -71,6 +74,15 @@ class MyWorkActivity : BaseActivity(), ToolBarManager {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
+                val intent = Intent()
+                if (refreshMusic) {
+                    intent.putExtra("addOrModifyMusicSuccess", true)
+                } else if (refreshMV) {
+                    intent.putExtra("addOrModifyMVSuccess", true)
+                } else if (refreshMusicList) {
+                    intent.putExtra("addOrModifyMusicListSuccess", true)
+                }
+                setResult(RESULT_OK, intent)
                 finish()
                 return true
             }
@@ -84,6 +96,7 @@ class MyWorkActivity : BaseActivity(), ToolBarManager {
             1 -> if (resultCode == RESULT_OK) {
                 val refreshMyMusic = data?.getBooleanExtra("refreshMyMusic", false)
                 if (refreshMyMusic == true) {
+                    refreshMusic = true
                     val userSerialized = data.getSerializableExtra("user")
                     if (userSerialized != null) {
                         currentUser = userSerialized as UserBean
@@ -102,6 +115,7 @@ class MyWorkActivity : BaseActivity(), ToolBarManager {
             2 -> if (resultCode == RESULT_OK) {
                 val refreshMyMV = data?.getBooleanExtra("refreshMyMV", false)
                 if (refreshMyMV == true) {
+                    refreshMV = true
                     val userSerialized = data.getSerializableExtra("user")
                     if (userSerialized != null) {
                         currentUser = userSerialized as UserBean
@@ -120,6 +134,7 @@ class MyWorkActivity : BaseActivity(), ToolBarManager {
             3 -> if (resultCode == RESULT_OK) {
                 val refreshMyMusicList = data?.getBooleanExtra("refreshMyMusicList", false)
                 if (refreshMyMusicList == true) {
+                    refreshMusicList = true
                     val userSerialized = data.getSerializableExtra("user")
                     if (userSerialized != null) {
                         currentUser = userSerialized as UserBean
@@ -139,6 +154,15 @@ class MyWorkActivity : BaseActivity(), ToolBarManager {
     }
 
     override fun onBackPressed() {
+        val intent = Intent()
+        if (refreshMusic) {
+            intent.putExtra("addOrModifyMusicSuccess", true)
+        } else if (refreshMV) {
+            intent.putExtra("addOrModifyMVSuccess", true)
+        } else if (refreshMusicList) {
+            intent.putExtra("addOrModifyMusicListSuccess", true)
+        }
+        setResult(RESULT_OK, intent)
         finish()
         super.onBackPressed()
     }
