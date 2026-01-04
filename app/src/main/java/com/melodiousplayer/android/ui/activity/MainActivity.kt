@@ -14,13 +14,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
-import com.melodiousplayer.android.base.BaseFragment
 import com.melodiousplayer.android.base.OnDataChangedListener
 import com.melodiousplayer.android.contract.LogoutContract
 import com.melodiousplayer.android.contract.TokenLoginContract
@@ -28,10 +28,10 @@ import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.model.UserResultBean
 import com.melodiousplayer.android.presenter.impl.LogoutPresenterImpl
 import com.melodiousplayer.android.presenter.impl.TokenLoginPresenterImpl
+import com.melodiousplayer.android.ui.fragment.LocalMusicFragment
 import com.melodiousplayer.android.ui.fragment.MVFragment
 import com.melodiousplayer.android.ui.fragment.MusicFragment
 import com.melodiousplayer.android.ui.fragment.MusicListFragment
-import com.melodiousplayer.android.util.FragmentUtil
 import com.melodiousplayer.android.util.ToolBarManager
 import com.melodiousplayer.android.util.URLProviderUtils
 import de.hdodenhof.circleimageview.CircleImageView
@@ -52,6 +52,14 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
     private lateinit var avatarImage: CircleImageView
     private lateinit var currentUser: UserBean
     private lateinit var menu: Menu
+    private lateinit var transaction: FragmentTransaction
+    private val home = MusicFragment.newInstance()
+    private val mv = MVFragment.newInstance()
+    private val localMusicList = LocalMusicFragment()
+    private val musicList = MusicListFragment.newInstance()
+    private val fragmentList = arrayListOf(home, mv, localMusicList, musicList)
+    private var mFragment = 0
+    private var toFragment = 0
     private var isLogin: Boolean = false
     private val PERMISSION_REQUEST = 1
     private val UPDATE_AVATAR_REQUEST = 1
@@ -84,11 +92,9 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
         toLogin = headerLayout.findViewById(R.id.toLogin)
         usernameText = headerLayout.findViewById(R.id.usernameText)
         avatarImage = headerLayout.findViewById(R.id.avatarImage)
+        transaction = supportFragmentManager.beginTransaction()
         // 将首页添加到fragment中
-        val homeFragment = FragmentUtil.fragmentUtil.getFragment(R.id.tab_home)
-        if (homeFragment != null) {
-            replaceFragment(homeFragment, R.id.tab_home.toString())
-        }
+        transaction.add(R.id.container, home).commit()
         toLogin.setOnClickListener(this)
         // 从SharedPreferences文件中读取token的值
         val token = getSharedPreferences("data", Context.MODE_PRIVATE)
@@ -131,9 +137,31 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
         // 设置tab切换监听
         bottomBar.setOnItemSelectedListener { item ->
             // item.itemId代表tabId参数
-            val fragment = FragmentUtil.fragmentUtil.getFragment(item.itemId)
-            if (fragment != null) {
-                replaceFragment(fragment, item.itemId.toString())
+            transaction = supportFragmentManager.beginTransaction()
+            when (item.itemId) {
+                R.id.tab_home -> {
+                    toFragment = 0
+                    switchFragment(transaction)
+                    mFragment = 0
+                }
+
+                R.id.tab_mv -> {
+                    toFragment = 1
+                    switchFragment(transaction)
+                    mFragment = 1
+                }
+
+                R.id.tab_local_music_list -> {
+                    toFragment = 2
+                    switchFragment(transaction)
+                    mFragment = 2
+                }
+
+                R.id.tab_music_list -> {
+                    toFragment = 3
+                    switchFragment(transaction)
+                    mFragment = 3
+                }
             }
             true
         }
@@ -312,17 +340,33 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
     }
 
     /**
-     * 替换fragment函数
+     * 切换fragment函数
      */
-    private fun replaceFragment(fragment: BaseFragment, tag: String) {
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.container, fragment, tag)
-        transaction.commit()
+    private fun switchFragment(transaction: FragmentTransaction) {
+        val from = fragmentList[mFragment]
+        val to = fragmentList[toFragment]
+        if (mFragment == toFragment) return
+        if (from.isAdded) {
+            if (to.isAdded) {
+                transaction.hide(from).show(to).commit()
+            } else {
+                transaction.add(R.id.container, to).hide(from).show(to).commit()
+            }
+        } else {
+            if (to.isAdded) {
+                transaction.add(R.id.container, from).hide(from).show(to).commit()
+            } else {
+                transaction.add(R.id.container, from)
+                    .add(R.id.container, to).hide(from).show(to).commit()
+            }
+        }
     }
 
     override fun onDataChanged() {
-        val fragment = FragmentUtil.fragmentUtil.getFragment(R.id.tab_home) as MusicFragment
-        fragment.onDataChanged()
+        val musicFragment = fragmentList[0] as MusicFragment
+        if (musicFragment.isAdded) {
+            musicFragment.onDataChanged()
+        }
     }
 
     override fun onTokenLoginSuccess(userResult: UserResultBean?) {
@@ -408,32 +452,22 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
                 val addOrModifyMVSuccess = data?.getBooleanExtra("addOrModifyMVSuccess", false)
                 val addOrModifyMusicListSuccess =
                     data?.getBooleanExtra("addOrModifyMusicListSuccess", false)
-                val fragmentManager = supportFragmentManager
                 if (addOrModifyMusicSuccess == true) {
-                    val fragment = fragmentManager.findFragmentByTag(R.id.tab_home.toString())
-                    if (fragment != null) {
-                        val musicFragment = fragment as MusicFragment
-                        if (musicFragment.isAdded) {
-                            musicFragment.onDataChanged()
-                        }
+                    val musicFragment = fragmentList[0] as MusicFragment
+                    if (musicFragment.isAdded) {
+                        musicFragment.onDataChanged()
                     }
                 }
                 if (addOrModifyMVSuccess == true) {
-                    val fragment = fragmentManager.findFragmentByTag(R.id.tab_mv.toString())
-                    if (fragment != null) {
-                        val mvFragment = fragment as MVFragment
-                        if (mvFragment.isAdded) {
-                            mvFragment.presenter.loadDatas()
-                        }
+                    val mvFragment = fragmentList[1] as MVFragment
+                    if (mvFragment.isAdded) {
+                        mvFragment.presenter.loadDatas()
                     }
                 }
                 if (addOrModifyMusicListSuccess == true) {
-                    val fragment = fragmentManager.findFragmentByTag(R.id.tab_music_list.toString())
-                    if (fragment != null) {
-                        val musicListFragment = fragment as MusicListFragment
-                        if (musicListFragment.isAdded) {
-                            musicListFragment.onDataChanged()
-                        }
+                    val musicListFragment = fragmentList[3] as MusicListFragment
+                    if (musicListFragment.isAdded) {
+                        musicListFragment.onDataChanged()
                     }
                 }
             }
