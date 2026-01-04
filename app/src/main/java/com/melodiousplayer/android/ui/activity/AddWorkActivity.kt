@@ -20,6 +20,7 @@ class AddWorkActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
     private lateinit var addMV: Button
     private lateinit var addList: Button
     private lateinit var currentUser: UserBean
+    private val ADD_OR_EDIT_WORK_REQUEST = 1
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -73,21 +74,44 @@ class AddWorkActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
                 // 进入添加音乐界面，传递用户信息
                 val intent = Intent(this, AddMusicActivity::class.java)
                 intent.putExtra("user", currentUser)
-                startActivity(intent)
+                startActivityForResult(intent, ADD_OR_EDIT_WORK_REQUEST)
             }
 
             R.id.addMV -> {
                 // 进入添加MV界面，传递用户信息
                 val intent = Intent(this, AddMVActivity::class.java)
                 intent.putExtra("user", currentUser)
-                startActivity(intent)
+                startActivityForResult(intent, ADD_OR_EDIT_WORK_REQUEST)
             }
 
             R.id.addList -> {
                 // 进入添加悦单界面，传递用户信息
                 val intent = Intent(this, AddMusicListActivity::class.java)
                 intent.putExtra("user", currentUser)
-                startActivity(intent)
+                startActivityForResult(intent, ADD_OR_EDIT_WORK_REQUEST)
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            ADD_OR_EDIT_WORK_REQUEST -> if (resultCode == RESULT_OK) {
+                val addOrModifyMusicSuccess =
+                    data?.getBooleanExtra("addOrModifyMusicSuccess", false)
+                val addOrModifyMVSuccess = data?.getBooleanExtra("addOrModifyMVSuccess", false)
+                val addOrModifyMusicListSuccess =
+                    data?.getBooleanExtra("addOrModifyMusicListSuccess", false)
+                val intent = Intent()
+                if (addOrModifyMusicSuccess == true) {
+                    intent.putExtra("addOrModifyMusicSuccess", true)
+                } else if (addOrModifyMVSuccess == true) {
+                    intent.putExtra("addOrModifyMVSuccess", true)
+                } else if (addOrModifyMusicListSuccess == true) {
+                    intent.putExtra("addOrModifyMusicListSuccess", true)
+                }
+                setResult(RESULT_OK, intent)
+                finish()
             }
         }
     }

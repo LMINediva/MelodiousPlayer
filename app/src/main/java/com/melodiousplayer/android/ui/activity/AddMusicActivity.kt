@@ -1062,8 +1062,10 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     override fun onAddMusicSuccess() {
         isAddMusicSuccess = true
         myToast(getString(R.string.add_music_success))
+        val backIntent = Intent()
+        backIntent.putExtra("addOrModifyMusicSuccess", true)
+        setResult(RESULT_OK, backIntent)
         val intent = Intent(this, SuccessActivity::class.java)
-        intent.putExtra("addOrModifyMusicSuccess", true)
         startActivity(intent)
         finish()
     }

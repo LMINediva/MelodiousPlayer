@@ -1,6 +1,5 @@
 package com.melodiousplayer.android.ui.activity
 
-import android.content.Intent
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
@@ -16,9 +15,6 @@ import com.melodiousplayer.android.util.ToolBarManager
 class SuccessActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
 
     private lateinit var backHomePageButton: Button
-    private var addOrModifyMusicSuccess: Boolean = false
-    private var addOrModifyMVSuccess: Boolean = false
-    private var addOrModifyMusicListSuccess: Boolean = false
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -39,9 +35,6 @@ class SuccessActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
             it.setDisplayShowTitleEnabled(false)
         }
         backHomePageButton = findViewById(R.id.backHomePageButton)
-        addOrModifyMusicSuccess = intent.getBooleanExtra("addOrModifyMusicSuccess", false)
-        addOrModifyMVSuccess = intent.getBooleanExtra("addOrModifyMVSuccess", false)
-        addOrModifyMusicListSuccess = intent.getBooleanExtra("addOrModifyMusicListSuccess", false)
     }
 
     override fun initListener() {
@@ -54,15 +47,6 @@ class SuccessActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                val intent = Intent(this, MainActivity::class.java)
-                if (addOrModifyMusicSuccess) {
-                    intent.putExtra("addOrModifyMusicSuccess", true)
-                } else if (addOrModifyMVSuccess) {
-                    intent.putExtra("addOrModifyMVSuccess", true)
-                } else if (addOrModifyMusicListSuccess) {
-                    intent.putExtra("addOrModifyMusicListSuccess", true)
-                }
-                startActivity(intent)
                 finish()
                 return true
             }
@@ -73,30 +57,12 @@ class SuccessActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.backHomePageButton -> {
-                val intent = Intent(this, MainActivity::class.java)
-                if (addOrModifyMusicSuccess) {
-                    intent.putExtra("addOrModifyMusicSuccess", true)
-                } else if (addOrModifyMVSuccess) {
-                    intent.putExtra("addOrModifyMVSuccess", true)
-                } else if (addOrModifyMusicListSuccess) {
-                    intent.putExtra("addOrModifyMusicListSuccess", true)
-                }
-                startActivity(intent)
                 finish()
             }
         }
     }
 
     override fun onBackPressed() {
-        val intent = Intent(this, MainActivity::class.java)
-        if (addOrModifyMusicSuccess) {
-            intent.putExtra("addOrModifyMusicSuccess", true)
-        } else if (addOrModifyMVSuccess) {
-            intent.putExtra("addOrModifyMVSuccess", true)
-        } else if (addOrModifyMusicListSuccess) {
-            intent.putExtra("addOrModifyMusicListSuccess", true)
-        }
-        startActivity(intent)
         finish()
         super.onBackPressed()
     }

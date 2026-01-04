@@ -53,12 +53,9 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
     private lateinit var currentUser: UserBean
     private lateinit var menu: Menu
     private var isLogin: Boolean = false
-    private var addOrModifyMusicSuccess: Boolean = false
-    private var addOrModifyMVSuccess: Boolean = false
-    private var addOrModifyMusicListSuccess: Boolean = false
     private val PERMISSION_REQUEST = 1
     private val UPDATE_AVATAR_REQUEST = 1
-    private val DELETE_WORK_REQUEST = 2
+    private val ADD_OR_EDIT_WORK_REQUEST = 2
     private var userSerialized: Serializable? = null
     private val presenter = TokenLoginPresenterImpl(this)
     private val logoutPresenter = LogoutPresenterImpl(this)
@@ -128,40 +125,6 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
             }
         }
         requestPermissions()
-        addOrModifyMusicSuccess = intent.getBooleanExtra("addOrModifyMusicSuccess", false)
-        addOrModifyMVSuccess = intent.getBooleanExtra("addOrModifyMVSuccess", false)
-        addOrModifyMusicListSuccess =
-            intent.getBooleanExtra("addOrModifyMusicListSuccess", false)
-    }
-
-    fun onMusicFragmentAdded() {
-        val fragmentManager = supportFragmentManager
-        if (addOrModifyMusicSuccess) {
-            val fragment =
-                fragmentManager.findFragmentByTag(R.id.tab_home.toString()) as MusicFragment
-            if (fragment.isAdded) {
-                fragment.onDataChanged()
-            }
-        }
-    }
-
-    fun onMVFragmentAdded() {
-        if (addOrModifyMVSuccess) {
-            val fragment = fragmentManager.findFragmentByTag(R.id.tab_mv.toString()) as MVFragment
-            if (fragment.isAdded) {
-                fragment.presenter.loadDatas()
-            }
-        }
-    }
-
-    fun onMusicListFragmentAdded() {
-        if (addOrModifyMusicListSuccess) {
-            val fragment =
-                fragmentManager.findFragmentByTag(R.id.tab_music_list.toString()) as MusicListFragment
-            if (fragment.isAdded) {
-                fragment.onDataChanged()
-            }
-        }
     }
 
     override fun initListener() {
@@ -209,14 +172,14 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
                 // 进入添加作品界面，传递用户信息
                 val intent = Intent(this, AddWorkActivity::class.java)
                 intent.putExtra("user", currentUser)
-                startActivity(intent)
+                startActivityForResult(intent, ADD_OR_EDIT_WORK_REQUEST)
             }
 
             R.id.navMyWorks -> {
                 // 进入我的作品界面，传递用户信息
                 val intent = Intent(this, MyWorkActivity::class.java)
                 intent.putExtra("user", currentUser)
-                startActivityForResult(intent, DELETE_WORK_REQUEST)
+                startActivityForResult(intent, ADD_OR_EDIT_WORK_REQUEST)
             }
 
             R.id.navLogout -> {
@@ -439,32 +402,38 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
                 }
             }
 
-            DELETE_WORK_REQUEST -> if (resultCode == RESULT_OK) {
-                val deleteMusicSuccess =
-                    intent.getBooleanExtra("addOrModifyMusicSuccess", false)
-                val deleteMVSuccess = intent.getBooleanExtra("addOrModifyMVSuccess", false)
-                val deleteMusicListSuccess =
-                    intent.getBooleanExtra("addOrModifyMusicListSuccess", false)
+            ADD_OR_EDIT_WORK_REQUEST -> if (resultCode == RESULT_OK) {
+                val addOrModifyMusicSuccess =
+                    data?.getBooleanExtra("addOrModifyMusicSuccess", false)
+                val addOrModifyMVSuccess = data?.getBooleanExtra("addOrModifyMVSuccess", false)
+                val addOrModifyMusicListSuccess =
+                    data?.getBooleanExtra("addOrModifyMusicListSuccess", false)
                 val fragmentManager = supportFragmentManager
-                if (deleteMusicSuccess) {
-                    val fragment =
-                        fragmentManager.findFragmentByTag(R.id.tab_home.toString()) as MusicFragment
-                    if (fragment.isAdded) {
-                        fragment.onDataChanged()
+                if (addOrModifyMusicSuccess == true) {
+                    val fragment = fragmentManager.findFragmentByTag(R.id.tab_home.toString())
+                    if (fragment != null) {
+                        val musicFragment = fragment as MusicFragment
+                        if (musicFragment.isAdded) {
+                            musicFragment.onDataChanged()
+                        }
                     }
                 }
-                if (deleteMVSuccess) {
-                    val fragment =
-                        fragmentManager.findFragmentByTag(R.id.tab_mv.toString()) as MVFragment
-                    if (fragment.isAdded) {
-                        fragment.presenter.loadDatas()
+                if (addOrModifyMVSuccess == true) {
+                    val fragment = fragmentManager.findFragmentByTag(R.id.tab_mv.toString())
+                    if (fragment != null) {
+                        val mvFragment = fragment as MVFragment
+                        if (mvFragment.isAdded) {
+                            mvFragment.presenter.loadDatas()
+                        }
                     }
                 }
-                if (deleteMusicListSuccess) {
-                    val fragment =
-                        fragmentManager.findFragmentByTag(R.id.tab_music_list.toString()) as MusicListFragment
-                    if (fragment.isAdded) {
-                        fragment.onDataChanged()
+                if (addOrModifyMusicListSuccess == true) {
+                    val fragment = fragmentManager.findFragmentByTag(R.id.tab_music_list.toString())
+                    if (fragment != null) {
+                        val musicListFragment = fragment as MusicListFragment
+                        if (musicListFragment.isAdded) {
+                            musicListFragment.onDataChanged()
+                        }
                     }
                 }
             }

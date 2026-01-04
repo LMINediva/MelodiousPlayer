@@ -1,6 +1,5 @@
 package com.melodiousplayer.android.ui.fragment
 
-import android.os.Bundle
 import android.view.View
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
@@ -9,7 +8,6 @@ import com.melodiousplayer.android.adapter.MVPagerAdapter
 import com.melodiousplayer.android.base.BaseFragment
 import com.melodiousplayer.android.model.MVAreaBean
 import com.melodiousplayer.android.presenter.impl.MVPresenterImpl
-import com.melodiousplayer.android.ui.activity.MainActivity
 import com.melodiousplayer.android.view.MVView
 
 /**
@@ -48,11 +46,6 @@ class MVFragment : BaseFragment(), MVView {
         tabLayout = view.findViewById(R.id.tabLayout)
         // 加载区域数据
         presenter.loadDatas()
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        (context as MainActivity).onMVFragmentAdded()
     }
 
     override fun onError(msg: String?) {
