@@ -76,6 +76,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
             }
         }
     }
+    private val EDIT_MUSIC_REQUEST = 1
     private val deleteMusicPresenter = DeleteMusicPresenterImpl(this)
 
     override fun getLayoutId(): Int {
@@ -227,8 +228,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         val intent = Intent(this, AddMusicActivity::class.java)
         intent.putExtra("isMyMusic", true)
         intent.putExtra("music", currentMusic)
-        startActivity(intent)
-        finish()
+        startActivityForResult(intent, EDIT_MUSIC_REQUEST)
     }
 
     /**
@@ -410,7 +410,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         // 返回我的作品界面，传递用户信息，并退出AudioPlayerActivity
         val intent = Intent()
         intent.putExtra("user", currentMusic.sysUser)
-        intent.putExtra("refreshMyMusic", true)
+        intent.putExtra("addOrModifyMusicSuccess", true)
         setResult(RESULT_OK, intent)
         finish()
     }
@@ -421,6 +421,27 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
 
     override fun onNetworkError() {
         myToast(getString(R.string.network_error))
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            EDIT_MUSIC_REQUEST -> if (resultCode == RESULT_OK) {
+                val addOrModifyMusicSuccess =
+                    data?.getBooleanExtra("addOrModifyMusicSuccess", false)
+                if (addOrModifyMusicSuccess == true) {
+                    val intent = Intent()
+                    intent.putExtra("addOrModifyMusicSuccess", true)
+                    setResult(RESULT_OK, intent)
+                    finish()
+                }
+            }
+        }
+    }
+
+    override fun onBackPressed() {
+        finish()
+        super.onBackPressed()
     }
 
     override fun onDestroy() {

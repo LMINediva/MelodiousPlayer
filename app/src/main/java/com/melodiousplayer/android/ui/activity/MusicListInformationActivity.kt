@@ -41,6 +41,7 @@ class MusicListInformationActivity : BaseActivity(), ToolBarManager, View.OnClic
     private var isMyMusicList: Boolean = false
     private var token: String? = null
     private var popupWindow: PopupWindow? = null
+    private val EDIT_MUSIC_LIST_REQUEST = 1
     private val deleteMusicListPresenter = DeleteMusicListPresenterImpl(this)
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
@@ -163,7 +164,7 @@ class MusicListInformationActivity : BaseActivity(), ToolBarManager, View.OnClic
         val intent = Intent(this, AddMusicListActivity::class.java)
         intent.putExtra("isMyMusicList", true)
         intent.putExtra("musicList", currentMusicList)
-        startActivity(intent)
+        startActivityForResult(intent, EDIT_MUSIC_LIST_REQUEST)
     }
 
     override fun onDeleteMusicListSuccess(result: ResultBean) {
@@ -171,7 +172,7 @@ class MusicListInformationActivity : BaseActivity(), ToolBarManager, View.OnClic
         // 返回我的作品界面，传递用户信息，并退出MusicListInformationActivity
         val intent = Intent()
         intent.putExtra("user", currentMusicList.sysUser)
-        intent.putExtra("refreshMyMusicList", true)
+        intent.putExtra("addOrModifyMusicListSuccess", true)
         setResult(RESULT_OK, intent)
         finish()
     }
@@ -182,6 +183,22 @@ class MusicListInformationActivity : BaseActivity(), ToolBarManager, View.OnClic
 
     override fun onNetworkError() {
         myToast(getString(R.string.network_error))
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            EDIT_MUSIC_LIST_REQUEST -> if (resultCode == RESULT_OK) {
+                val addOrModifyMusicListSuccess =
+                    data?.getBooleanExtra("addOrModifyMusicListSuccess", false)
+                if (addOrModifyMusicListSuccess == true) {
+                    val intent = Intent()
+                    intent.putExtra("addOrModifyMusicListSuccess", true)
+                    setResult(RESULT_OK, intent)
+                    finish()
+                }
+            }
+        }
     }
 
     override fun onBackPressed() {

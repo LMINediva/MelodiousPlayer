@@ -69,6 +69,7 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
+    private val EDIT_MV_REQUEST = 1
     private val client by lazy { OkHttpClient() }
     private val deleteMVPresenter = DeleteMVPresenterImpl(this)
 
@@ -289,7 +290,7 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
         val intent = Intent(this, AddMVActivity::class.java)
         intent.putExtra("isMyMV", true)
         intent.putExtra("mv", currentMV)
-        startActivity(intent)
+        startActivityForResult(intent, EDIT_MV_REQUEST)
     }
 
     /**
@@ -389,7 +390,7 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
         // 返回我的作品界面，传递用户信息，并退出JiaoZiVideoPlayerActivity
         val intent = Intent()
         intent.putExtra("user", currentMV.sysUser)
-        intent.putExtra("refreshMyMV", true)
+        intent.putExtra("addOrModifyMVSuccess", true)
         setResult(RESULT_OK, intent)
         finish()
     }
@@ -400,6 +401,22 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
 
     override fun onNetworkError() {
         myToast(getString(R.string.network_error))
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            EDIT_MV_REQUEST -> if (resultCode == RESULT_OK) {
+                val addOrModifyMVSuccess =
+                    data?.getBooleanExtra("addOrModifyMVSuccess", false)
+                if (addOrModifyMVSuccess == true) {
+                    val intent = Intent()
+                    intent.putExtra("addOrModifyMVSuccess", true)
+                    setResult(RESULT_OK, intent)
+                    finish()
+                }
+            }
+        }
     }
 
     override fun onBackPressed() {
