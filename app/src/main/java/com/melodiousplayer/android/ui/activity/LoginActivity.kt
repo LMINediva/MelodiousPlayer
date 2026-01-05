@@ -31,7 +31,7 @@ class LoginActivity : BaseActivity(), VerificationCodeContract.View,
     private lateinit var userName: EditText
     private lateinit var password: EditText
     private lateinit var login: Button
-    private lateinit var newUser: TextView
+    private lateinit var register: TextView
     private lateinit var rememberPassword: CheckBox
     private lateinit var verificationCode: EditText
     private lateinit var verificationCodeImage: ImageView
@@ -48,7 +48,7 @@ class LoginActivity : BaseActivity(), VerificationCodeContract.View,
         userName = findViewById(R.id.userName)
         password = findViewById(R.id.password)
         login = findViewById(R.id.login)
-        newUser = findViewById(R.id.newUser)
+        register = findViewById(R.id.register)
         rememberPassword = findViewById(R.id.rememberPassword)
         verificationCode = findViewById(R.id.verificationCode)
         verificationCodeImage = findViewById(R.id.verificationCodeImage)
@@ -82,20 +82,20 @@ class LoginActivity : BaseActivity(), VerificationCodeContract.View,
             true
         }
         login.setOnClickListener(this)
-        newUser.setOnClickListener(this)
+        register.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.back -> {
-                startActivityAndFinish<MainActivity>()
+                finish()
             }
 
             R.id.login -> {
                 compareVerificationCode()
             }
 
-            R.id.newUser -> {
+            R.id.register -> {
                 startActivityForResult(Intent(this, RegisterActivity::class.java), REGISTER_REQUEST)
             }
 
@@ -103,18 +103,6 @@ class LoginActivity : BaseActivity(), VerificationCodeContract.View,
                 Glide.with(this).load(
                     URLProviderUtils.getVerificationCode() + "?d=" + System.currentTimeMillis()
                 ).into(verificationCodeImage)
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            REGISTER_REQUEST -> if (resultCode == RESULT_OK) {
-                val userNameString = data?.getStringExtra("username")
-                val passwordString = data?.getStringExtra("password")
-                userName.setText(userNameString)
-                password.setText(passwordString)
             }
         }
     }
@@ -174,10 +162,10 @@ class LoginActivity : BaseActivity(), VerificationCodeContract.View,
         editor.apply()
         // 弹出Toast
         myToast(getString(R.string.login_success))
-        // 进入主界面，传递用户信息，并退出LoginActivity
-        val intent = Intent(this, MainActivity::class.java)
+        // 返回主界面，传递用户信息，并退出LoginActivity
+        val intent = Intent()
         intent.putExtra("user", userResult?.currentUser)
-        startActivity(intent)
+        setResult(RESULT_OK, intent)
         finish()
     }
 
@@ -195,9 +183,21 @@ class LoginActivity : BaseActivity(), VerificationCodeContract.View,
         myToast(getString(R.string.network_error))
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            REGISTER_REQUEST -> if (resultCode == RESULT_OK) {
+                val userNameString = data?.getStringExtra("username")
+                val passwordString = data?.getStringExtra("password")
+                userName.setText(userNameString)
+                password.setText(passwordString)
+            }
+        }
+    }
+
     override fun onBackPressed() {
-        // 当用户按下返回键时，跳转回到主界面
-        startActivityAndFinish<MainActivity>()
+        // 当用户按下返回键时，返回到主界面
+        finish()
         super.onBackPressed()
     }
 

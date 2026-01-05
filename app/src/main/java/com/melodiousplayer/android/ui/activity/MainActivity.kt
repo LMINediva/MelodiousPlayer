@@ -64,6 +64,7 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
     private val PERMISSION_REQUEST = 1
     private val UPDATE_AVATAR_REQUEST = 1
     private val ADD_OR_EDIT_WORK_REQUEST = 2
+    private val LOGIN_REQUEST = 3
     private var userSerialized: Serializable? = null
     private val presenter = TokenLoginPresenterImpl(this)
     private val logoutPresenter = LogoutPresenterImpl(this)
@@ -102,33 +103,10 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
         if (!token.isNullOrEmpty()) {
             presenter.tokenLogin(token)
         }
-        // 登录成功显示用户名和头像
         menu = navView.menu
-        userSerialized = intent.getSerializableExtra("user")
-        if (userSerialized != null) {
-            currentUser = userSerialized as UserBean
-            usernameText.text = currentUser.username
-            usernameText.visibility = View.VISIBLE
-            toLogin.visibility = View.GONE
-            isLogin = true
-            Glide.with(this)
-                .load(
-                    URLProviderUtils.protocol + URLProviderUtils.serverAddress
-                            + URLProviderUtils.userAvatarPath + currentUser.avatar
-                )
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .into(avatarImage)
-            // 显示侧边栏所有菜单项
-            for (i in 0 until menu.size()) {
-                menu.getItem(i).isVisible = true
-            }
-            drawerLayout.openDrawer(GravityCompat.START)
-        } else {
-            // 隐藏侧边栏所有菜单项
-            for (i in 0 until menu.size()) {
-                menu.getItem(i).isVisible = false
-            }
+        // 隐藏侧边栏所有菜单项
+        for (i in 0 until menu.size()) {
+            menu.getItem(i).isVisible = false
         }
         requestPermissions()
     }
@@ -232,7 +210,8 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.toLogin -> {
-                startActivityAndFinish<LoginActivity>()
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivityForResult(intent, LOGIN_REQUEST)
             }
         }
     }
@@ -426,6 +405,36 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
+            LOGIN_REQUEST -> if (resultCode == RESULT_OK) {
+                userSerialized = data?.getSerializableExtra("user")
+                if (userSerialized != null) {
+                    // 登录成功显示用户名和头像
+                    currentUser = userSerialized as UserBean
+                    usernameText.text = currentUser.username
+                    usernameText.visibility = View.VISIBLE
+                    toLogin.visibility = View.GONE
+                    isLogin = true
+                    Glide.with(this)
+                        .load(
+                            URLProviderUtils.protocol + URLProviderUtils.serverAddress
+                                    + URLProviderUtils.userAvatarPath + currentUser.avatar
+                        )
+                        .skipMemoryCache(true)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(avatarImage)
+                    // 显示侧边栏所有菜单项
+                    for (i in 0 until menu.size()) {
+                        menu.getItem(i).isVisible = true
+                    }
+                    drawerLayout.openDrawer(GravityCompat.START)
+                } else {
+                    // 隐藏侧边栏所有菜单项
+                    for (i in 0 until menu.size()) {
+                        menu.getItem(i).isVisible = false
+                    }
+                }
+            }
+
             UPDATE_AVATAR_REQUEST -> if (resultCode == RESULT_OK) {
                 val newAvatar = data?.getStringExtra("newAvatar")
                 val newUsername = data?.getStringExtra("newUsername")

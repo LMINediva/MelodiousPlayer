@@ -50,7 +50,7 @@ class RegisterActivity : BaseActivity(), RegisterContract.View, View.OnClickList
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.back -> {
-                startActivityAndFinish<LoginActivity>()
+                finish()
             }
 
             R.id.register -> {
@@ -58,7 +58,7 @@ class RegisterActivity : BaseActivity(), RegisterContract.View, View.OnClickList
             }
 
             R.id.toLogin -> {
-                startActivityAndFinish<LoginActivity>()
+                finish()
             }
         }
     }
@@ -115,8 +115,8 @@ class RegisterActivity : BaseActivity(), RegisterContract.View, View.OnClickList
     }
 
     override fun onBackPressed() {
-        // 当用户按下返回键时，跳转回到登录界面
-        startActivityAndFinish<LoginActivity>()
+        // 当用户按下返回键时，返回登录界面
+        finish()
         super.onBackPressed()
     }
 
