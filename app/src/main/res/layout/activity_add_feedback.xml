@@ -28,7 +28,7 @@
                     android:layout_gravity="center"
                     android:layout_marginStart="5dp"
                     android:text="反馈内容："
-                    android:textColor="@color/black"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="20sp" />
 
                 <EditText
@@ -43,8 +43,8 @@
                     android:maxLines="5"
                     android:minLines="1"
                     android:scrollbars="vertical"
-                    android:textColor="@color/black"
-                    app:backgroundTint="@color/black" />
+                    android:textColor="?android:attr/textColorPrimary"
+                    app:backgroundTint="?android:attr/textColorPrimary" />
 
             </LinearLayout>
 
@@ -59,7 +59,7 @@
                     android:layout_gravity="center"
                     android:layout_marginStart="5dp"
                     android:text="反馈图片："
-                    android:textColor="@color/black"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="20sp" />
 
                 <ImageView

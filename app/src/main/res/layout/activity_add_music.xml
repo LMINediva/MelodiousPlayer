@@ -28,7 +28,7 @@
                     android:layout_gravity="center"
                     android:layout_marginStart="5dp"
                     android:text="音乐名："
-                    android:textColor="@color/black"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="20sp" />
 
                 <EditText
@@ -38,8 +38,8 @@
                     android:layout_margin="5dp"
                     android:imeOptions="actionNext"
                     android:inputType="text"
-                    android:textColor="@color/black"
-                    app:backgroundTint="@color/black" />
+                    android:textColor="?android:attr/textColorPrimary"
+                    app:backgroundTint="?android:attr/textColorPrimary" />
 
             </LinearLayout>
 
@@ -54,7 +54,7 @@
                     android:layout_gravity="center"
                     android:layout_marginStart="5dp"
                     android:text="歌手名称："
-                    android:textColor="@color/black"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="20sp" />
 
                 <EditText
@@ -64,8 +64,8 @@
                     android:layout_margin="5dp"
                     android:imeOptions="actionNext"
                     android:inputType="text"
-                    android:textColor="@color/black"
-                    app:backgroundTint="@color/black" />
+                    android:textColor="?android:attr/textColorPrimary"
+                    app:backgroundTint="?android:attr/textColorPrimary" />
 
             </LinearLayout>
 
@@ -80,7 +80,7 @@
                     android:layout_gravity="center"
                     android:layout_marginStart="5dp"
                     android:text="描述："
-                    android:textColor="@color/black"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="20sp" />
 
                 <EditText
@@ -95,8 +95,8 @@
                     android:maxLines="5"
                     android:minLines="1"
                     android:scrollbars="vertical"
-                    android:textColor="@color/black"
-                    app:backgroundTint="@color/black" />
+                    android:textColor="?android:attr/textColorPrimary"
+                    app:backgroundTint="?android:attr/textColorPrimary" />
 
             </LinearLayout>
 
@@ -111,7 +111,7 @@
                     android:layout_gravity="center"
                     android:layout_marginStart="5dp"
                     android:text="海报图片："
-                    android:textColor="@color/black"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="20sp" />
 
                 <ImageView
@@ -145,7 +145,7 @@
                     android:layout_gravity="center"
                     android:layout_marginStart="5dp"
                     android:text="缩略图："
-                    android:textColor="@color/black"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="20sp" />
 
                 <ImageView
@@ -179,7 +179,7 @@
                     android:layout_gravity="center"
                     android:layout_marginStart="5dp"
                     android:text="歌词："
-                    android:textColor="@color/black"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="20sp" />
 
                 <ImageView
@@ -222,7 +222,7 @@
                     android:layout_gravity="center"
                     android:layout_marginStart="5dp"
                     android:text="音乐："
-                    android:textColor="@color/black"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="20sp" />
 
                 <ImageView

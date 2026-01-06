@@ -26,7 +26,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
             android:text="操作成功"
-            android:textColor="@color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="20sp" />
 
         <Button

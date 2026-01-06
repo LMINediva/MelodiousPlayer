@@ -30,7 +30,7 @@ class LocalMusicItemView : RelativeLayout {
      */
     fun setData(itemBean: AudioBean) {
         val title: TextView = findViewById(R.id.title)
-        val artist:TextView = findViewById(R.id.artist)
+        val artist: TextView = findViewById(R.id.artist)
         val size: TextView = findViewById(R.id.size)
         // 歌曲名
         title.text = itemBean.displayName

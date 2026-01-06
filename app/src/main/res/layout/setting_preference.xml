@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/setting_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -8,7 +9,7 @@
         android:id="@+id/check_update"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_up_select"
+        android:background="@drawable/btn_set_select"
         android:orientation="horizontal"
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
         android:paddingTop="16dp"
@@ -16,6 +17,7 @@
         android:paddingBottom="16dp">
 
         <ImageView
+            android:id="@+id/check_update_image"
             android:layout_width="27dp"
             android:layout_height="27dp"
             android:layout_gravity="center_vertical"
@@ -34,6 +36,7 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/check_update_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginStart="?android:attr/listPreferredItemPaddingStart"
@@ -44,7 +47,7 @@
         android:id="@+id/notification_setting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_up_select"
+        android:background="@drawable/btn_set_select"
         android:orientation="horizontal"
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
         android:paddingTop="16dp"
@@ -52,6 +55,7 @@
         android:paddingBottom="16dp">
 
         <ImageView
+            android:id="@+id/notification_setting_image"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_gravity="center_vertical"
@@ -70,6 +74,7 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/notification_setting_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginStart="?android:attr/listPreferredItemPaddingStart"
@@ -80,7 +85,7 @@
         android:id="@+id/clear_cache"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_up_select"
+        android:background="@drawable/btn_set_select"
         android:orientation="horizontal"
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
         android:paddingTop="16dp"
@@ -88,6 +93,7 @@
         android:paddingBottom="16dp">
 
         <ImageView
+            android:id="@+id/clear_cache_image"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_gravity="center_vertical"
@@ -106,6 +112,7 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/clear_cache_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginStart="?android:attr/listPreferredItemPaddingStart"
@@ -116,7 +123,7 @@
         android:id="@+id/feedback"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_up_select"
+        android:background="@drawable/btn_set_select"
         android:orientation="horizontal"
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
         android:paddingTop="16dp"
@@ -124,6 +131,7 @@
         android:paddingBottom="16dp">
 
         <ImageView
+            android:id="@+id/feedback_image"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_gravity="center_vertical"
@@ -142,6 +150,7 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/feedback_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginStart="?android:attr/listPreferredItemPaddingStart"
@@ -152,7 +161,7 @@
         android:id="@+id/about"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_up_select"
+        android:background="@drawable/btn_set_select"
         android:orientation="horizontal"
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
         android:paddingTop="16dp"
@@ -160,6 +169,7 @@
         android:paddingBottom="16dp">
 
         <ImageView
+            android:id="@+id/about_image"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_gravity="center_vertical"
@@ -176,12 +186,5 @@
             android:textSize="18sp" />
 
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="?android:attr/listPreferredItemPaddingStart"
-        android:layout_marginEnd="?android:attr/listPreferredItemPaddingEnd"
-        android:background="@color/gray" />
 
 </LinearLayout>

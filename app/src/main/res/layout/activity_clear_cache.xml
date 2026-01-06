@@ -12,7 +12,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:text="缓存"
-        android:textColor="@color/black"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="18sp" />
 
     <TextView
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:text="300MB"
-        android:textColor="@color/black"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="35sp" />
 
     <TextView

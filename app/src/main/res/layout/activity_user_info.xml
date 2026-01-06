@@ -40,7 +40,7 @@
             android:layout_gravity="center"
             android:layout_marginStart="5dp"
             android:text="用户名称："
-            android:textColor="@color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="20sp" />
 
         <EditText
@@ -50,8 +50,8 @@
             android:layout_margin="5dp"
             android:imeOptions="actionNext"
             android:inputType="text"
-            android:textColor="@color/black"
-            app:backgroundTint="@color/black" />
+            android:textColor="?android:attr/textColorPrimary"
+            app:backgroundTint="?android:attr/textColorPrimary" />
 
     </LinearLayout>
 
@@ -66,7 +66,7 @@
             android:layout_gravity="center"
             android:layout_marginStart="5dp"
             android:text="手机号码："
-            android:textColor="@color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="20sp" />
 
         <EditText
@@ -76,8 +76,8 @@
             android:layout_margin="5dp"
             android:imeOptions="actionNext"
             android:inputType="phone"
-            android:textColor="@color/black"
-            app:backgroundTint="@color/black" />
+            android:textColor="?android:attr/textColorPrimary"
+            app:backgroundTint="?android:attr/textColorPrimary" />
 
     </LinearLayout>
 
@@ -92,7 +92,7 @@
             android:layout_gravity="center"
             android:layout_marginStart="5dp"
             android:text="用户邮箱："
-            android:textColor="@color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="20sp" />
 
         <EditText
@@ -102,8 +102,8 @@
             android:layout_margin="5dp"
             android:imeOptions="actionGo"
             android:inputType="textEmailAddress"
-            android:textColor="@color/black"
-            app:backgroundTint="@color/black" />
+            android:textColor="?android:attr/textColorPrimary"
+            app:backgroundTint="?android:attr/textColorPrimary" />
 
     </LinearLayout>
 
@@ -118,7 +118,7 @@
             android:layout_gravity="center"
             android:layout_marginStart="5dp"
             android:text="所属角色："
-            android:textColor="@color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="20sp" />
 
         <TextView
@@ -127,7 +127,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="普通角色"
-            android:textColor="@color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="20sp" />
 
     </LinearLayout>
@@ -143,7 +143,7 @@
             android:layout_gravity="center"
             android:layout_marginStart="5dp"
             android:text="更新日期："
-            android:textColor="@color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="20sp" />
 
         <TextView
@@ -152,7 +152,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="2020-01-01 00:00:00"
-            android:textColor="@color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="20sp" />
 
     </LinearLayout>
@@ -168,7 +168,7 @@
             android:layout_gravity="center"
             android:layout_marginStart="5dp"
             android:text="创建日期："
-            android:textColor="@color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="20sp" />
 
         <TextView
@@ -177,7 +177,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="2020-01-01 00:00:00"
-            android:textColor="@color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="20sp" />
 
     </LinearLayout>

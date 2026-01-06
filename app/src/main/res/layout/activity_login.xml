@@ -63,7 +63,7 @@
             android:layout_marginStart="30dp"
             android:layout_marginTop="36dp"
             android:text="登录"
-            android:textColor="@color/black"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="30sp"
             android:textStyle="bold" />
 
@@ -90,13 +90,13 @@
                 android:layout_marginRight="30dp"
                 android:background="@drawable/edit_text_background"
                 android:drawableEnd="@drawable/user_icon"
-                android:drawableTint="@color/black"
+                android:drawableTint="?android:attr/textColorPrimary"
                 android:hint="用户名"
                 android:imeOptions="actionNext"
                 android:inputType="text"
                 android:paddingLeft="26dp"
                 android:paddingRight="26dp"
-                android:textColor="@color/black"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textColorHint="@color/colorPlaceholder"
                 android:textStyle="bold" />
 
@@ -109,13 +109,13 @@
                 android:layout_marginRight="30dp"
                 android:background="@drawable/edit_text_background"
                 android:drawableEnd="@drawable/lock_icon"
-                android:drawableTint="@color/black"
+                android:drawableTint="?android:attr/textColorPrimary"
                 android:hint="密码"
                 android:imeOptions="actionNext"
                 android:inputType="textPassword"
                 android:paddingLeft="26dp"
                 android:paddingRight="26dp"
-                android:textColor="@color/black"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textColorHint="@color/colorPlaceholder"
                 android:textStyle="bold" />
 
@@ -135,13 +135,13 @@
                     android:layout_weight="3"
                     android:background="@drawable/edit_text_background"
                     android:drawableEnd="@drawable/verification_code"
-                    android:drawableTint="@color/black"
+                    android:drawableTint="?android:attr/textColorPrimary"
                     android:hint="验证码"
                     android:imeOptions="actionGo"
                     android:inputType="text"
                     android:paddingLeft="26dp"
                     android:paddingRight="26dp"
-                    android:textColor="@color/black"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textColorHint="@color/colorPlaceholder"
                     android:textStyle="bold" />
 
@@ -160,9 +160,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="18dp"
-                android:buttonTint="@color/black"
+                android:buttonTint="?android:attr/textColorPrimary"
                 android:text="记住密码"
-                android:textColor="@color/black"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -181,7 +181,7 @@
                     android:layout_marginStart="12dp"
                     android:layout_weight="1"
                     android:text="忘记密码？"
-                    android:textColor="@color/black"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -215,7 +215,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:text="还没有账号？"
-                android:textColor="@color/black"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp" />
 
             <TextView

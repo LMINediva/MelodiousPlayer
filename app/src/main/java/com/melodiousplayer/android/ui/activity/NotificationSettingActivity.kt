@@ -130,9 +130,7 @@ class NotificationSettingActivity : BaseActivity(), ToolBarManager, View.OnClick
         val notificationContent = dialogView.findViewById<TextView>(R.id.notification_content)
         val cancelButton = dialogView.findViewById<Button>(R.id.cancel)
         val openButton = dialogView.findViewById<Button>(R.id.open)
-        val color = resources.getColor(R.color.qq_red, context.theme)
         notificationTitle.text = getString(R.string.close_notification_title)
-        notificationTitle.setTextColor(color)
         notificationContent.text = getString(R.string.close_notification)
         openButton.setBackgroundResource(R.drawable.button_close_background)
         openButton.text = "去关闭"
