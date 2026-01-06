@@ -887,6 +887,9 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
         backIntent.putExtra("addOrModifyMVSuccess", true)
         setResult(RESULT_OK, backIntent)
         val intent = Intent(this, SuccessActivity::class.java)
+        if (isMyMV) {
+            intent.putExtra("isMyMV", true)
+        }
         startActivity(intent)
         finish()
     }

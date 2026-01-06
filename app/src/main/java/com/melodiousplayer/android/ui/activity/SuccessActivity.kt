@@ -35,6 +35,12 @@ class SuccessActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
             it.setDisplayShowTitleEnabled(false)
         }
         backHomePageButton = findViewById(R.id.backHomePageButton)
+        val isMyMusic = intent.getBooleanExtra("isMyMusic", false)
+        val isMyMV = intent.getBooleanExtra("isMyMV", false)
+        val isMyMusicList = intent.getBooleanExtra("isMyMusicList", false)
+        if (isMyMusic || isMyMV || isMyMusicList) {
+            backHomePageButton.text = "返回"
+        }
     }
 
     override fun initListener() {

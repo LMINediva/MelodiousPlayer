@@ -1066,6 +1066,9 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         backIntent.putExtra("addOrModifyMusicSuccess", true)
         setResult(RESULT_OK, backIntent)
         val intent = Intent(this, SuccessActivity::class.java)
+        if (isMyMusic) {
+            intent.putExtra("isMyMusic", true)
+        }
         startActivity(intent)
         finish()
     }

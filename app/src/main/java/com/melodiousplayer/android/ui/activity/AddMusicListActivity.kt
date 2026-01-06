@@ -380,45 +380,6 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            ALBUM_THUMBNAIL_REQUEST -> {
-                if (resultCode == RESULT_OK && data != null) {
-                    data.data?.let { uri ->
-                        if (checkPicture(uri, thumbnailPictureError)) {
-                            // 在截图界面显示选择好的照片
-                            val intent = CropImage.activity(uri)
-                                .setGuidelines(CropImageView.Guidelines.ON)
-                                .setInitialCropWindowPaddingRatio(0F)
-                                .getIntent(this)
-                            startActivityForResult(intent, CROP_THUMBNAIL_REQUEST)
-                        }
-                    }
-                }
-            }
-
-            CROP_THUMBNAIL_REQUEST -> {
-                if (resultCode == RESULT_OK) {
-                    val resultUri = CropImage.getActivityResult(data).uri
-                    // 将裁剪好的音乐清单缩略图图片上传到服务器
-                    if (resultUri != null) {
-                        if (token.isNotEmpty()) {
-                            showUploadFileDialog(this)
-                            resultUri.path?.let { File(it) }
-                                ?.let {
-                                    uploadMusicListThumbnailPresenter.uploadThumbnail(
-                                        token,
-                                        it
-                                    )
-                                }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     /**
      * 检查图片文件是否符合要求
      */
@@ -654,6 +615,9 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
         backIntent.putExtra("addOrModifyMusicListSuccess", true)
         setResult(RESULT_OK, backIntent)
         val intent = Intent(this, SuccessActivity::class.java)
+        if (isMyMusicList) {
+            intent.putExtra("isMyMusicList", true)
+        }
         startActivity(intent)
         finish()
     }
@@ -672,6 +636,45 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
 
     override fun onNetworkError() {
         myToast(getString(R.string.network_error))
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            ALBUM_THUMBNAIL_REQUEST -> {
+                if (resultCode == RESULT_OK && data != null) {
+                    data.data?.let { uri ->
+                        if (checkPicture(uri, thumbnailPictureError)) {
+                            // 在截图界面显示选择好的照片
+                            val intent = CropImage.activity(uri)
+                                .setGuidelines(CropImageView.Guidelines.ON)
+                                .setInitialCropWindowPaddingRatio(0F)
+                                .getIntent(this)
+                            startActivityForResult(intent, CROP_THUMBNAIL_REQUEST)
+                        }
+                    }
+                }
+            }
+
+            CROP_THUMBNAIL_REQUEST -> {
+                if (resultCode == RESULT_OK) {
+                    val resultUri = CropImage.getActivityResult(data).uri
+                    // 将裁剪好的音乐清单缩略图图片上传到服务器
+                    if (resultUri != null) {
+                        if (token.isNotEmpty()) {
+                            showUploadFileDialog(this)
+                            resultUri.path?.let { File(it) }
+                                ?.let {
+                                    uploadMusicListThumbnailPresenter.uploadThumbnail(
+                                        token,
+                                        it
+                                    )
+                                }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun onBackPressed() {
