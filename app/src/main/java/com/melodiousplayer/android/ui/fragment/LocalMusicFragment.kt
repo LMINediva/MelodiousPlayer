@@ -28,6 +28,16 @@ class LocalMusicFragment : BaseFragment() {
     private lateinit var view: View
     private lateinit var listView: ListView
 
+    companion object {
+        /**
+         * 单例，返回此片段的新实例
+         */
+        @JvmStatic
+        fun newInstance(): LocalMusicFragment {
+            return LocalMusicFragment()
+        }
+    }
+
     override fun initView(): View? {
         if (!::view.isInitialized) {
             view = View.inflate(context, R.layout.fragment_local_music, null)

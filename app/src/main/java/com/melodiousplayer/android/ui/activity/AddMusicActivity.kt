@@ -168,7 +168,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         } else {
             addMusic.visibility = View.VISIBLE
             editMusic.visibility = View.GONE
-            initAddMusicToolBar()
+            initAddMusicToolBar(this)
         }
         setSupportActionBar(toolbar)
         supportActionBar?.let {
@@ -197,7 +197,7 @@ class AddMusicActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private fun initEditMusic() {
         addMusic.visibility = View.GONE
         editMusic.visibility = View.VISIBLE
-        initEditMusicToolBar()
+        initEditMusicToolBar(this)
         val musicSerialized = intent.getSerializableExtra("music")
         if (musicSerialized != null) {
             currentMusic = musicSerialized as MusicBean

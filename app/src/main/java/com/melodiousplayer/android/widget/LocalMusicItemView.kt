@@ -8,6 +8,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.model.AudioBean
+import com.melodiousplayer.android.util.ThemeUtil
 
 class LocalMusicItemView : RelativeLayout {
 
@@ -32,6 +33,12 @@ class LocalMusicItemView : RelativeLayout {
         val title: TextView = findViewById(R.id.title)
         val artist: TextView = findViewById(R.id.artist)
         val size: TextView = findViewById(R.id.size)
+        val isDarkTheme = ThemeUtil.isDarkTheme(context)
+        if (isDarkTheme) {
+            val textColor = resources.getColor(R.color.darkGray, context?.theme)
+            artist.setTextColor(textColor)
+            size.setTextColor(textColor)
+        }
         // 歌曲名
         title.text = itemBean.displayName
         // 歌手名

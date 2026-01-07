@@ -31,6 +31,7 @@ import com.melodiousplayer.android.presenter.impl.DeleteMusicPresenterImpl
 import com.melodiousplayer.android.service.AudioService
 import com.melodiousplayer.android.service.IService
 import com.melodiousplayer.android.util.StringUtil
+import com.melodiousplayer.android.util.ThemeUtil
 import com.melodiousplayer.android.widget.LyricView
 import com.melodiousplayer.android.widget.PlayListPopupWindow
 import org.greenrobot.eventbus.EventBus
@@ -43,6 +44,7 @@ import org.greenrobot.eventbus.ThreadMode
 class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeekBarChangeListener,
     AdapterView.OnItemClickListener, DeleteMusicContract.View {
 
+    private lateinit var audioPlayerBackground: LinearLayout
     private lateinit var state: ImageView
     private lateinit var audioTitle: TextView
     private lateinit var artist: TextView
@@ -84,6 +86,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     }
 
     override fun initData() {
+        audioPlayerBackground = findViewById(R.id.music_player_background)
         state = findViewById(R.id.state)
         audioTitle = findViewById(R.id.audio_title)
         artist = findViewById(R.id.artist)
@@ -98,6 +101,10 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         audioPlayerBottom = findViewById(R.id.audio_player_bottom)
         lyricView = findViewById(R.id.lyricView)
         more = findViewById(R.id.audio_more)
+        val isDarkTheme = ThemeUtil.isDarkTheme(this)
+        if (isDarkTheme) {
+            audioPlayerBackground.setBackgroundResource(R.mipmap.music_night_bg)
+        }
         // 注册EventBus
         EventBus.getDefault().register(this)
         // 通过AudioService播放音乐

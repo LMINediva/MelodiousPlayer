@@ -86,10 +86,8 @@ class SettingFragment : BaseFragment(), CheckUpdateContract.View,
             feedbackLine.visibility = View.GONE
         }
         if (isDarkTheme == true) {
-            val backgroundColor = resources.getColor(R.color.darkGrayNight, context?.theme)
             val lineColor = resources.getColor(R.color.lineNight, context?.theme)
             val imageColor = resources.getColor(R.color.white, context?.theme)
-            settingBackground.setBackgroundColor(backgroundColor)
             checkUpdate.setBackgroundResource(R.drawable.btn_set_select_night)
             checkUpdateImageView.setColorFilter(imageColor, PorterDuff.Mode.SRC_IN)
             checkUpdateLine.setBackgroundColor(lineColor)

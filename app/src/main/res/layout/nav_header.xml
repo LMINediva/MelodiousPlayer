@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="180dp"
-    android:background="@drawable/nav_background"
-    android:padding="10dp">
+    android:background="@drawable/nav_background">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatarImage"
@@ -31,6 +30,7 @@
         android:layout_below="@id/avatarImage"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
+        android:padding="5dp"
         android:text="立即登录"
         android:textColor="#FFF"
         android:textSize="14sp" />

@@ -37,7 +37,7 @@ class ChangePasswordActivity : BaseActivity(), ToolBarManager, View.OnClickListe
     }
 
     override fun initData() {
-        initChangePasswordToolBar()
+        initChangePasswordToolBar(this)
         setSupportActionBar(toolbar)
         supportActionBar?.let {
             // 启用Toolbar的返回按钮

@@ -1,6 +1,8 @@
 package com.melodiousplayer.android.ui.fragment
 
+import android.content.res.ColorStateList
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.melodiousplayer.android.R
@@ -8,6 +10,7 @@ import com.melodiousplayer.android.adapter.MVPagerAdapter
 import com.melodiousplayer.android.base.BaseFragment
 import com.melodiousplayer.android.model.MVAreaBean
 import com.melodiousplayer.android.presenter.impl.MVPresenterImpl
+import com.melodiousplayer.android.util.ThemeUtil
 import com.melodiousplayer.android.view.MVView
 
 /**
@@ -37,15 +40,31 @@ class MVFragment : BaseFragment(), MVView {
         return view
     }
 
-    override fun initListener() {
-
-    }
-
     override fun initData() {
         viewPager = view.findViewById(R.id.viewPager)
         tabLayout = view.findViewById(R.id.tabLayout)
+        val isDarkTheme = context?.let { ThemeUtil.isDarkTheme(it) }
+        if (isDarkTheme == true) {
+            val indicatorColor = context?.getColor(R.color.white)
+            tabLayout.setBackgroundResource(R.color.darkGrayNight)
+            if (indicatorColor != null) {
+                tabLayout.setSelectedTabIndicatorColor(indicatorColor)
+            }
+            tabLayout.tabTextColors = context?.let {
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        it,
+                        R.color.darkGray
+                    )
+                )
+            }
+        }
         // 加载区域数据
         presenter.loadDatas()
+    }
+
+    override fun initListener() {
+
     }
 
     override fun onError(msg: String?) {
@@ -58,4 +77,5 @@ class MVFragment : BaseFragment(), MVView {
         viewPager.adapter = adapter
         tabLayout.setupWithViewPager(viewPager)
     }
+
 }

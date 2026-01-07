@@ -75,7 +75,7 @@ class FeedBackActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     }
 
     override fun initData() {
-        initFeedBackToolBar()
+        initFeedBackToolBar(this)
         setSupportActionBar(toolbar)
         supportActionBar?.let {
             // 启用Toolbar的返回按钮

@@ -5,7 +5,7 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
+    <color name="black">#00000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="white_pressed">#E5E5E5</color>
     <color name="yellow">#FFCD2E</color>
@@ -16,9 +16,9 @@
     <color name="lightGray">#DFDFDF</color>
     <color name="lightGrayNight">#232229</color>
     <color name="darkGray">#808080</color>
-    <color name="darkGrayNight">#1A1820</color>
+    <color name="darkGrayNight">#0E0E10</color>
     <color name="lineNight">#222128</color>
-    <color name="home_item_bg">#7F000000</color>
+    <color name="borderNight">#7F000000</color>
     <color name="green">#FF1EC399</color>
     <color name="transparent_layer">#7F000000</color>
     <color name="colorMusicProgress">#FFCD2E</color>

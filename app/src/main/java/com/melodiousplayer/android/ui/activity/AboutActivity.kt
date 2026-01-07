@@ -22,7 +22,7 @@ class AboutActivity : BaseActivity(), ToolBarManager {
     }
 
     override fun initData() {
-        initAboutToolBar()
+        initAboutToolBar(this)
         setSupportActionBar(toolbar)
         supportActionBar?.let {
             // 启用Toolbar的返回按钮

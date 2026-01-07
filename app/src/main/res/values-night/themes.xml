@@ -2,15 +2,17 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">@color/darkGrayNight</item>
+        <item name="colorPrimaryDark">@color/darkGrayNight</item>
+        <item name="colorPrimaryVariant">@color/darkGrayNight</item>
         <item name="colorOnPrimary">?android:attr/textColorPrimary</item>
+        <item name="android:windowBackground">@color/darkGrayNight</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">?android:attr/textColorPrimary</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/colorPrimary</item>
+        <item name="android:statusBarColor">@color/darkGrayNight</item>
         <!-- 设置ToolBar返回按钮的颜色 -->
         <item name="colorControlNormal">@color/white</item>
     </style>

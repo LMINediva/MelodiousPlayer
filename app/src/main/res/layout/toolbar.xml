@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:background="@color/colorPrimary"
-    app:titleTextColor="@color/white">
+    app:titleTextColor="?android:attr/textColorPrimary">
 
     <TextView
         android:id="@+id/toolbar_title"
@@ -15,6 +15,6 @@
         android:layout_gravity="center"
         android:ellipsize="end"
         android:singleLine="true"
-        android:textColor="#ffffff" />
+        android:textColor="@color/white" />
 
 </androidx.appcompat.widget.Toolbar>

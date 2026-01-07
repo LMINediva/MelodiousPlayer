@@ -7,6 +7,8 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -19,6 +21,7 @@ import com.melodiousplayer.android.model.UserResultBean
 import com.melodiousplayer.android.presenter.impl.LoginPresenterImpl
 import com.melodiousplayer.android.presenter.impl.VerificationCodePresenterImpl
 import com.melodiousplayer.android.util.EncryptUtil
+import com.melodiousplayer.android.util.ThemeUtil
 import com.melodiousplayer.android.util.URLProviderUtils
 
 /**
@@ -27,6 +30,8 @@ import com.melodiousplayer.android.util.URLProviderUtils
 class LoginActivity : BaseActivity(), VerificationCodeContract.View,
     LoginContract.View, View.OnClickListener {
 
+    private lateinit var loginHeader: LinearLayout
+    private lateinit var loginContent: RelativeLayout
     private lateinit var back: ImageView
     private lateinit var userName: EditText
     private lateinit var password: EditText
@@ -44,6 +49,8 @@ class LoginActivity : BaseActivity(), VerificationCodeContract.View,
     }
 
     override fun initData() {
+        loginHeader = findViewById(R.id.login_header)
+        loginContent = findViewById(R.id.login_content)
         back = findViewById(R.id.back)
         userName = findViewById(R.id.userName)
         password = findViewById(R.id.password)
@@ -52,6 +59,11 @@ class LoginActivity : BaseActivity(), VerificationCodeContract.View,
         rememberPassword = findViewById(R.id.rememberPassword)
         verificationCode = findViewById(R.id.verificationCode)
         verificationCodeImage = findViewById(R.id.verificationCodeImage)
+        val isDarkTheme = ThemeUtil.isDarkTheme(this)
+        if (isDarkTheme) {
+            loginHeader.setBackgroundResource(R.color.black)
+            loginContent.setBackgroundResource(R.drawable.card_night_background)
+        }
         val prefs = getSharedPreferences("data", Context.MODE_PRIVATE)
         val isRemember = prefs.getBoolean("remember_password", false)
         if (isRemember) {

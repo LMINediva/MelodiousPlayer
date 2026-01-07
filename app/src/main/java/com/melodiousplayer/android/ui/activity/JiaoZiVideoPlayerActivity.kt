@@ -81,7 +81,7 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
     }
 
     override fun initData() {
-        initVideoPlayerToolBar()
+        initVideoPlayerToolBar(this)
         setSupportActionBar(toolbar)
         supportActionBar?.let {
             // 启用Toolbar的返回按钮

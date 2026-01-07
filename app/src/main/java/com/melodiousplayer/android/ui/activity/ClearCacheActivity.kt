@@ -34,7 +34,7 @@ class ClearCacheActivity : BaseActivity(), ToolBarManager, View.OnClickListener 
     }
 
     override fun initData() {
-        initClearCacheToolBar()
+        initClearCacheToolBar(this)
         setSupportActionBar(toolbar)
         supportActionBar?.let {
             // 启用Toolbar的返回按钮

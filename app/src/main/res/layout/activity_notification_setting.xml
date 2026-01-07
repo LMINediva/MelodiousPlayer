@@ -16,10 +16,11 @@
         android:textSize="18sp" />
 
     <RelativeLayout
+        android:id="@+id/notification_switch_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:background="@drawable/btn_up_select"
+        android:background="@color/white"
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
         android:paddingTop="16dp"
         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"

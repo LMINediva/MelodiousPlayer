@@ -30,7 +30,7 @@ class AddWorkActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
     }
 
     override fun initData() {
-        initAddWorkToolBar()
+        initAddWorkToolBar(this)
         setSupportActionBar(toolbar)
         supportActionBar?.let {
             // 启用Toolbar的返回按钮

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SwitchCompat
@@ -12,12 +13,15 @@ import androidx.appcompat.widget.Toolbar
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.util.NotificationUtil
+import com.melodiousplayer.android.util.ThemeUtil
 import com.melodiousplayer.android.util.ToolBarManager
 
 class NotificationSettingActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
 
+    private lateinit var notificationSwitchBackground: RelativeLayout
     private lateinit var notificationSwitch: SwitchCompat
     private var isNotificationON: Boolean = false
+    private var isDarkTheme: Boolean = false
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override val toolbarTitle by lazy { findViewById<TextView>(R.id.toolbar_title) }
@@ -27,7 +31,7 @@ class NotificationSettingActivity : BaseActivity(), ToolBarManager, View.OnClick
     }
 
     override fun initData() {
-        initNotificationSettingToolBar()
+        initNotificationSettingToolBar(this)
         setSupportActionBar(toolbar)
         supportActionBar?.let {
             // 启用Toolbar的返回按钮
@@ -37,7 +41,12 @@ class NotificationSettingActivity : BaseActivity(), ToolBarManager, View.OnClick
             // 隐藏默认标题
             it.setDisplayShowTitleEnabled(false)
         }
+        notificationSwitchBackground = findViewById(R.id.notification_switch_background)
         notificationSwitch = findViewById(R.id.notification_switch)
+        isDarkTheme = ThemeUtil.isDarkTheme(this)
+        if (isDarkTheme) {
+            notificationSwitchBackground.setBackgroundResource(R.color.lightGrayNight)
+        }
         // 检查通知是否打开
         if (!NotificationUtil.isNotificationKeyExist(this)) {
             isNotificationON = NotificationUtil.isNotificationEnabled(this)
@@ -104,6 +113,9 @@ class NotificationSettingActivity : BaseActivity(), ToolBarManager, View.OnClick
         alertDialog.show()
         val cancelButton = dialogView.findViewById<Button>(R.id.cancel)
         val openButton = dialogView.findViewById<Button>(R.id.open)
+        if (isDarkTheme) {
+            cancelButton.setBackgroundResource(R.drawable.button_cancel_night_background)
+        }
         cancelButton.setOnClickListener {
             notificationSwitch.isChecked = isNotificationON
             alertDialog.dismiss()
@@ -134,6 +146,9 @@ class NotificationSettingActivity : BaseActivity(), ToolBarManager, View.OnClick
         notificationContent.text = getString(R.string.close_notification)
         openButton.setBackgroundResource(R.drawable.button_close_background)
         openButton.text = "去关闭"
+        if (isDarkTheme) {
+            cancelButton.setBackgroundResource(R.drawable.button_cancel_night_background)
+        }
         cancelButton.setOnClickListener {
             notificationSwitch.isChecked = isNotificationON
             alertDialog.dismiss()

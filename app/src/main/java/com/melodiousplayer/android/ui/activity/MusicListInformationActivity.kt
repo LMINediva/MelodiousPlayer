@@ -24,6 +24,7 @@ import com.melodiousplayer.android.model.PlayListsBean
 import com.melodiousplayer.android.model.ResultBean
 import com.melodiousplayer.android.model.VideosBean
 import com.melodiousplayer.android.presenter.impl.DeleteMusicListPresenterImpl
+import com.melodiousplayer.android.util.ThemeUtil
 import com.melodiousplayer.android.util.ToolBarManager
 
 /**
@@ -55,6 +56,11 @@ class MusicListInformationActivity : BaseActivity(), ToolBarManager, View.OnClic
         // 设置Toolbar标题
         toolbarTitle.text = intent.getStringExtra("title")
         mvList = intent.getSerializableExtra("mvList") as MutableSet<VideosBean>
+        val isDarkTheme = ThemeUtil.isDarkTheme(this)
+        if (isDarkTheme) {
+            val toolBarColor = getColor(R.color.darkGrayNight)
+            toolbar.setBackgroundColor(toolBarColor)
+        }
         setSupportActionBar(toolbar)
         supportActionBar?.let {
             // 启用Toolbar的返回按钮

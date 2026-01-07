@@ -32,6 +32,7 @@ import com.melodiousplayer.android.ui.fragment.LocalMusicFragment
 import com.melodiousplayer.android.ui.fragment.MVFragment
 import com.melodiousplayer.android.ui.fragment.MusicFragment
 import com.melodiousplayer.android.ui.fragment.MusicListFragment
+import com.melodiousplayer.android.util.ThemeUtil
 import com.melodiousplayer.android.util.ToolBarManager
 import com.melodiousplayer.android.util.URLProviderUtils
 import de.hdodenhof.circleimageview.CircleImageView
@@ -55,9 +56,13 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
     private lateinit var transaction: FragmentTransaction
     private val home = MusicFragment.newInstance()
     private val mv = MVFragment.newInstance()
-    private val localMusicList = LocalMusicFragment()
+    private val localMusicList = LocalMusicFragment.newInstance()
     private val musicList = MusicListFragment.newInstance()
     private val fragmentList = arrayListOf(home, mv, localMusicList, musicList)
+    private val tagList = arrayListOf(
+        R.id.tab_home.toString(), R.id.tab_mv.toString(),
+        R.id.tab_local_music_list.toString(), R.id.tab_music_list.toString()
+    )
     private var mFragment = 0
     private var toFragment = 0
     private var isLogin: Boolean = false
@@ -78,7 +83,7 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
     }
 
     override fun initData() {
-        initMainToolBar()
+        initMainToolBar(this)
         setSupportActionBar(toolbar)
         supportActionBar?.let {
             it.setDisplayHomeAsUpEnabled(true)
@@ -94,8 +99,47 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
         usernameText = headerLayout.findViewById(R.id.usernameText)
         avatarImage = headerLayout.findViewById(R.id.avatarImage)
         transaction = supportFragmentManager.beginTransaction()
-        // 将首页添加到fragment中
-        transaction.add(R.id.container, home).commit()
+        val isDarkTheme = ThemeUtil.isDarkTheme(this)
+        if (isDarkTheme) {
+            val bottomBarColor = getColor(R.color.black)
+            bottomBar.setBackgroundColor(bottomBarColor)
+        }
+        val fragmentManager = supportFragmentManager
+        val homeFragment = fragmentManager.findFragmentByTag(tagList[0])
+        val mvFragment = fragmentManager.findFragmentByTag(tagList[1])
+        val localMusicListFragment = fragmentManager.findFragmentByTag(tagList[2])
+        val musicListFragment = fragmentManager.findFragmentByTag(tagList[3])
+        if (homeFragment != null && !homeFragment.isRemoving && !homeFragment.isDetached) {
+            // 首页 Fragment已添加
+            if (!homeFragment.isHidden) {
+                mFragment = 0
+            }
+        } else {
+            // 将首页添加到fragment中
+            transaction.add(R.id.container, home, tagList[0]).commit()
+        }
+        if (mvFragment != null && !mvFragment.isRemoving && !mvFragment.isDetached) {
+            // MV Fragment已添加
+            if (!mvFragment.isHidden) {
+                mFragment = 1
+            }
+        }
+        if (localMusicListFragment != null && !localMusicListFragment.isRemoving
+            && !localMusicListFragment.isDetached
+        ) {
+            // 本地音乐 Fragment已添加
+            if (!localMusicListFragment.isHidden) {
+                mFragment = 2
+            }
+        }
+        if (musicListFragment != null && !musicListFragment.isRemoving
+            && !musicListFragment.isDetached
+        ) {
+            // 悦单 Fragment已添加
+            if (!musicListFragment.isHidden) {
+                mFragment = 3
+            }
+        }
         toLogin.setOnClickListener(this)
         // 从SharedPreferences文件中读取token的值
         val token = getSharedPreferences("data", Context.MODE_PRIVATE)
@@ -324,19 +368,23 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
     private fun switchFragment(transaction: FragmentTransaction) {
         val from = fragmentList[mFragment]
         val to = fragmentList[toFragment]
+        val fromAdded = supportFragmentManager.findFragmentByTag(tagList[mFragment])
+        val toAdded = supportFragmentManager.findFragmentByTag(tagList[toFragment])
         if (mFragment == toFragment) return
-        if (from.isAdded) {
-            if (to.isAdded) {
-                transaction.hide(from).show(to).commit()
+        if (fromAdded != null) {
+            if (toAdded != null) {
+                transaction.hide(fromAdded).show(toAdded).commit()
             } else {
-                transaction.add(R.id.container, to).hide(from).show(to).commit()
+                transaction.add(R.id.container, to, tagList[toFragment]).hide(fromAdded).show(to)
+                    .commit()
             }
         } else {
-            if (to.isAdded) {
-                transaction.add(R.id.container, from).hide(from).show(to).commit()
+            if (toAdded != null) {
+                transaction.add(R.id.container, from, tagList[mFragment]).hide(from).show(toAdded)
+                    .commit()
             } else {
-                transaction.add(R.id.container, from)
-                    .add(R.id.container, to).hide(from).show(to).commit()
+                transaction.add(R.id.container, from, tagList[mFragment])
+                    .add(R.id.container, to, tagList[toFragment]).hide(from).show(to).commit()
             }
         }
     }

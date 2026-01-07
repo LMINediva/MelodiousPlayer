@@ -5,17 +5,22 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.base.BaseActivity
 import com.melodiousplayer.android.contract.RegisterContract
 import com.melodiousplayer.android.presenter.impl.RegisterPresenterImpl
+import com.melodiousplayer.android.util.ThemeUtil
 
 /**
  * 用户注册界面
  */
 class RegisterActivity : BaseActivity(), RegisterContract.View, View.OnClickListener {
 
+    private lateinit var registerHeader: LinearLayout
+    private lateinit var registerContent: RelativeLayout
     private lateinit var back: ImageView
     private lateinit var userName: EditText
     private lateinit var password: EditText
@@ -29,12 +34,19 @@ class RegisterActivity : BaseActivity(), RegisterContract.View, View.OnClickList
     }
 
     override fun initData() {
+        registerHeader = findViewById(R.id.register_header)
+        registerContent = findViewById(R.id.register_content)
         back = findViewById(R.id.back)
         userName = findViewById(R.id.userName)
         password = findViewById(R.id.password)
         confirmPassword = findViewById(R.id.confirmPassword)
         register = findViewById(R.id.register)
         toLogin = findViewById(R.id.toLogin)
+        val isDarkTheme = ThemeUtil.isDarkTheme(this)
+        if (isDarkTheme) {
+            registerHeader.setBackgroundResource(R.color.black)
+            registerContent.setBackgroundResource(R.drawable.card_night_background)
+        }
     }
 
     override fun initListener() {

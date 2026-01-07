@@ -138,7 +138,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
         } else {
             addMusicList.visibility = View.VISIBLE
             editMusicList.visibility = View.GONE
-            initAddMusicListToolBar()
+            initAddMusicListToolBar(this)
         }
         setSupportActionBar(toolbar)
         supportActionBar?.let {
@@ -187,7 +187,7 @@ class AddMusicListActivity : BaseActivity(), ToolBarManager, GetMVListContract.V
     private fun initEditMusicList() {
         addMusicList.visibility = View.GONE
         editMusicList.visibility = View.VISIBLE
-        initEditMusicListToolBar()
+        initEditMusicListToolBar(this)
         val musicListSerialized = intent.getSerializableExtra("musicList")
         if (musicListSerialized != null) {
             currentMusicList = musicListSerialized as PlayListsBean

@@ -24,7 +24,7 @@ class SuccessActivity : BaseActivity(), ToolBarManager, View.OnClickListener {
     }
 
     override fun initData() {
-        initSuccessToolBar()
+        initSuccessToolBar(this)
         setSupportActionBar(toolbar)
         supportActionBar?.let {
             // 启用Toolbar的返回按钮

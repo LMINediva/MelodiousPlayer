@@ -24,7 +24,7 @@ class SettingActivity : BaseActivity(), ToolBarManager {
     }
 
     override fun initData() {
-        initSettingToolbar()
+        initSettingToolbar(this)
         setSupportActionBar(toolbar)
         supportActionBar?.let {
             // 启用Toolbar的返回按钮

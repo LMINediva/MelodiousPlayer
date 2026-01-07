@@ -150,7 +150,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
         } else {
             addMV.visibility = View.VISIBLE
             editMV.visibility = View.GONE
-            initAddMVToolBar()
+            initAddMVToolBar(this)
         }
         setSupportActionBar(toolbar)
         supportActionBar?.let {
@@ -184,7 +184,7 @@ class AddMVActivity : BaseActivity(), ToolBarManager, AdapterView.OnItemSelected
     private fun initEditMV() {
         addMV.visibility = View.GONE
         editMV.visibility = View.VISIBLE
-        initEditMVToolBar()
+        initEditMVToolBar(this)
         val mvSerialized = intent.getSerializableExtra("mv")
         if (mvSerialized != null) {
             currentMV = mvSerialized as VideosBean

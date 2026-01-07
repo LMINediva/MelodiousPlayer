@@ -95,7 +95,7 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     }
 
     override fun initData() {
-        initUserInfoToolBar()
+        initUserInfoToolBar(this)
         setSupportActionBar(toolbar)
         supportActionBar?.let {
             // 启用Toolbar的返回按钮

@@ -2,9 +2,11 @@ package com.melodiousplayer.android.ui.activity
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.melodiousplayer.android.R
@@ -14,6 +16,7 @@ import com.melodiousplayer.android.model.UserBean
 import com.melodiousplayer.android.ui.fragment.MyMVFragment
 import com.melodiousplayer.android.ui.fragment.MyMusicFragment
 import com.melodiousplayer.android.ui.fragment.MyMusicListFragment
+import com.melodiousplayer.android.util.ThemeUtil
 import com.melodiousplayer.android.util.ToolBarManager
 
 /**
@@ -38,7 +41,7 @@ class MyWorkActivity : BaseActivity(), ToolBarManager {
     }
 
     override fun initData() {
-        initMyWorkToolBar()
+        initMyWorkToolBar(this)
         setSupportActionBar(toolbar)
         supportActionBar?.let {
             // 启用Toolbar的返回按钮
@@ -50,6 +53,14 @@ class MyWorkActivity : BaseActivity(), ToolBarManager {
         }
         tabLayout = findViewById(R.id.tabLayout)
         viewPager = findViewById(R.id.viewPager)
+        val isDarkTheme = ThemeUtil.isDarkTheme(this)
+        if (isDarkTheme) {
+            val indicatorColor = getColor(R.color.white)
+            tabLayout.setBackgroundResource(R.color.darkGrayNight)
+            tabLayout.setSelectedTabIndicatorColor(indicatorColor)
+            tabLayout.tabTextColors =
+                ColorStateList.valueOf(ContextCompat.getColor(this, R.color.darkGray))
+        }
         val userSerialized = intent.getSerializableExtra("user")
         if (userSerialized != null) {
             currentUser = userSerialized as UserBean
