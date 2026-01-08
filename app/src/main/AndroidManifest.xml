@@ -102,7 +102,8 @@
         </activity>
         <activity
             android:name=".ui.activity.AudioPlayerActivity"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.AudioPlayerTheme" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />

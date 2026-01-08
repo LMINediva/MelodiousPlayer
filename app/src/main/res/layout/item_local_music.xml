@@ -35,7 +35,7 @@
             android:layout_marginTop="10dp"
             android:maxLines="1"
             android:text="歌手名称"
-            android:textColor="#40000000"
+            android:textColor="@color/textGray"
             android:textSize="18sp" />
 
     </LinearLayout>
@@ -47,7 +47,7 @@
         android:layout_marginTop="10dp"
         android:maxLines="1"
         android:text="5.43M"
-        android:textColor="#40000000"
+        android:textColor="@color/textGray"
         android:textSize="18sp" />
 
 </LinearLayout>

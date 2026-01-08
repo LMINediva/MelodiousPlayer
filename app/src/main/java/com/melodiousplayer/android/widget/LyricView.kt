@@ -206,11 +206,18 @@ class LyricView : View {
      * 解析歌词文件并且添加到集合中
      */
     fun setSongName(name: String) {
-        // 在IO调度器上启动一个协程
-        GlobalScope.launch(Dispatchers.IO) {
-            // 在这里执行异步操作
+        val file = LyricLoader.loadLyricFile(name)
+        val isFileExists = file.exists()
+        if (isFileExists) {
+            // 在IO调度器上启动一个协程
+            GlobalScope.launch(Dispatchers.IO) {
+                // 在这里执行异步操作
+                this@LyricView.list.clear()
+                this@LyricView.list.addAll(LyricUtil.parseLyric(file))
+            }
+        } else {
             this@LyricView.list.clear()
-            this@LyricView.list.addAll(LyricUtil.parseLyric(LyricLoader.loadLyricFile(name)))
+            this@LyricView.list.addAll(LyricUtil.parseLyric(null))
         }
     }
 
@@ -219,10 +226,10 @@ class LyricView : View {
      * 解析歌词文件并且添加到集合中
      */
     fun setOnlineSongName(url: String?) {
-        // 在IO调度器上启动一个协程
-        GlobalScope.launch(Dispatchers.IO) {
-            // 在这里执行异步操作
-            if (url != null && url.endsWith(".lrc")) {
+        if (url != null && url.endsWith(".lrc")) {
+            // 在IO调度器上启动一个协程
+            GlobalScope.launch(Dispatchers.IO) {
+                // 在这里执行异步操作
                 // 加载在线音乐
                 val request = Request.Builder()
                     .url(url)
@@ -234,10 +241,10 @@ class LyricView : View {
                     // 关闭响应，释放资源
                     response.close()
                 }
-            } else {
-                this@LyricView.list.clear()
-                this@LyricView.list.addAll(LyricUtil.parseOnlineLyric(null))
             }
+        } else {
+            this@LyricView.list.clear()
+            this@LyricView.list.addAll(LyricUtil.parseOnlineLyric(null))
         }
     }
 

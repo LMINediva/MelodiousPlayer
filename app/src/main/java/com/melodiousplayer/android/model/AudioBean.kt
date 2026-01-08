@@ -1,9 +1,8 @@
 package com.melodiousplayer.android.model
 
 import android.database.Cursor
-import android.os.Parcel
-import android.os.Parcelable
 import android.provider.MediaStore.Audio.Media
+import java.io.Serializable
 
 /**
  * 音乐列表条目bean
@@ -15,40 +14,9 @@ data class AudioBean(
     var artist: String?,
     var lyric: String?,
     var isOnline: Boolean = false
-) : Parcelable {
+) : Serializable {
 
-    constructor(parcel: Parcel) : this(
-        parcel.readString().toString(),
-        parcel.readLong(),
-        parcel.readString().toString(),
-        parcel.readString().toString(),
-        parcel.readString().toString(),
-        parcel.readByte() != 0.toByte()
-    ) {
-    }
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(data)
-        parcel.writeLong(size)
-        parcel.writeString(displayName)
-        parcel.writeString(artist)
-        parcel.writeString(lyric)
-        parcel.writeByte(if (isOnline) 1 else 0)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<AudioBean> {
-
-        override fun createFromParcel(parcel: Parcel): AudioBean {
-            return AudioBean(parcel)
-        }
-
-        override fun newArray(size: Int): Array<AudioBean?> {
-            return arrayOfNulls(size)
-        }
+    companion object {
 
         /**
          * 根据特定位置上的cursor获取bean

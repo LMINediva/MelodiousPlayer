@@ -17,6 +17,7 @@
     <color name="lightGrayNight">#232229</color>
     <color name="darkGray">#808080</color>
     <color name="darkGrayNight">#0E0E10</color>
+    <color name="textGray">#40000000</color>
     <color name="lineNight">#222128</color>
     <color name="borderNight">#7F000000</color>
     <color name="green">#FF1EC399</color>

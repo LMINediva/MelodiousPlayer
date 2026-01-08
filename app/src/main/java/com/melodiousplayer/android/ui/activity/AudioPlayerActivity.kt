@@ -62,6 +62,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     private lateinit var cancel: ImageView
     private lateinit var edit: ImageView
     private lateinit var delete: ImageView
+    private lateinit var playListPopupWindow: PopupWindow
     private lateinit var currentMusic: MusicBean
     private var popupWindow: PopupWindow? = null
     private val connection by lazy { AudioConnection() }
@@ -210,7 +211,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         if (popupWindow == null) {
             val view = layoutInflater.inflate(R.layout.popup_operation, null)
             val width = ViewGroup.LayoutParams.MATCH_PARENT
-            val height = 350
+            val height = 400
             cancel = view.findViewById(R.id.cancel)
             edit = view.findViewById(R.id.edit)
             delete = view.findViewById(R.id.delete)
@@ -248,8 +249,8 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
             val adapter = PopupAdapter(list)
             // 获取底部高度
             val bottomHeight = audioPlayerBottom.height
-            val popupWindow = PlayListPopupWindow(this, adapter, this, window)
-            popupWindow.showAsDropDown(audioPlayerBottom, 0, bottomHeight)
+            playListPopupWindow = PlayListPopupWindow(this, adapter, this, window)
+            playListPopupWindow.showAsDropDown(audioPlayerBottom, 0, bottomHeight)
         }
     }
 
@@ -343,6 +344,12 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        println("恢复")
+        println("audioBean = " + audioBean)
+    }
+
     /**
      * 接收EventBus方法
      */
@@ -408,6 +415,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         // 播放当前的歌曲
         iService?.playPosition(position)
+        playListPopupWindow.dismiss()
     }
 
     override fun onDeleteMusicSuccess(result: ResultBean) {

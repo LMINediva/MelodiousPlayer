@@ -12,11 +12,11 @@ object LyricUtil {
     /**
      * 解析歌词文件获取歌词集合
      */
-    fun parseLyric(file: File): List<LyricBean> {
+    fun parseLyric(file: File?): List<LyricBean> {
         // 创建集合
         val list = ArrayList<LyricBean>()
         // 判断歌词是否为空
-        if (!file.exists()) {
+        if (file == null) {
             list.add(LyricBean(0, "歌词未找到"))
             return list
         }

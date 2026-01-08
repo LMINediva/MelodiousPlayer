@@ -81,7 +81,7 @@ class AudioService : Service() {
                     position = pos
                     // 想要播放的条目和正在播放的条目不是同一首
                     // 获取list以及position
-                    list = intent?.getParcelableArrayListExtra<AudioBean>("list")
+                    list = intent?.getSerializableExtra("list") as ArrayList<AudioBean>?
                     // 开始播放音乐
                     binder.playItem()
                 } else {

@@ -18,6 +18,12 @@
     </style>
 
     <!-- 继承自AppTheme，占满全屏 -->
+    <style name="AppTheme.AudioPlayerTheme">
+        <!-- 设置应用为全屏 -->
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <!-- 继承自AppTheme，占满全屏 -->
     <style name="AppTheme.FullScreen">
         <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
