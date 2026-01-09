@@ -105,7 +105,10 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
         data = intent.data
         if (data == null) {
             // 获取传递的数据
-            videoPlayBean = intent.getParcelableExtra("item")
+            val videoPlaySerialized = intent.getSerializableExtra("item")
+            if (videoPlaySerialized != null) {
+                videoPlayBean = videoPlaySerialized as VideoPlayBean
+            }
             // 从应用内响应视频播放
             videoPlayer.setUp(
                 URLProviderUtils.protocol + URLProviderUtils.serverAddress

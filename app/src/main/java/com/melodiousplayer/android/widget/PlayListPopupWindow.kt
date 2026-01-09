@@ -13,6 +13,7 @@ import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.PopupWindow
 import com.melodiousplayer.android.R
+import com.melodiousplayer.android.util.ThemeUtil
 
 class PlayListPopupWindow(
     context: Context,
@@ -23,7 +24,9 @@ class PlayListPopupWindow(
     PopupWindow() {
 
     // 记录当前应用程序窗体透明度
-    var alpha: Float = 0f
+    private var alpha: Float = 0f
+    private var currentContext: Context
+    private var listView: ListView
 
     init {
         // 记录当前窗体的透明度
@@ -31,7 +34,7 @@ class PlayListPopupWindow(
         // 设置布局
         val view = LayoutInflater.from(context).inflate(R.layout.popup_playlist, null, false)
         // 获取ListView
-        val listView = view.findViewById<ListView>(R.id.listView)
+        listView = view.findViewById(R.id.listView)
         // 适配
         listView.adapter = adapter
         // 设置列表条目点击事件
@@ -53,12 +56,17 @@ class PlayListPopupWindow(
         setBackgroundDrawable(ColorDrawable())
         // 处理PopupWindow弹出和隐藏的动画
         animationStyle = R.style.popup
+        currentContext = context
     }
 
     override fun showAsDropDown(anchor: View?, xoff: Int, yoff: Int, gravity: Int) {
         super.showAsDropDown(anchor, xoff, yoff, gravity)
         // PopupWindow已经显示
         val attributes = window.attributes
+        val isDarkTheme = currentContext.let { ThemeUtil.isDarkTheme(it) }
+        if (isDarkTheme) {
+            listView.setBackgroundResource(R.color.darkGrayNight)
+        }
         attributes.alpha = 0.3f
         // 设置到应用程序窗体上
         window.attributes = attributes

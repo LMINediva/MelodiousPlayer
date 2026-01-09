@@ -15,13 +15,20 @@ import okhttp3.Response
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 /**
  * 发送网络请求类
  */
 class NetManager private constructor() {
 
-    val client by lazy { OkHttpClient() }
+    val client by lazy {
+        OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(120, TimeUnit.SECONDS)
+            .build()
+    }
 
     // 单例实现
     companion object {

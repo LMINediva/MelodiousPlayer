@@ -20,7 +20,10 @@ class TextureVideoPlayerActivity : BaseActivity(), TextureView.SurfaceTextureLis
 
     override fun initData() {
         // 获取传递的数据
-        videoPlayBean = intent.getParcelableExtra<VideoPlayBean>("item")
+        val videoPlaySerialized = intent.getSerializableExtra("item")
+        if (videoPlaySerialized != null) {
+            videoPlayBean = videoPlaySerialized as VideoPlayBean
+        }
         textureView = findViewById(R.id.textureView)
         textureView.surfaceTextureListener = this
     }

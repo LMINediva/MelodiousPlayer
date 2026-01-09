@@ -4,7 +4,9 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.Color
 import android.graphics.drawable.AnimationDrawable
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Message
@@ -17,9 +19,12 @@ import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import android.widget.RelativeLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.adapter.PopupAdapter
 import com.melodiousplayer.android.base.BaseActivity
@@ -45,6 +50,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     AdapterView.OnItemClickListener, DeleteMusicContract.View {
 
     private lateinit var audioPlayerBackground: LinearLayout
+    private lateinit var audioPlayerTop: RelativeLayout
     private lateinit var state: ImageView
     private lateinit var audioTitle: TextView
     private lateinit var artist: TextView
@@ -64,6 +70,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     private lateinit var delete: ImageView
     private lateinit var playListPopupWindow: PopupWindow
     private lateinit var currentMusic: MusicBean
+    private lateinit var audioServiceIntent: Intent
     private var popupWindow: PopupWindow? = null
     private val connection by lazy { AudioConnection() }
     private var iService: IService? = null
@@ -88,6 +95,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
 
     override fun initData() {
         audioPlayerBackground = findViewById(R.id.music_player_background)
+        audioPlayerTop = findViewById(R.id.music_player_top)
         state = findViewById(R.id.state)
         audioTitle = findViewById(R.id.audio_title)
         artist = findViewById(R.id.artist)
@@ -104,12 +112,28 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         more = findViewById(R.id.audio_more)
         val isDarkTheme = ThemeUtil.isDarkTheme(this)
         if (isDarkTheme) {
+            val textColor = getColor(R.color.darkGray)
             audioPlayerBackground.setBackgroundResource(R.mipmap.music_night_bg)
+            artist.setTextColor(textColor)
         }
-        // 注册EventBus
-        EventBus.getDefault().register(this)
+        // 设置全屏
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
+        // 设置状态栏透明
+        window.statusBarColor = Color.TRANSPARENT
+        // 判断当前系统版本是否为Android 9.0以上
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            window.attributes.layoutInDisplayCutoutMode =
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+        }
+        // 将音乐播放器顶部控件下移状态栏的位置
+        ViewCompat.setOnApplyWindowInsetsListener(audioPlayerTop) { view, insets ->
+            val params = view.layoutParams as LinearLayout.LayoutParams
+            params.topMargin =
+                insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            insets
+        }
         // 通过AudioService播放音乐
-        val intent = intent
         val isMyMusic = intent.getBooleanExtra("isMyMusic", false)
         if (isMyMusic) {
             more.visibility = View.VISIBLE
@@ -121,12 +145,17 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         } else {
             more.visibility = View.GONE
         }
+        // 注册EventBus
+        EventBus.getDefault().register(this)
+        audioServiceIntent = Intent()
+        audioServiceIntent.putExtra("list", intent.getSerializableExtra("list"))
+        audioServiceIntent.putExtra("position", intent.getIntExtra("position", 0))
         // 修改
-        intent.setClass(this, AudioService::class.java)
+        audioServiceIntent.setClass(this, AudioService::class.java)
         // 先绑定服务
-        bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        bindService(audioServiceIntent, connection, Context.BIND_AUTO_CREATE)
         // 再开启服务
-        startService(intent)
+        startService(audioServiceIntent)
     }
 
     inner class AudioConnection : ServiceConnection {
@@ -342,12 +371,6 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
                 handler.removeMessages(MSG_PROGRESS)
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        println("恢复")
-        println("audioBean = " + audioBean)
     }
 
     /**

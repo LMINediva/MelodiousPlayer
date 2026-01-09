@@ -18,8 +18,9 @@
 
     <!-- 继承自AppTheme，占满全屏 -->
     <style name="AppTheme.AudioPlayerTheme">
-        <!-- 设置应用为全屏 -->
-        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:statusBarColor">@null</item>
     </style>
 
     <!-- 继承自AppTheme，占满全屏 -->

@@ -15,7 +15,11 @@ class VideoPlayerActivity : BaseActivity() {
 
     override fun initData() {
         // 获取传递的数据
-        val videoPlayBean = intent.getParcelableExtra<VideoPlayBean>("item")
+        val videoPlaySerialized = intent.getSerializableExtra("item")
+        var videoPlayBean = VideoPlayBean(0, "", "", "", "")
+        if (videoPlaySerialized != null) {
+            videoPlayBean = videoPlaySerialized as VideoPlayBean
+        }
         videoView = findViewById(R.id.videoView)
         // 异步准备
         videoView.setVideoPath(videoPlayBean?.url)

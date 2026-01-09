@@ -17,33 +17,40 @@ import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 /**
  * 自定义歌词view
  */
 class LyricView : View {
 
-    private val client by lazy { OkHttpClient() }
+    private val client by lazy {
+        OkHttpClient.Builder()
+            .connectTimeout(120, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(120, TimeUnit.SECONDS)
+            .build()
+    }
 
     // 通过惰性加载创建画笔Paint
-    val paint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
-    var list: MutableList<LyricBean>
-    var centerLine = 0
-    var viewW: Int = 0
-    var viewH: Int = 0
-    var bigSize = 0f
-    var smallSize = 0f
-    var white = 0
-    var green = 0
-    var lineHeight = 0
-    var duration = 0
-    var progress = 0
+    private val paint by lazy { Paint(Paint.ANTI_ALIAS_FLAG) }
+    private val list by lazy { ArrayList<LyricBean>() }
+    private var centerLine = 0
+    private var viewW: Int = 0
+    private var viewH: Int = 0
+    private var bigSize = 0f
+    private var smallSize = 0f
+    private var white = 0
+    private var green = 0
+    private var lineHeight = 0
+    private var duration = 0
+    private var progress = 0
 
     // 指定是否可以通过progress进度更新歌词，默认为true
-    var updateByProgress = true
-    var downY = 0f
-    var offsetY = 0f
-    var markY = 0f
+    private var updateByProgress = true
+    private var downY = 0f
+    private var offsetY = 0f
+    private var markY = 0f
 
     // 进度回调函数
     private var listener: ((progress: Int) -> Unit)? = null
@@ -66,7 +73,6 @@ class LyricView : View {
         lineHeight = resources.getDimensionPixelOffset(R.dimen.lineHeight)
         // 画笔在x轴方向确定位置是通过中间位置确定坐标
         paint.textAlign = Paint.Align.CENTER
-        list = ArrayList()
     }
 
     override fun onDraw(canvas: Canvas) {
