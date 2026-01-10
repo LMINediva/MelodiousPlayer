@@ -37,6 +37,7 @@ import com.melodiousplayer.android.service.AudioService
 import com.melodiousplayer.android.service.IService
 import com.melodiousplayer.android.util.StringUtil
 import com.melodiousplayer.android.util.ThemeUtil
+import com.melodiousplayer.android.widget.AudioOperationPopupWindow
 import com.melodiousplayer.android.widget.LyricView
 import com.melodiousplayer.android.widget.PlayListPopupWindow
 import org.greenrobot.eventbus.EventBus
@@ -69,6 +70,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     private lateinit var edit: ImageView
     private lateinit var delete: ImageView
     private lateinit var playListPopupWindow: PopupWindow
+    private lateinit var audioOperationPopupWindow: PopupWindow
     private lateinit var currentMusic: MusicBean
     private lateinit var audioServiceIntent: Intent
     private var popupWindow: PopupWindow? = null
@@ -76,6 +78,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     private var iService: IService? = null
     private var audioBean: AudioBean? = null
     private var drawable: AnimationDrawable? = null
+    private var alpha: Float = 0f
     private var duration: Int = 0
     private var token: String? = null
     private val MSG_PROGRESS = 0
@@ -110,6 +113,8 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         audioPlayerBottom = findViewById(R.id.audio_player_bottom)
         lyricView = findViewById(R.id.lyricView)
         more = findViewById(R.id.audio_more)
+        // 记录当前窗体的透明度
+        alpha = window.attributes.alpha
         val isDarkTheme = ThemeUtil.isDarkTheme(this)
         if (isDarkTheme) {
             val textColor = getColor(R.color.darkGray)
@@ -207,11 +212,11 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
             R.id.pre -> iService?.playPrevious()
             R.id.next -> iService?.playNext()
             R.id.playlist -> showPlayList()
-            R.id.audio_more -> showPopupWindow()
-            R.id.cancel -> popupWindow?.dismiss()
+            R.id.audio_more -> showAudioOperationPopupWindow()
+            R.id.cancel -> audioOperationPopupWindow.dismiss()
             R.id.edit -> editMyMusic()
             R.id.delete -> {
-                popupWindow?.dismiss()
+                audioOperationPopupWindow.dismiss()
                 AlertDialog.Builder(this).apply {
                     setTitle("提示")
                     setMessage("确定要删除音乐吗？")
@@ -233,34 +238,20 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     }
 
     /**
-     * 从底部显示PopupWindow
+     * 从底部显示音乐操作PopupWindow
      */
-    private fun showPopupWindow() {
-        val layoutInflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        if (popupWindow == null) {
-            val view = layoutInflater.inflate(R.layout.popup_operation, null)
-            val width = ViewGroup.LayoutParams.MATCH_PARENT
-            val height = 400
-            cancel = view.findViewById(R.id.cancel)
-            edit = view.findViewById(R.id.edit)
-            delete = view.findViewById(R.id.delete)
-            popupWindow = PopupWindow(view, width, height, true)
-            cancel.setOnClickListener(this)
-            edit.setOnClickListener(this)
-            delete.setOnClickListener(this)
-        }
-        popupWindow?.animationStyle = R.style.bottom_popup
-        popupWindow?.isOutsideTouchable = true
-        popupWindow?.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
-        // 显示PopupWindow，参数为锚点View和重力、偏移量，这里设置为底部弹出
-        popupWindow?.showAtLocation(window.decorView, Gravity.BOTTOM, 0, 0)
+    private fun showAudioOperationPopupWindow() {
+        // 获取底部高度
+        val bottomHeight = audioPlayerBottom.height
+        audioOperationPopupWindow = AudioOperationPopupWindow(this, this, window)
+        audioOperationPopupWindow.showAsDropDown(audioPlayerBottom, 0, bottomHeight)
     }
 
     /**
      * 修改我的音乐
      */
     private fun editMyMusic() {
-        popupWindow?.dismiss()
+        audioOperationPopupWindow.dismiss()
         // 进入添加音乐界面，传递音乐信息
         val intent = Intent(this, AddMusicActivity::class.java)
         intent.putExtra("isMyMusic", true)

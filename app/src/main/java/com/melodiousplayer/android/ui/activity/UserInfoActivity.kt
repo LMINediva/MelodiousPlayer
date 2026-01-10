@@ -20,6 +20,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.ProgressBar
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
@@ -39,6 +40,7 @@ import com.melodiousplayer.android.presenter.impl.UpdateAvatarPresenterImpl
 import com.melodiousplayer.android.presenter.impl.UpdateUserInfoPresenterImpl
 import com.melodiousplayer.android.presenter.impl.UploadAvatarPresenterImpl
 import com.melodiousplayer.android.util.DateUtil
+import com.melodiousplayer.android.util.ThemeUtil
 import com.melodiousplayer.android.util.ToolBarManager
 import com.melodiousplayer.android.util.URLProviderUtils
 import com.melodiousplayer.android.util.UnitUtil
@@ -61,6 +63,8 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private lateinit var role: TextView
     private lateinit var updateTime: TextView
     private lateinit var createTime: TextView
+    private lateinit var popupBackground: RelativeLayout
+    private lateinit var line: TextView
     private lateinit var albums: TextView
     private lateinit var cancel: LinearLayout
     private lateinit var photograph: TextView
@@ -72,6 +76,7 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private lateinit var totalText: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var hintInfo: TextView
+    private var isDarkTheme: Boolean = false
     private var popupWindow: PopupWindow? = null
     private val PERMISSION_REQUEST = 1
     private val TAKE_PHOTO_REQUEST = 1
@@ -135,6 +140,7 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         // 从SharedPreferences文件中读取token的值
         token = getSharedPreferences("data", Context.MODE_PRIVATE)
             .getString("token", "").toString()
+        isDarkTheme = ThemeUtil.isDarkTheme(this)
         requestPermissions()
     }
 
@@ -254,10 +260,19 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
             val view = layoutInflater.inflate(R.layout.popup_select_photograph, null)
             val width = ViewGroup.LayoutParams.MATCH_PARENT
             val height = 500
+            popupBackground = view.findViewById(R.id.popup_background)
+            line = view.findViewById(R.id.line)
             photograph = view.findViewById(R.id.photograph)
             albums = view.findViewById(R.id.albums)
             cancel = view.findViewById(R.id.cancel)
             popupWindow = PopupWindow(view, width, height, true)
+            if (isDarkTheme) {
+                popupBackground.setBackgroundResource(R.color.lightGrayNight)
+                line.setBackgroundResource(R.color.darkGray)
+                photograph.setBackgroundResource(R.drawable.btn_up_select_night)
+                albums.setBackgroundResource(R.drawable.btn_down_select_night)
+                cancel.setBackgroundResource(R.drawable.btn_select_night)
+            }
             photograph.setOnClickListener(this)
             albums.setOnClickListener(this)
             cancel.setOnClickListener(this)
