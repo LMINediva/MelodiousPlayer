@@ -2,6 +2,7 @@ package com.melodiousplayer.android.base
 
 import android.content.Context
 import android.view.View
+import android.widget.RelativeLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.melodiousplayer.android.R
@@ -25,11 +26,13 @@ abstract class BaseGridListFragment<RESPONSE, ITEMBEAN, ITEMVIEW : View> : BaseF
     val presenter by lazy { getSpecialPresenter() }
 
     private lateinit var recyclerView: RecyclerView
+    private lateinit var myListLoadingLayout: RelativeLayout
     private var listener: MessageListener? = null
 
     override fun initView(): View? {
         val view = View.inflate(context, R.layout.fragment_my_list, null)
         recyclerView = view.findViewById(R.id.recyclerView)
+        myListLoadingLayout = view.findViewById(R.id.myListLoadingLayout)
         return view
     }
 
@@ -91,6 +94,8 @@ abstract class BaseGridListFragment<RESPONSE, ITEMBEAN, ITEMVIEW : View> : BaseF
     }
 
     override fun loadSuccess(response: RESPONSE?) {
+        recyclerView.visibility = View.VISIBLE
+        myListLoadingLayout.visibility = View.GONE
         // 刷新列表
         adapter.updateList(getList(response))
     }

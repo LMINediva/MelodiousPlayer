@@ -2,6 +2,7 @@ package com.melodiousplayer.android.ui.fragment
 
 import android.content.res.ColorStateList
 import android.view.View
+import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
@@ -21,6 +22,7 @@ class MVFragment : BaseFragment(), MVView {
     private lateinit var view: View
     private lateinit var viewPager: ViewPager
     private lateinit var tabLayout: TabLayout
+    private lateinit var mvAreaLoadingLayout: RelativeLayout
     val presenter by lazy { MVPresenterImpl(this) }
 
     companion object {
@@ -43,6 +45,7 @@ class MVFragment : BaseFragment(), MVView {
     override fun initData() {
         viewPager = view.findViewById(R.id.viewPager)
         tabLayout = view.findViewById(R.id.tabLayout)
+        mvAreaLoadingLayout = view.findViewById(R.id.mvAreaLoadingLayout)
         val isDarkTheme = context?.let { ThemeUtil.isDarkTheme(it) }
         if (isDarkTheme == true) {
             val indicatorColor = context?.getColor(R.color.white)
@@ -72,6 +75,9 @@ class MVFragment : BaseFragment(), MVView {
     }
 
     override fun onSuccess(result: List<MVAreaBean>) {
+        tabLayout.visibility = View.VISIBLE
+        mvAreaLoadingLayout.visibility = View.GONE
+        viewPager.visibility = View.VISIBLE
         // 在fragment中管理fragment需要用childFragmentManager
         val adapter = context?.let { MVPagerAdapter(it, result, childFragmentManager) }
         viewPager.adapter = adapter

@@ -103,11 +103,8 @@ abstract class BaseListFragment<RESPONSE, ITEMBEAN, ITEMVIEW : View> : BaseFragm
     override fun loadSuccess(response: RESPONSE?) {
         // 隐藏刷新控件
         refreshLayout.isRefreshing = false
-        if (refreshLayout.visibility == View.GONE) {
-            refreshLayout.visibility = View.VISIBLE
-        } else if (loadingLayout.visibility == View.VISIBLE) {
-            loadingLayout.visibility = View.GONE
-        }
+        refreshLayout.visibility = View.VISIBLE
+        loadingLayout.visibility = View.GONE
         // 刷新列表
         adapter.updateList(getList(response))
     }

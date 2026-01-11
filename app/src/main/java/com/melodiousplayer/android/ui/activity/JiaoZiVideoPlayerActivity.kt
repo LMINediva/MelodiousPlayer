@@ -48,6 +48,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     DeleteMVContract.View {
@@ -70,7 +71,13 @@ class JiaoZiVideoPlayerActivity : BaseActivity(), ToolBarManager, View.OnClickLi
         Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
     private val EDIT_MV_REQUEST = 1
-    private val client by lazy { OkHttpClient() }
+    private val client by lazy {
+        OkHttpClient.Builder()
+            .connectTimeout(120, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(120, TimeUnit.SECONDS)
+            .build()
+    }
     private val deleteMVPresenter = DeleteMVPresenterImpl(this)
 
     override val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
