@@ -3,6 +3,7 @@ package com.melodiousplayer.android.base
 import android.content.Context
 import android.graphics.Color
 import android.view.View
+import android.widget.RelativeLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -24,12 +25,14 @@ abstract class BaseListFragment<RESPONSE, ITEMBEAN, ITEMVIEW : View> : BaseFragm
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var refreshLayout: SwipeRefreshLayout
+    private lateinit var loadingLayout: RelativeLayout
     private var listener: MessageListener? = null
 
     override fun initView(): View? {
         val view = View.inflate(context, R.layout.fragment_list, null)
         recyclerView = view.findViewById(R.id.recyclerView)
         refreshLayout = view.findViewById(R.id.refreshLayout)
+        loadingLayout = view.findViewById(R.id.loadingLayout)
         return view
     }
 
@@ -100,6 +103,11 @@ abstract class BaseListFragment<RESPONSE, ITEMBEAN, ITEMVIEW : View> : BaseFragm
     override fun loadSuccess(response: RESPONSE?) {
         // 隐藏刷新控件
         refreshLayout.isRefreshing = false
+        if (refreshLayout.visibility == View.GONE) {
+            refreshLayout.visibility = View.VISIBLE
+        } else if (loadingLayout.visibility == View.VISIBLE) {
+            loadingLayout.visibility = View.GONE
+        }
         // 刷新列表
         adapter.updateList(getList(response))
     }

@@ -67,6 +67,7 @@
     <string name="my_work_tab_text_1">音乐</string>
     <string name="my_work_tab_text_2">MV</string>
     <string name="my_work_tab_text_3">悦单</string>
+    <string name="loading">正在加载...</string>
     <string name="cache_explain">
         缓存是使用悦听影音过程中产生的临时数据，清理缓存不会影响悦听影音的正常使用。
     </string>
