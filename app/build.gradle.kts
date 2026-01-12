@@ -13,8 +13,8 @@ android {
         applicationId = "com.melodiousplayer.android"
         minSdk = 24
         targetSdk = 34
-        versionCode = 6
-        versionName = "2.1.7"
+        versionCode = 7
+        versionName = "2.1.8"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

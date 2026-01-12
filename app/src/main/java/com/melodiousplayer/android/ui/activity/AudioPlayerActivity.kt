@@ -10,10 +10,10 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Message
-import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowInsets
+import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ImageView
@@ -24,6 +24,7 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.adapter.PopupAdapter
@@ -66,14 +67,10 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     private lateinit var audioPlayerBottom: LinearLayout
     private lateinit var lyricView: LyricView
     private lateinit var more: ImageView
-    private lateinit var cancel: ImageView
-    private lateinit var edit: ImageView
-    private lateinit var delete: ImageView
     private lateinit var playListPopupWindow: PopupWindow
     private lateinit var audioOperationPopupWindow: PopupWindow
     private lateinit var currentMusic: MusicBean
     private lateinit var audioServiceIntent: Intent
-    private var popupWindow: PopupWindow? = null
     private val connection by lazy { AudioConnection() }
     private var iService: IService? = null
     private var audioBean: AudioBean? = null
@@ -122,10 +119,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
             artist.setTextColor(textColor)
         }
         // 设置全屏
-        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
-        // 设置状态栏透明
-        window.statusBarColor = Color.TRANSPARENT
+        setFullScreen(window)
         // 判断当前系统版本是否为Android 9.0以上
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             window.attributes.layoutInDisplayCutoutMode =
@@ -161,6 +155,37 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
         bindService(audioServiceIntent, connection, Context.BIND_AUTO_CREATE)
         // 再开启服务
         startService(audioServiceIntent)
+    }
+
+    /**
+     * 设置全屏和沉浸式模式
+     */
+    fun setFullScreen(window: Window) {
+        // 判断系统是否为Android 11及以上
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            //使用刘海屏也需要这一句进行全屏处理
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            val controller = window.insetsController
+            if (controller != null) {
+                controller.hide(
+                    WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars()
+                            or WindowInsets.Type.displayCutout()
+                )
+                controller.systemBarsBehavior =
+                    WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                controller.setSystemBarsAppearance(
+                    0,
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                )
+            }
+        } else {
+            // 对于低于Android 10的系统，使用上面的方法或旧方式设置状态栏颜色
+            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
+            // 设置状态栏透明
+            window.statusBarColor = Color.TRANSPARENT
+        }
     }
 
     inner class AudioConnection : ServiceConnection {

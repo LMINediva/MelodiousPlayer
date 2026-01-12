@@ -175,7 +175,7 @@ class AudioService : Service() {
             intent.putExtra("from", FROM_NEXT)
             val pendingIntent = PendingIntent.getService(
                 this@AudioService, 2, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             return pendingIntent
         }
@@ -189,7 +189,7 @@ class AudioService : Service() {
             intent.putExtra("from", FROM_STATE)
             val pendingIntent = PendingIntent.getService(
                 this@AudioService, 3, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             return pendingIntent
         }
@@ -203,7 +203,7 @@ class AudioService : Service() {
             intent.putExtra("from", FROM_PRE)
             val pendingIntent = PendingIntent.getService(
                 this@AudioService, 4, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             return pendingIntent
         }
@@ -219,7 +219,7 @@ class AudioService : Service() {
             val intents = arrayOf(intentM, intentA)
             val pendingIntent = PendingIntent.getActivities(
                 this@AudioService, 1, intents,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             return pendingIntent
         }

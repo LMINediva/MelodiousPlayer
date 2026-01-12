@@ -117,7 +117,7 @@ class LyricView : View {
         val textH = bounds.height()
         // 居中行y值
         val centerY = viewH / 2 + textH / 2 - offsetY
-        for ((index, value) in list.withIndex()) {
+        list.withIndex().forEach { (index, value) ->
             if (index == centerLine) {
                 // 绘制居中行
                 paint.color = green
@@ -131,9 +131,9 @@ class LyricView : View {
             val curY = centerY + (index - centerLine) * lineHeight
             // 超出边界处理
             // 处理超出上边界歌词
-            if (curY < 0) continue
+            if (curY < 0) return@forEach
             // 处理超出下边界歌词
-            if (curY > viewH + lineHeight) break
+            if (curY > viewH + lineHeight) return@forEach
             val curText = list.get(index).content
             canvas?.drawText(curText, curX.toFloat(), curY.toFloat(), paint)
         }

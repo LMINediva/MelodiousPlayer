@@ -40,7 +40,7 @@
         <activity
             android:name=".ui.activity.WelcomeActivity"
             android:exported="true"
-            android:theme="@style/AppTheme.FullScreen">
+            android:theme="@style/TranslucentTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
