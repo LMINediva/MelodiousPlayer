@@ -17,20 +17,10 @@
     </style>
 
     <!-- 继承自AppTheme，占满全屏 -->
-    <style name="AppTheme.AudioPlayerTheme">
-        <item name="android:windowTranslucentStatus">false</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:statusBarColor">@null</item>
-    </style>
-
-    <!-- 继承自AppTheme，占满全屏 -->
     <style name="AppTheme.FullScreen">
         <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
-        <!-- 导航栏移除内容覆盖层 -->
-        <item name="android:navigationBarColor">
-            @null
-        </item>
+        <item name="android:navigationBarColor">@color/colorPrimary</item>
         <!-- 状态栏移除内容覆盖层 -->
         <item name="android:statusBarColor">
             @null
@@ -40,14 +30,8 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowDisablePreview">false</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">false</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowBackground">@drawable/welcome</item>
-    </style>
-
-    <style name="pop">
-        <item name="android:windowEnterAnimation">@anim/bottom_popup_enter</item>
-        <item name="android:windowExitAnimation">@anim/bottom_popup_exit</item>
     </style>
 
 </resources>

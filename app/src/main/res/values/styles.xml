@@ -11,10 +11,9 @@
         <item name="android:windowExitAnimation">@anim/bottom_popup_exit</item>
     </style>
 
-    <style name="TranslucentTheme" parent="AppTheme.FullScreen">
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:windowLayoutInDisplayCutoutMode">always</item>
+    <style name="pop">
+        <item name="android:windowEnterAnimation">@anim/bottom_popup_enter</item>
+        <item name="android:windowExitAnimation">@anim/bottom_popup_exit</item>
     </style>
 
 </resources>

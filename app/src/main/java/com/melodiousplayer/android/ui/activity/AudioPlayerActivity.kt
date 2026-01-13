@@ -168,24 +168,21 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
             val controller = window.insetsController
             if (controller != null) {
                 controller.hide(
-                    WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars()
+                    WindowInsets.Type.navigationBars()
                             or WindowInsets.Type.displayCutout()
                 )
                 controller.systemBarsBehavior =
-                    WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                controller.setSystemBarsAppearance(
-                    0,
-                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-                )
+                    WindowInsetsController.BEHAVIOR_DEFAULT
             }
+            window.navigationBarColor = Color.TRANSPARENT
         } else {
             // 对于低于Android 10的系统，使用上面的方法或旧方式设置状态栏颜色
             window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     or View.SYSTEM_UI_FLAG_FULLSCREEN
                     or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
-            // 设置状态栏透明
-            window.statusBarColor = Color.TRANSPARENT
         }
+        // 设置状态栏透明
+        window.statusBarColor = Color.TRANSPARENT
     }
 
     inner class AudioConnection : ServiceConnection {
