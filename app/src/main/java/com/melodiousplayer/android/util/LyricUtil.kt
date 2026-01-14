@@ -17,7 +17,9 @@ object LyricUtil {
         val list = ArrayList<LyricBean>()
         // 判断歌词是否为空
         if (file == null) {
-            list.add(LyricBean(0, "歌词未找到"))
+            synchronized(list) {
+                list.add(LyricBean(0, "歌词未找到"))
+            }
             return list
         }
         // 解析歌词文件，添加到集合中
@@ -27,7 +29,9 @@ object LyricUtil {
             // 解析一行
             val lineList: List<LyricBean> = parseLine(line)
             // 添加到集合中
-            list.addAll(lineList)
+            synchronized(list) {
+                list.addAll(lineList)
+            }
         }
         // 歌词排序
         list.sortBy { it.startTime }
@@ -43,7 +47,9 @@ object LyricUtil {
         val list = ArrayList<LyricBean>()
         // 判断歌词是否为空
         if (lyric == null) {
-            list.add(LyricBean(0, "歌词未找到"))
+            synchronized(list) {
+                list.add(LyricBean(0, "歌词未找到"))
+            }
             return list
         }
         // 解析歌词文件，添加到集合中
@@ -53,7 +59,9 @@ object LyricUtil {
             // 解析一行
             val lineList: List<LyricBean> = parseLine(line)
             // 添加到集合中
-            list.addAll(lineList)
+            synchronized(list) {
+                list.addAll(lineList)
+            }
         }
         // 歌词排序
         list.sortBy { it.startTime }
@@ -77,11 +85,15 @@ object LyricUtil {
             // 将非时间内容进行过滤处理
             val pattern = Pattern.compile("^\\[(\\d{2}):(\\d{2})(.*)")
             if (!pattern.matcher(value).matches()) {
-                list.add(LyricBean(0, content))
+                synchronized(list) {
+                    list.add(LyricBean(0, content))
+                }
                 continue
             }
             val startTime: Int = parseTime(value)
-            list.add(LyricBean(startTime, content))
+            synchronized(list) {
+                list.add(LyricBean(startTime, content))
+            }
         }
         // 返回集合
         return list

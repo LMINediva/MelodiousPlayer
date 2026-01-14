@@ -176,10 +176,12 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
             }
             window.navigationBarColor = Color.TRANSPARENT
         } else {
-            // 对于低于Android 10的系统，使用上面的方法或旧方式设置状态栏颜色
-            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
+            // 对于低于Android 10的系统，使用下面的方法或旧方式设置状态栏颜色
+            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
         }
         // 设置状态栏透明
         window.statusBarColor = Color.TRANSPARENT
