@@ -32,9 +32,12 @@
 </table>
 
 ## 运行说明
-本项目有配套的服务器端后台管理系统，具体查看：
+1、本项目有配套的服务器端后台管理系统，具体查看：
 - 悦听影音后台管理系统前端界面（[github](https://github.com/LMINediva/melodious-player-admin) | [gitee](https://gitee.com/lminediva/melodious-player-admin)）
 - 悦听影音后台管理系统后端（[github](https://github.com/LMINediva/MelodiousPlayerServer) | [gitee](https://gitee.com/lminediva/MelodiousPlayerServer)）
+
+2、开发环境为：Android Studio Otter 2 Feature Drop | 2025.2.2 Patch 
+3、如需将请求网址改为个人服务器，请修改MelodiousPlayer\app\src\main\java\com\melodiousplayer\android\util目录下的URLProviderUtils.kt文件，将变量serverAddress修改为自己的个人服务器的IP/网址和端口，如果是https协议的网址，也可修改变量protocol为https。
 
 ## 许可
 > Copyright (C) liuhaiyang, Ganzhou Quxiang Inc. Open source codes for study only.
