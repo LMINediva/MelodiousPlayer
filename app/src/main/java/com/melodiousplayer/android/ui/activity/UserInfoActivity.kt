@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import android.text.Editable
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -192,11 +193,24 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        // 设置action按钮
+        menuInflater.inflate(R.menu.edit_menu, menu)
+        return true
+    }
+
     /**
      * Toolbar上的图标按钮点击事件
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.edit -> {
+                username.isEnabled = true
+                phonenumber.isEnabled = true
+                email.isEnabled = true
+                updateButton.visibility = View.VISIBLE
+            }
+
             android.R.id.home -> {
                 val intent = Intent()
                 intent.putExtra("newAvatar", newAvatar)
