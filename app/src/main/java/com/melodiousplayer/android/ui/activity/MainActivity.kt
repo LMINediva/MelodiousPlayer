@@ -66,11 +66,11 @@ class MainActivity : BaseActivity(), ToolBarManager, OnDataChangedListener,
     private var mFragment = 0
     private var toFragment = 0
     private var isLogin: Boolean = false
+    private var userSerialized: Serializable? = null
     private val PERMISSION_REQUEST = 1
     private val UPDATE_AVATAR_REQUEST = 1
     private val ADD_OR_EDIT_WORK_REQUEST = 2
     private val LOGIN_REQUEST = 3
-    private var userSerialized: Serializable? = null
     private val presenter = TokenLoginPresenterImpl(this)
     private val logoutPresenter = LogoutPresenterImpl(this)
 

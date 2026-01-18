@@ -16,7 +16,6 @@ import androidx.core.app.NotificationCompat
 import com.melodiousplayer.android.R
 import com.melodiousplayer.android.model.AudioBean
 import com.melodiousplayer.android.ui.activity.AudioPlayerActivity
-import com.melodiousplayer.android.ui.activity.MainActivity
 import org.greenrobot.eventbus.EventBus
 import java.util.Random
 
@@ -213,10 +212,9 @@ class AudioService : Service() {
          */
         private fun getPendingIntent(): PendingIntent? {
             // 点击主体进入音乐播放界面中
-            val intentM = Intent(this@AudioService, MainActivity::class.java)
             val intentA = Intent(this@AudioService, AudioPlayerActivity::class.java)
             intentA.putExtra("from", FROM_CONTENT)
-            val intents = arrayOf(intentM, intentA)
+            val intents = arrayOf(intentA)
             val pendingIntent = PendingIntent.getActivities(
                 this@AudioService, 1, intents,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE

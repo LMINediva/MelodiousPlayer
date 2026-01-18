@@ -163,7 +163,7 @@ class AudioPlayerActivity : BaseActivity(), View.OnClickListener, SeekBar.OnSeek
     fun setFullScreen(window: Window) {
         // 判断系统是否为Android 11及以上
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            //使用刘海屏也需要这一句进行全屏处理
+            // 使用刘海屏也需要这一句进行全屏处理
             WindowCompat.setDecorFitsSystemWindows(window, false)
             val controller = window.insetsController
             if (controller != null) {
