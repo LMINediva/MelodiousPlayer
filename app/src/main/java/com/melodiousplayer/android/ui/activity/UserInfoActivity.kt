@@ -148,7 +148,6 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     }
 
     override fun initListener() {
-        avatarImage.setOnClickListener(this)
         changePicture.setOnClickListener(this)
         updateButton.setOnClickListener(this)
     }
@@ -220,7 +219,7 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                 email.isFocusableInTouchMode = true
                 editItem.isVisible = false
                 cancelItem.isVisible = true
-                avatarImage.isClickable = true
+                avatarImage.setOnClickListener(this)
                 changePicture.visibility = View.VISIBLE
                 updateButton.visibility = View.VISIBLE
             }
@@ -237,7 +236,7 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
                 email.isFocusableInTouchMode = false
                 editItem.isVisible = true
                 cancelItem.isVisible = false
-                avatarImage.isClickable = false
+                avatarImage.setOnClickListener(null)
                 changePicture.visibility = View.GONE
                 updateButton.visibility = View.GONE
             }
