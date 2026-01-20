@@ -9,8 +9,7 @@ import android.util.Log
 object URLProviderUtils {
 
     const val protocol = "http://"
-    // var serverAddress = "hk.frpee.top:17116"
-    var serverAddress = "192.168.124.3:8082"
+    var serverAddress = "hk.frpee.top:17116"
     const val musicImagePath = "/image/musicPicture/"
     const val musicPath = "/audio/music/"
     const val lyricPath = "/audio/lyric/"

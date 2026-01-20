@@ -77,6 +77,8 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     private lateinit var totalText: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var hintInfo: TextView
+    private lateinit var editItem: MenuItem
+    private lateinit var cancelItem: MenuItem
     private var isDarkTheme: Boolean = false
     private var popupWindow: PopupWindow? = null
     private val PERMISSION_REQUEST = 1
@@ -196,6 +198,8 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         // 设置action按钮
         menuInflater.inflate(R.menu.edit_menu, menu)
+        editItem = menu!!.findItem(R.id.edit)
+        cancelItem = menu.findItem(R.id.cancel)
         return true
     }
 
@@ -205,10 +209,37 @@ class UserInfoActivity : BaseActivity(), ToolBarManager, View.OnClickListener,
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.edit -> {
-                username.isEnabled = true
-                phonenumber.isEnabled = true
-                email.isEnabled = true
+                username.isClickable = true
+                username.isFocusable = true
+                username.isFocusableInTouchMode = true
+                phonenumber.isClickable = true
+                phonenumber.isFocusable = true
+                phonenumber.isFocusableInTouchMode = true
+                email.isClickable = true
+                email.isFocusable = true
+                email.isFocusableInTouchMode = true
+                editItem.isVisible = false
+                cancelItem.isVisible = true
+                avatarImage.isClickable = true
+                changePicture.visibility = View.VISIBLE
                 updateButton.visibility = View.VISIBLE
+            }
+
+            R.id.cancel -> {
+                username.isClickable = false
+                username.isFocusable = false
+                username.isFocusableInTouchMode
+                phonenumber.isClickable = false
+                phonenumber.isFocusable = false
+                phonenumber.isFocusableInTouchMode = false
+                email.isClickable = false
+                email.isFocusable = false
+                email.isFocusableInTouchMode = false
+                editItem.isVisible = true
+                cancelItem.isVisible = false
+                avatarImage.isClickable = false
+                changePicture.visibility = View.GONE
+                updateButton.visibility = View.GONE
             }
 
             android.R.id.home -> {
